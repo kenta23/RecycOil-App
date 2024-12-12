@@ -35,4 +35,10 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
+# nativewind
+nativewind-env.d.ts
+
+#android build
+android/
+
 app-example
