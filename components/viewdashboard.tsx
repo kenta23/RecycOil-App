@@ -3,7 +3,9 @@ import React from 'react'
 import { AntDesign, Feather, FontAwesome6 } from '@expo/vector-icons'
 import { PieChart } from 'react-native-gifted-charts';
 import * as Progress from 'react-native-progress';
-import { useTheme } from '@react-navigation/native';
+import { useTheme } from '@/app/providers/themeprovider';
+
+
 
 
 export default function Viewdashboard() {
@@ -15,20 +17,20 @@ export default function Viewdashboard() {
 
 
   return (
-    <ScrollView className={`w-full ${theme.dark ? 'text-white' : 'text-black'} px-4 py-4`}>
+    <ScrollView className={`w-full px-4 py-4`}>
       {/** Main Sensor view */}
       <View className="w-full mt-2 ">
         {/**Status  */}
         <View className="flex flex-row justify-between mb-6">
           <View className="flex flex-row items-center gap-2">
             <AntDesign name="checkcircle" size={18} color="green" />
-            <Text className="text-sm font-semibold">Status</Text>
+            <Text className="text-sm font-semibold" style={{ color: theme?.colors.text }}>Status</Text>
           </View>
 
           {/**Machine Start again Button */}
           <Pressable className="flex-row items-center gap-2">
             <Feather name="power" size={18} color="green" />
-            <Text className="text-[16px] font-normal">Start new</Text>
+            <Text className="text-[16px] font-normal" style={{ color: theme?.colors.text }}>Start new</Text>
           </Pressable>
         </View>
 
@@ -48,7 +50,7 @@ export default function Viewdashboard() {
                 );
               }}
             />
-            <Text style={theme.dark ? {color: 'white'} : {color: 'black'}} className="text-lg font-medium text-center">
+            <Text style={{ color: theme?.colors.text }} className="text-lg font-medium text-center">
               Producing percentage
             </Text>
           </View>
@@ -65,8 +67,8 @@ export default function Viewdashboard() {
                 height={8}
               />
               <View className="flex-col items-center">
-                <Text style={theme.dark ? {color: 'white'} : {color: 'black'}}>Temperature</Text>
-                <Text style={theme.dark ? {color: 'white'} : {color: 'black'}} className="text-lg font-semibold">20°C</Text>
+                <Text style={{ color: theme?.colors.text }}>Temperature</Text>
+                <Text style={{ color: theme?.colors.text }} className="text-lg font-semibold">20°C</Text>
               </View>
             </View>
 
@@ -79,8 +81,8 @@ export default function Viewdashboard() {
                 height={8}
               />
               <View className="flex-col items-center">
-                <Text style={theme.dark ? {color: 'white'} : {color: 'black'}}>Flow rate</Text>
-                <Text style={theme.dark ? {color: 'white'} : {color: 'black'}} className="text-lg font-semibold">85%</Text>
+                <Text style={{ color: theme?.colors.text }}>Flow rate</Text>
+                <Text style={{ color: theme?.colors.text }} className="text-lg font-semibold">85%</Text>
               </View>
             </View>
 
@@ -93,8 +95,8 @@ export default function Viewdashboard() {
                 height={8}
               />
               <View className="flex-col items-center">
-                <Text style={theme.dark ? {color: 'white'} : {color: 'black'}}>Chunks filtered</Text>
-                <Text  style={theme.dark ? {color: 'white'} : {color: 'black'}}className="text-lg font-semibold">95%</Text>
+                <Text style={{ color: theme?.colors.text }}>Chunks filtered</Text>
+                <Text style={{ color: theme?.colors.text }}className="text-lg font-semibold">95%</Text>
               </View>
             </View>
           </View>
@@ -107,8 +109,8 @@ export default function Viewdashboard() {
         <View className={`w-[300px] px-4 py-3 h-[180px] bg-black/25 rounded-lg`}>
           <View className="flex-col items-center w-full h-full gap-2 ">
             <View className="flex-row items-center self-start w-full gap-2">
-              <FontAwesome6 name="glass-water" size={18} color={theme.dark ? 'white' : 'black'} /> 
-              <Text className={`text-lg font-medium ${theme.dark ? 'text-white' : 'text-[#595750'}`}>    Oil Volume
+              <FontAwesome6 name="glass-water" size={18} color={theme?.colors.text} /> 
+              <Text className={`text-lg font-medium text-[${theme?.colors.text}]`}>    Oil Volume
               </Text>
             </View>
 

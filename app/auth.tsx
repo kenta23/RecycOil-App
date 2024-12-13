@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { Alert, Platform, Pressable, StyleSheet, Text, View } from 'react-native'
 import { Image } from 'expo-image';
 import { supabase } from '@/lib/supabase';
-import { Button, Input } from '@rneui/themed'
 import { useAuth } from '@/lib/authprovider';
 import { Redirect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -10,11 +9,9 @@ import { makeRedirectUri } from "expo-auth-session";
 import * as QueryParams from "expo-auth-session/build/QueryParams";
 import * as WebBrowser from "expo-web-browser";
 import { Provider } from '@supabase/supabase-js';
-import { useTheme } from '@react-navigation/native';
+import { useTheme } from './providers/themeprovider';
 
 export default function Auth() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const { session, user } = useAuth();
   const theme = useTheme();
@@ -73,7 +70,7 @@ const performOAuth = async (provider: Provider) => {
 const btncolor = "flex-row items-center justify-center w-full h-auto gap-3 py-4 rounded-lg shadow-sm border-[1px] border-gray-300 cursor-pointer"
 
   return (
-    <SafeAreaView style={[styles.container, theme.dark && styles.dark]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme?.colors.background }]}>
       <View className="flex-col items-center gap-3 mb-10">
         <Image
           source={require("../assets/images/logo-no-background.png")}
@@ -85,7 +82,7 @@ const btncolor = "flex-row items-center justify-center w-full h-auto gap-3 py-4 
           style={
             Platform.OS === "web" && {
               fontSize: 35,
-              color: theme.colors.text
+              color: theme?.colors.text
             }
           }
         >
@@ -106,9 +103,8 @@ const btncolor = "flex-row items-center justify-center w-full h-auto gap-3 py-4 
             alt="google icon"
           />
           <Text
-            className={`text-lg text-center ${
-              theme.dark ? "text-white" : "text-black"
-            }`}
+            style={{ color: theme?.colors.text }}
+            className={`text-lg text-center`}
           >
             Sign in using Gmail
           </Text>
@@ -119,7 +115,7 @@ const btncolor = "flex-row items-center justify-center w-full h-auto gap-3 py-4 
           disabled={loading}
           onPress={() => performOAuth("github")}
         >
-          {theme.dark ? (
+          {theme?.dark ? (
             <Image
               source={require("../assets/images/github-logo-white.png")}
               style={{ width: 25, height: 25 }}
@@ -133,9 +129,8 @@ const btncolor = "flex-row items-center justify-center w-full h-auto gap-3 py-4 
             />
           )}
           <Text
-            className={`text-lg text-center ${
-              theme.dark ? "text-white" : "text-black"
-            }`}
+            style={{ color: theme?.colors.text }}
+            className={`text-lg text-center`}
           >
             Sign in using Github
           </Text>

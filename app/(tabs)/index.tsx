@@ -2,7 +2,8 @@ import { View, Text, StyleSheet, TouchableOpacity, Image, Pressable, Dimensions,
 import React, { useState } from 'react'
 import Viewdashboard from '@/components/viewdashboard';
 import { useAuth } from '@/lib/authprovider';
-import { useTheme } from '@react-navigation/native';
+import { useTheme } from '../providers/themeprovider';
+
 
 const pieData = [
   {value: 54, color: '#177AD5', text: '54%'},
@@ -16,7 +17,7 @@ export default function Dashboard() {
   const theme = useTheme();
   
   return (
-    <View className={`${theme.dark ? "bg-[#0D1411] h-full" : "bg-white"} `}>
+    <View style={{ backgroundColor: theme?.colors.background }}>
       {power ? (
         <Viewdashboard />
       ) : (
@@ -24,7 +25,7 @@ export default function Dashboard() {
           <View style={styles.container}>
             <Text
               style={
-                theme.dark ? styles.textDescriptionDark : styles.textDescription
+                { color: theme?.colors.text }
               }
             >
               The Machine is turned off

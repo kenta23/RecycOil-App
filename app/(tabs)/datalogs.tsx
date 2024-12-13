@@ -5,6 +5,7 @@ export default function datalogs() {
   return (
     <View>
       <Text>datalogs</Text>
+      
     </View>
   )
 }

@@ -1,4 +1,3 @@
-import { ThemeProvider, DarkTheme, DefaultTheme } from '@react-navigation/native';
 import { Inter_400Regular, Inter_300Light, Inter_500Medium, Inter_600SemiBold, Inter_700Bold, useFonts } from '@expo-google-fonts/inter';
 import {  Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
@@ -9,6 +8,33 @@ import { SystemBars } from 'react-native-edge-to-edge';
 import AuthProvider from '@/lib/authprovider';
 import 'expo-dev-client';
 import { Image } from 'expo-image';
+import Themeprovider from './providers/themeprovider';
+
+
+
+const darkMode = {
+  dark: true,
+  colors: {
+    primary: '#BFEC87',
+    background: '#0E100F',
+    card: 'rgb(18, 18, 18)',
+    text: '#FFFFFF',
+    border: 'rgb(39, 39, 41)',
+    notification: 'rgb(255, 69, 58)',
+  },
+};
+
+const lightMode = {
+  dark: false,
+  colors: {
+    primary: '#BFEC87',
+    background: 'rgb(255, 255, 255)',
+    card: '#C3E1CA',
+    text: '#00000',
+    border: 'rgb(39, 39, 41)',
+    notification: 'rgb(255, 69, 58)',
+  }
+}
 
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -37,30 +63,29 @@ export default function RootLayout() {
 
   return (
     <AuthProvider>
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Stack 
+      <Themeprovider value={colorScheme === "dark" ? darkMode : lightMode}>
+        <Stack
           screenOptions={{
             headerShown: false,
           }}
         >
-          <Stack.Screen name="auth"/>
-          <Stack.Screen name="(tabs)" />     
+          <Stack.Screen name="auth" />
+          <Stack.Screen name="(tabs)" />
         </Stack>
 
+        <Image
+          source={require("../assets/images/logo-no-background.png")}
+          style={{
+            width: 50,
+            height: 50,
+            position: "absolute",
+            bottom: 0,
+            right: 0,
+          }}
+        />
 
-          <Image
-                source={require("../assets/images/logo-no-background.png")} 
-                style={{
-                  width: 50,
-                  height: 50,
-                  position: 'absolute',
-                  bottom: 0,
-                  right: 0,
-                }}
-              />
-     
         <SystemBars style="auto" />
-      </ThemeProvider>
+      </Themeprovider>
     </AuthProvider>
   );
 }

@@ -1,48 +1,86 @@
-import { View, Text, Image, Pressable, Modal, TouchableOpacity, StyleSheet, FlatList } from 'react-native'
+import { View, Text, Image, Pressable, Modal, TouchableOpacity, StyleSheet, FlatList, Platform } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { Redirect, Tabs, useRouter,  } from 'expo-router'
+import { Redirect, Slot, Tabs, useRouter,  } from 'expo-router'
 import { Feather, FontAwesome, Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs'
-
 import { useAuth } from '@/lib/authprovider'
-import { useTheme } from '@react-navigation/native'
+import { useTheme } from '../providers/themeprovider'
 
 
-const linkStyles = 'flex flex-row items-center gap-3';
+
+const linkStyles = 'flex flex-row hover:bg-primary transition-all ease-out duration-150 items-center gap-2 py-3 px-4';
 const links = [
      {
          id: 1,
-         icon:  <MaterialIcons name="dashboard" size={26} color="#C8EDA3" />,
+         icon:  <MaterialIcons name="dashboard" size={26} color="white" />,
          navigationName: 'index',
          name: 'Dashboard'
      },
      { 
         id: 2, 
-        icon: <MaterialCommunityIcons name="timetable" size={26} color="#C8EDA3" /> ,
+        icon: <MaterialCommunityIcons name="timetable" size={26} color="white" /> ,
         navigationName: 'datalogs',
         name: 'Data logs',
      },
      {
         id: 3,
-        icon: <Ionicons name="analytics-sharp" size={26} color="#C8EDA3" />,
+        icon: <Ionicons name="analytics-sharp" size={26} color="white" />,
         navigationName: 'analytics',
         name: 'Analytics'
      },
      {
         id: 4, 
-        icon: <MaterialCommunityIcons name="account" size={26} color="#C8EDA3" />,
+        icon: <MaterialCommunityIcons name="account" size={26} color="white" />,
         navigationName: 'account',
         name: 'Account'
      }
 ]
 function TabBarBackground (props: BottomTabBarProps) {
     const [drawerVisible, setDrawerVisible] = useState(false);
+    const theme = useTheme();
 
     const openDrawer = () => setDrawerVisible(true);
     const closeDrawer = () => setDrawerVisible(false);
 
 
-    return (
+    return Platform.OS === 'web' ? (
+      <View className='relative py-2 h-full w-[220px] min-h-svh bg-dark'>
+          <Image 
+            source={require('../../assets/images/logo-white.png')}
+            style={{ 
+              width: 150,
+              height: 50,
+              resizeMode: 'center',
+            }}
+          />
+
+
+          <View className='mt-40'>
+            <FlatList
+                data={links}
+                accessibilityLabel="Links"
+                horizontal={false}
+                className=''
+                contentContainerStyle={{ gap: 30 }}
+                renderItem={({ item }) => (
+                    <TouchableOpacity
+                      className={linkStyles}
+                      onPress={() => { 
+                        closeDrawer();
+                        props.navigation.navigate(item.navigationName)
+                      }   
+                      }
+                    >
+                      {item.icon}
+                      <Text style={{ fontSize: 18, color: theme?.colors.text }}>{item.name}</Text>
+                    </TouchableOpacity>
+              
+                )}
+                keyExtractor={(item) => item.id.toString()}
+              />
+          </View>
+      </View>
+    ) : (
       <View className="absolute bottom-5 left-3">
         <Pressable className={`${drawerVisible ? 'hidden' : 'block'}`} onPress={openDrawer}>
           <Image
@@ -99,8 +137,8 @@ function TabBarBackground (props: BottomTabBarProps) {
           </View>
         </Modal>
       </View>
-    );
-}
+    )
+ }
 
 export default function Tablayout() {
   const router = useRouter();
@@ -129,11 +167,12 @@ export default function Tablayout() {
   return (
     <Tabs
       screenOptions={{
-        headerShown: true,
+        headerShown: Platform.OS === 'web' ? false : true,
         headerStyle: {
           backgroundColor: "#C8EDA3",
         },
         headerBackButtonDisplayMode: "minimal",
+        tabBarPosition: 'left',
       }}
       tabBar={(props) => <TabBarBackground {...props} />}
     >
@@ -142,7 +181,7 @@ export default function Tablayout() {
         options={{
           title: "Dashboard",
           headerTitleAlign: "center",
-          headerTintColor: theme.dark ? "black" : "white",
+          headerTintColor: "#00000",
           tabBarIcon: ({ color }) => (
             <FontAwesome size={28} name="home" color={color} />
           ),
