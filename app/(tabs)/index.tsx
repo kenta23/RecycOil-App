@@ -21,11 +21,11 @@ export default function Dashboard() {
       {power ? (
         <Viewdashboard />
       ) : (
-        <View className="flex items-center justify-center w-full h-full min-h-screen">
+        <View style={{ backgroundColor: theme?.colors.background }} className="flex items-center justify-center w-full h-full min-h-screen">
           <View style={styles.container}>
             <Text
               style={
-                { color: theme?.colors.text }
+                { color: theme?.colors.text, fontSize: 20 }
               }
             >
               The Machine is turned off

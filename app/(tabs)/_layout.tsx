@@ -1,4 +1,4 @@
-import { View, Text, Image, Pressable, Modal, TouchableOpacity, StyleSheet, FlatList, Platform } from 'react-native'
+import { View, Text, Image, Pressable, Modal, TouchableOpacity, StyleSheet, FlatList, Platform, TouchableHighlight } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Redirect, Slot, Tabs, useRouter,  } from 'expo-router'
 import { Feather, FontAwesome, Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'
@@ -8,29 +8,29 @@ import { useTheme } from '../providers/themeprovider'
 
 
 
-const linkStyles = 'flex flex-row hover:bg-primary transition-all ease-out duration-150 items-center gap-2 py-3 px-4';
+const linkStyles = 'flex flex-row active:text-primary hover:bg-primary transition-all ease-out duration-150 items-center gap-2 py-3 px-4';
 const links = [
      {
          id: 1,
-         icon:  <MaterialIcons name="dashboard" size={26} color="white" />,
+         icon:  <MaterialIcons name="dashboard" size={26} color="#BFEC87" />,
          navigationName: 'index',
          name: 'Dashboard'
      },
      { 
         id: 2, 
-        icon: <MaterialCommunityIcons name="timetable" size={26} color="white" /> ,
+        icon: <MaterialCommunityIcons name="timetable" size={26} color="#BFEC87" /> ,
         navigationName: 'datalogs',
         name: 'Data logs',
      },
      {
         id: 3,
-        icon: <Ionicons name="analytics-sharp" size={26} color="white" />,
+        icon: <Ionicons name="analytics-sharp" size={26} color="#BFEC87" />,
         navigationName: 'analytics',
         name: 'Analytics'
      },
      {
         id: 4, 
-        icon: <MaterialCommunityIcons name="account" size={26} color="white" />,
+        icon: <MaterialCommunityIcons name="account" size={26} color="#BFEC87" />,
         navigationName: 'account',
         name: 'Account'
      }
@@ -38,6 +38,7 @@ const links = [
 function TabBarBackground (props: BottomTabBarProps) {
     const [drawerVisible, setDrawerVisible] = useState(false);
     const theme = useTheme();
+    const [pressed, setPressed] = useState<boolean>(false);
 
     const openDrawer = () => setDrawerVisible(true);
     const closeDrawer = () => setDrawerVisible(false);
@@ -114,15 +115,17 @@ function TabBarBackground (props: BottomTabBarProps) {
                 contentContainerStyle={{ gap: 30 }}
                 renderItem={({ item }) => (
                     <TouchableOpacity
-                      className={linkStyles}
+                      className={linkStyles} 
                       onPress={() => { 
                         closeDrawer();
                         props.navigation.navigate(item.navigationName)
-                      }   
+                        }   
                       }
                     >
-                      {item.icon}
-                      <Text className='text-[#C8EDA3]' style={{ fontSize: 22 }}>{item.name}</Text>
+                     
+                         {item.icon}
+                         <Text className={`text-primary`} style={{ fontSize: 22 }}>{item.name}</Text>
+                     
                     </TouchableOpacity>
               
                 )}
@@ -236,7 +239,7 @@ const styles = StyleSheet.create({
       borderRadius: 10,
       padding: 20,
       width: 'auto',
-      height: 370,
+      height: 400,
       alignItems: 'flex-start',
       marginVertical: 30,
       marginLeft: 15
@@ -245,6 +248,6 @@ const styles = StyleSheet.create({
     closeButton: {
       fontSize: 16,
       color: 'red',
-      marginTop: 20,
+      marginTop: 30,
     },
   });

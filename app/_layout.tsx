@@ -16,7 +16,7 @@ const darkMode = {
   dark: true,
   colors: {
     primary: '#BFEC87',
-    background: '#0E100F',
+    background: '#141514',
     card: 'rgb(18, 18, 18)',
     text: '#FFFFFF',
     border: 'rgb(39, 39, 41)',
@@ -72,18 +72,6 @@ export default function RootLayout() {
           <Stack.Screen name="auth" />
           <Stack.Screen name="(tabs)" />
         </Stack>
-
-        <Image
-          source={require("../assets/images/logo-no-background.png")}
-          style={{
-            width: 50,
-            height: 50,
-            position: "absolute",
-            bottom: 0,
-            right: 0,
-          }}
-        />
-
         <SystemBars style="auto" />
       </Themeprovider>
     </AuthProvider>

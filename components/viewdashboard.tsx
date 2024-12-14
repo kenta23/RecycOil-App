@@ -4,7 +4,7 @@ import { AntDesign, Feather, FontAwesome6 } from '@expo/vector-icons'
 import { PieChart } from 'react-native-gifted-charts';
 import * as Progress from 'react-native-progress';
 import { useTheme } from '@/app/providers/themeprovider';
-
+import { Image } from 'expo-image';
 
 
 
@@ -153,8 +153,20 @@ export default function Viewdashboard() {
             </View>
           </View>
         </View>
-
       </View>
+
+
+      <Image
+          source={theme?.dark ? require("../assets/images/logo-white.png") : require("../assets/images/logo-black.png")}
+          contentFit='contain'
+          style={{
+            width: 100,
+            height: 50,
+            position: "absolute",
+            bottom: 20,
+            right: 10,
+          }}
+        />
     </ScrollView>
   );
 }
