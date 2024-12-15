@@ -20,7 +20,7 @@
     "android": {
       "package": "com.recycoil.inv",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/logo-no-background.png",
+        "foregroundImage": "./assets/images/logo.png",
         "backgroundColor": "#E9FEB1"
       }
     },

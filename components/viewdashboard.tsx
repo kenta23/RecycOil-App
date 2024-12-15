@@ -5,7 +5,10 @@ import { PieChart } from 'react-native-gifted-charts';
 import * as Progress from 'react-native-progress';
 import { useTheme } from '@/app/providers/themeprovider';
 import { Image } from 'expo-image';
-
+import TankChart from './container';
+import { WithSkiaWeb } from '@shopify/react-native-skia/lib/module/web';
+import { version } from 'canvaskit-wasm/package.json';
+import SkiaComponent from '@/skia components/tank-container';
 
 
 export default function Viewdashboard() {
@@ -24,20 +27,30 @@ export default function Viewdashboard() {
         <View className="flex flex-row justify-between mb-6">
           <View className="flex flex-row items-center gap-2">
             <AntDesign name="checkcircle" size={18} color="green" />
-            <Text className="text-sm font-semibold" style={{ color: theme?.colors.text }}>Status</Text>
+            <Text
+              className="text-sm font-semibold"
+              style={{ color: theme?.colors.text }}
+            >
+              Status
+            </Text>
           </View>
 
           {/**Machine Start again Button */}
           <Pressable className="flex-row items-center gap-2">
             <Feather name="power" size={18} color="green" />
-            <Text className="text-[16px] font-normal" style={{ color: theme?.colors.text }}>Start new</Text>
+            <Text
+              className="text-[16px] font-normal"
+              style={{ color: theme?.colors.text }}
+            >
+              Start new
+            </Text>
           </Pressable>
         </View>
 
         <View className="flex flex-col items-center gap-6">
           {/**Pie chart biodiesel sensor */}
           <View className="flex flex-col gap-3">
-            <PieChart
+            {/* <PieChart
               donut
               innerRadius={90}
               radius={110}     
@@ -49,9 +62,13 @@ export default function Viewdashboard() {
                   <Text style={{ fontSize: 40, fontWeight: "600" }}>70%</Text>
                 );
               }}
-            />
-            <Text style={{ color: theme?.colors.text }} className="text-lg font-medium text-center">
-              Producing percentage
+            /> */}
+            <SkiaComponent maxValue={5} value={3}/>
+            <Text
+              style={{ color: theme?.colors.text }}
+              className="text-lg font-medium text-center"
+            >
+              Biodiesel
             </Text>
           </View>
 
@@ -68,7 +85,12 @@ export default function Viewdashboard() {
               />
               <View className="flex-col items-center">
                 <Text style={{ color: theme?.colors.text }}>Temperature</Text>
-                <Text style={{ color: theme?.colors.text }} className="text-lg font-semibold">20°C</Text>
+                <Text
+                  style={{ color: theme?.colors.text }}
+                  className="text-lg font-semibold"
+                >
+                  20°C
+                </Text>
               </View>
             </View>
 
@@ -82,7 +104,12 @@ export default function Viewdashboard() {
               />
               <View className="flex-col items-center">
                 <Text style={{ color: theme?.colors.text }}>Flow rate</Text>
-                <Text style={{ color: theme?.colors.text }} className="text-lg font-semibold">85%</Text>
+                <Text
+                  style={{ color: theme?.colors.text }}
+                  className="text-lg font-semibold"
+                >
+                  85%
+                </Text>
               </View>
             </View>
 
@@ -95,8 +122,15 @@ export default function Viewdashboard() {
                 height={8}
               />
               <View className="flex-col items-center">
-                <Text style={{ color: theme?.colors.text }}>Chunks filtered</Text>
-                <Text style={{ color: theme?.colors.text }}className="text-lg font-semibold">95%</Text>
+                <Text style={{ color: theme?.colors.text }}>
+                  Chunks filtered
+                </Text>
+                <Text
+                  style={{ color: theme?.colors.text }}
+                  className="text-lg font-semibold"
+                >
+                  95%
+                </Text>
               </View>
             </View>
           </View>
@@ -106,11 +140,21 @@ export default function Viewdashboard() {
       {/** Oil Volume and Time production cards */}
 
       <View className="flex-col items-center gap-5 mt-10 mb-[100px] text-white">
-        <View className={`w-[300px] px-4 py-3 h-[180px] bg-black/25 rounded-lg`}>
+        <View
+          className={`w-[300px] px-4 py-3 h-[180px] bg-black/25 rounded-lg`}
+        >
           <View className="flex-col items-center w-full h-full gap-2 ">
             <View className="flex-row items-center self-start w-full gap-2">
-              <FontAwesome6 name="glass-water" size={18} color={theme?.colors.text} /> 
-              <Text className={`text-lg font-medium text-[${theme?.colors.text}]`}>    Oil Volume
+              <FontAwesome6
+                name="glass-water"
+                size={18}
+                color={theme?.colors.text}
+              />
+              <Text
+                className={`text-lg font-medium text-[${theme?.colors.text}]`}
+              >
+                {" "}
+                Oil Volume
               </Text>
             </View>
 
@@ -155,18 +199,21 @@ export default function Viewdashboard() {
         </View>
       </View>
 
-
       <Image
-          source={theme?.dark ? require("../assets/images/logo-white.png") : require("../assets/images/logo-black.png")}
-          contentFit='contain'
-          style={{
-            width: 100,
-            height: 50,
-            position: "absolute",
-            bottom: 20,
-            right: 10,
-          }}
-        />
+        source={
+          theme?.dark
+            ? require("../assets/images/logo-white.png")
+            : require("../assets/images/logo-black.png")
+        }
+        contentFit="contain"
+        style={{
+          width: 100,
+          height: 50,
+          position: "absolute",
+          bottom: 20,
+          right: 10,
+        }}
+      />
     </ScrollView>
   );
 }

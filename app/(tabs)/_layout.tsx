@@ -1,6 +1,6 @@
 import { View, Text, Image, Pressable, Modal, TouchableOpacity, StyleSheet, FlatList, Platform, TouchableHighlight } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import { Redirect, Slot, Tabs, useRouter,  } from 'expo-router'
+import React, { useState } from 'react'
+import { Redirect, Tabs, useRouter,  } from 'expo-router'
 import { Feather, FontAwesome, Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs'
 import { useAuth } from '@/lib/authprovider'
@@ -8,7 +8,7 @@ import { useTheme } from '../providers/themeprovider'
 
 
 
-const linkStyles = 'flex flex-row active:text-primary hover:bg-primary transition-all ease-out duration-150 items-center gap-2 py-3 px-4';
+const linkStyles = 'flex flex-row hover:bg-primary transition-all ease-out duration-150 items-center gap-2 py-3 px-4';
 const links = [
      {
          id: 1,
@@ -38,7 +38,6 @@ const links = [
 function TabBarBackground (props: BottomTabBarProps) {
     const [drawerVisible, setDrawerVisible] = useState(false);
     const theme = useTheme();
-    const [pressed, setPressed] = useState<boolean>(false);
 
     const openDrawer = () => setDrawerVisible(true);
     const closeDrawer = () => setDrawerVisible(false);
@@ -112,7 +111,7 @@ function TabBarBackground (props: BottomTabBarProps) {
                 accessibilityLabel="Links"
                 horizontal={false}
                 style={{ height: 100 }}
-                contentContainerStyle={{ gap: 30 }}
+                contentContainerStyle={{ gap: 20 }}
                 renderItem={({ item }) => (
                     <TouchableOpacity
                       className={linkStyles} 
@@ -237,12 +236,12 @@ const styles = StyleSheet.create({
     },
     drawerContent: {
       borderRadius: 10,
-      padding: 20,
+      padding: 8,
       width: 'auto',
       height: 400,
       alignItems: 'flex-start',
-      marginVertical: 30,
-      marginLeft: 15
+      marginVertical: 20,
+      marginLeft: 8
     },
 
     closeButton: {
