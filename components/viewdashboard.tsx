@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, Pressable } from 'react-native'
+import { View, Text, ScrollView, Pressable, Platform } from 'react-native'
 import React from 'react'
 import { AntDesign, Feather, FontAwesome6 } from '@expo/vector-icons'
 import { PieChart } from 'react-native-gifted-charts';
@@ -20,7 +20,9 @@ export default function Viewdashboard() {
 
 
   return (
-    <ScrollView className={`w-full px-4 py-4`}>
+    <ScrollView className={`${
+      Platform.OS === 'web' ? 'overflow-y-auto' : ''
+    } w-full px-4 py-4 max-h-screen`}>
       {/** Main Sensor view */}
       <View className="w-full mt-2 ">
         {/**Status  */}
@@ -138,29 +140,41 @@ export default function Viewdashboard() {
       </View>
 
       {/** Oil Volume and Time production cards */}
-
       <View className="flex-col items-center gap-5 mt-10 mb-[100px] text-white">
         <View
-          className={`w-[300px] px-4 py-3 h-[180px] bg-black/25 rounded-lg`}
+          className={`w-[300px] shadow-sm shadow-gray-200 px-4 bg-white py-3 h-[180px] rounded-lg`}
         >
           <View className="flex-col items-center w-full h-full gap-2 ">
             <View className="flex-row items-center self-start w-full gap-2">
               <FontAwesome6
                 name="glass-water"
-                size={18}
-                color={theme?.colors.text}
+                size={16}
+                color={'#595750'}
               />
               <Text
-                className={`text-lg font-medium text-[${theme?.colors.text}]`}
+                className={`text-sm font-medium text-[#595750]`}
               >
                 {" "}
                 Oil Volume
               </Text>
             </View>
 
-            <View className="items-center justify-center flex-1 w-full text-center">
+            <View className="items-center justify-center flex-1 w-full text-center ">
               {/**Volume chart here */}
-              <PieChart
+              {Platform.OS === "web" ? <PieChart
+                donut
+                innerRadius={50}
+                endAngle={90}
+                pieInnerComponentHeight={200}
+                pieInnerComponentWidth={100}
+                radius={65}
+                data={pieData}
+                centerLabelComponent={() => {
+                  return (
+                    <Text className="text-lg font-semibold">1.3 Litres</Text>
+                  );
+                }}
+              /> : <PieChart
                 donut
                 innerRadius={80}
                 endAngle={90}
@@ -174,16 +188,16 @@ export default function Viewdashboard() {
                     <Text className="text-lg font-semibold">1.3 Litres</Text>
                   );
                 }}
-              />
+              />}
             </View>
           </View>
         </View>
 
-        <View className="w-[300px] px-4 py-3 h-[180px] pb-10 bg-white rounded-lg shadow-sm shadow-gray-100 ">
+        <View className="w-[300px] px-4 py-3 h-[180px] pb-8 bg-white rounded-lg shadow-sm shadow-gray-200 ">
           <View className="flex-col items-center w-full h-full gap-2 ">
             <View className="flex-row items-center self-start w-full gap-2">
-              <AntDesign name="clockcircle" size={18} color="#595750" />
-              <Text className="text-lg font-medium text-[#595750]">
+              <AntDesign name="clockcircle" size={16} color="#595750" />
+              <Text className="text-sm font-medium text-[#595750]">
                 Producing time
               </Text>
             </View>
@@ -191,8 +205,8 @@ export default function Viewdashboard() {
             <View className="items-center justify-center flex-1 w-full text-center">
               {/**Text */}
 
-              <Text className="font-semibold text-[25px] text-center text-wrap">
-                2 hours and 30 minutes
+              <Text className="font-semibold text-[20px] text-center text-wrap">
+                2 hrs and 30 min
               </Text>
             </View>
           </View>

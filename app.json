@@ -4,7 +4,7 @@
     "slug": "recycoil",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/logo.png",
+    "icon": "./assets/images/logo-no-background.png",
     "scheme": "recycoil.inv",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -13,21 +13,21 @@
       "bundleIdentifier": "com.recycoil.inv"
     },
     "splash": {
-      "image": "./assets/images/logo.png",
+      "image": "./assets/images/logo-no-background.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ECE499"
+      "backgroundColor": "#E9FEB1"
     },
     "android": {
       "package": "com.recycoil.inv",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/logo.png",
+        "foregroundImage": "./assets/images/logo-no-background.png",
         "backgroundColor": "#E9FEB1"
       }
     },
     "web": {
       "bundler": "metro",
       "output": "server",
-      "favicon": "./assets/images/logo.png"
+      "favicon": "./assets/images/logo-no-background.png"
     },
     "plugins": [
       "react-native-edge-to-edge",
@@ -35,12 +35,11 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/logo.png",
-          "imageWidth": 400,
+          "image": "./assets/images/logo-no-background.png",
           "resizeMode": "contain",
           "backgroundColor": "#ECE499",
           "dark": {
-            "image": "./assets/images/logo.png",
+            "image": "./assets/images/logo-no-background.png",
             "backgroundColor": "#0000"
           }
         }

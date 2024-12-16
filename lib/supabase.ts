@@ -28,10 +28,9 @@ class LargeSecureStore {
   }
 
   private async _decrypt(key: string, value: string) {
-    const encryptionKeyHex = Platform.OS !== 'web' 
-      ? await SecureStore.getItemAsync(key) 
-      : localStorage.getItem(`${key}_key`);
-
+    const encryptionKeyHex = Platform.OS === 'web'
+  ? localStorage.getItem(key) // Correct key
+  : await SecureStore.getItemAsync(key);
       
     if (!encryptionKeyHex) {
       return encryptionKeyHex;
@@ -88,6 +87,7 @@ const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL!
 const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!
 
 
+const isBrowser = typeof window !== 'undefined' && typeof localStorage !== 'undefined';
 
 export const supabase = Platform.OS !== 'web' ? createClient<Database>(supabaseUrl, supabaseAnonKey, {
   auth: {
@@ -96,4 +96,11 @@ export const supabase = Platform.OS !== 'web' ? createClient<Database>(supabaseU
     persistSession: true,
     detectSessionInUrl: false,
   },
-}) : createClient<Database>(supabaseUrl, supabaseAnonKey);
+}) : createClient<Database>(supabaseUrl, supabaseAnonKey, { 
+  auth: { 
+     storage: isBrowser ? localStorage : undefined,
+     autoRefreshToken: true,
+     persistSession: true,
+     detectSessionInUrl: true,
+  }
+});

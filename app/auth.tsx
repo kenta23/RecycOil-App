@@ -13,7 +13,7 @@ import { useTheme } from './providers/themeprovider';
 
 export default function Auth() {
   const [loading, setLoading] = useState(false)
-  const { session, user } = useAuth();
+  const { session } = useAuth();
   const theme = useTheme();
 
   console.log(theme);

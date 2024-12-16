@@ -13,8 +13,11 @@ const pieData = [
 
 export default function Dashboard() {
   const [power, setPower] = useState<boolean>(false);
-  const { user } = useAuth();
+  const { session } = useAuth();
   const theme = useTheme();
+
+
+  console.log(session);
   
   return (
     <View style={{ backgroundColor: theme?.colors.background }}>

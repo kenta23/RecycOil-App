@@ -1,4 +1,4 @@
-import { View, Text, Image, Pressable, Modal, TouchableOpacity, StyleSheet, FlatList, Platform, TouchableHighlight } from 'react-native'
+import { View, Text, Image, Pressable, Modal, TouchableOpacity, StyleSheet, FlatList, Platform } from 'react-native'
 import React, { useState } from 'react'
 import { Redirect, Tabs, useRouter,  } from 'expo-router'
 import { Feather, FontAwesome, Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'
@@ -149,7 +149,7 @@ export default function Tablayout() {
   
 
 
-  if(!user.session && !user.user) {
+  if(!user.session) {
     return <Redirect href={'/auth'}/>
   }
 
