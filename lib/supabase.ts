@@ -89,16 +89,9 @@ const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!
 
 const isBrowser = typeof window !== 'undefined' && typeof localStorage !== 'undefined';
 
-export const supabase = Platform.OS !== 'web' ? createClient<Database>(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    storage: new LargeSecureStore(),
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: false,
-  },
-}) : createClient<Database>(supabaseUrl, supabaseAnonKey, { 
+export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, { 
   auth: { 
-     storage: isBrowser ? localStorage : undefined,
+     storage: isBrowser ? localStorage : new LargeSecureStore(),
      autoRefreshToken: true,
      persistSession: true,
      detectSessionInUrl: true,

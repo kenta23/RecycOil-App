@@ -72,7 +72,7 @@ function TabBarBackground (props: BottomTabBarProps) {
                       }
                     >
                       {item.icon}
-                      <Text style={{ fontSize: 18, color: theme?.colors.text }}>{item.name}</Text>
+                      <Text className='hover:text-white' style={{ fontSize: 18, color: '#BFEC87' }}>{item.name}</Text>
                     </TouchableOpacity>
               
                 )}
@@ -145,7 +145,7 @@ function TabBarBackground (props: BottomTabBarProps) {
 export default function Tablayout() {
   const router = useRouter();
   const user = useAuth();
-  const theme = useTheme();
+ 
   
 
 

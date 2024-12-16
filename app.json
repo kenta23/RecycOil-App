@@ -14,7 +14,7 @@
     },
     "splash": {
       "image": "./assets/images/logo-no-background.png",
-      "resizeMode": "contain",
+      "contentFit": "contain",
       "backgroundColor": "#E9FEB1"
     },
     "android": {

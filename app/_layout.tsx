@@ -7,8 +7,6 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 import { SystemBars } from 'react-native-edge-to-edge';
 import AuthProvider from '@/lib/authprovider';
 import 'expo-dev-client';
-
-import { Image } from 'expo-image';
 import Themeprovider from './providers/themeprovider';
 
 

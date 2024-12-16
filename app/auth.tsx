@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Alert, Platform, Pressable, StyleSheet, Text, View } from 'react-native'
+import React, { useRef, useState } from 'react'
+import { Alert, Platform, Pressable, StyleSheet, Text, View, TextInput } from 'react-native'
 import { Image } from 'expo-image';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/authprovider';
@@ -10,11 +10,30 @@ import * as QueryParams from "expo-auth-session/build/QueryParams";
 import * as WebBrowser from "expo-web-browser";
 import { Provider } from '@supabase/supabase-js';
 import { useTheme } from './providers/themeprovider';
+import PhoneInput, {
+  ICountry,
+} from 'react-native-international-phone-number';
+
+
+
 
 export default function Auth() {
   const [loading, setLoading] = useState(false)
   const { session } = useAuth();
   const theme = useTheme();
+  const [value, setValue] = useState("");
+
+  const [selectedCountry, setSelectedCountry] =
+  useState<null | ICountry>(null);
+const [inputValue, setInputValue] = useState<string>('');
+
+function handleInputValue(phoneNumber: string) {
+  setInputValue(phoneNumber);
+}
+
+function handleSelectedCountry(country: ICountry) {
+  setSelectedCountry(country);
+}
 
   console.log(theme);
   
@@ -63,9 +82,9 @@ const performOAuth = async (provider: Provider) => {
     console.log(url);
     await createSessionFromUrl(url);
   }
-
-  console.log(res.type);
 };
+
+
 
 const btncolor = "flex-row items-center justify-center w-full h-auto gap-3 py-4 rounded-lg shadow-sm border-[1px] border-gray-300 cursor-pointer"
 
@@ -90,7 +109,23 @@ const btncolor = "flex-row items-center justify-center w-full h-auto gap-3 py-4 
         </Text>
       </View>
 
-      <View className="w-[50%] min-w-[250px] flex-col items-center gap-4">
+      <View className="w-[30%] min-w-[300px] flex-col items-center gap-4">
+        <PhoneInput
+          defaultCountry='PH'
+          theme={theme?.dark ? "dark" : "light"}
+          style={{ width: "100%", outline: 'none', color: theme?.colors.text }}
+          autoFocus={false}
+          
+          value={inputValue}
+          onChangePhoneNumber={handleInputValue}
+          selectedCountry={selectedCountry}
+          onChangeSelectedCountry={handleSelectedCountry}
+        />
+            <View className='flex-row items-center gap-2'>
+                <View className='w-[100px] h-[1px] bg-gray-400'/>
+                   <Text className='text-gray-400'>Or</Text>
+                <View className='w-[100px] h-[1px] bg-gray-400'/>
+            </View>
         <Pressable
           className={btncolor}
           disabled={loading}
