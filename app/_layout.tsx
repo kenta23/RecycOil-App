@@ -68,7 +68,7 @@ export default function RootLayout() {
             headerShown: false,
           }}
         >
-          <Stack.Screen name="auth" />
+          <Stack.Screen name="(auth)" />
           <Stack.Screen name="(tabs)" />
         </Stack>
         <SystemBars style="auto" />
