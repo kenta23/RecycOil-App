@@ -3,7 +3,7 @@ import React from 'react'
 import { AntDesign, Feather, FontAwesome6 } from '@expo/vector-icons'
 import { PieChart } from 'react-native-gifted-charts';
 import * as Progress from 'react-native-progress';
-import { useTheme } from '@/app/providers/themeprovider';
+import { useTheme } from '@/providers/themeprovider';
 import { Image } from 'expo-image';
 import TankChart from './container';
 import { WithSkiaWeb } from '@shopify/react-native-skia/lib/module/web';

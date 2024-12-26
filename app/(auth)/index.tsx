@@ -1,15 +1,15 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Alert, Platform, Pressable, StyleSheet, Text, View, TextInput } from 'react-native'
 import { Image } from 'expo-image';
 import { supabase } from '@/lib/supabase';
-import { useAuth } from '@/lib/authprovider';
-import { Link, Redirect, useRouter } from 'expo-router';
+import { useAuth } from '@/providers/authprovider';
+import { Redirect, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { makeRedirectUri } from "expo-auth-session";
 import * as QueryParams from "expo-auth-session/build/QueryParams";
 import * as WebBrowser from "expo-web-browser";
 import { Provider } from '@supabase/supabase-js';
-import { useTheme } from '../providers/themeprovider';
+import { useTheme } from '../../providers/themeprovider';
 import PhoneInput, {
   ICountry,
 } from 'react-native-international-phone-number';
@@ -18,14 +18,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
-
 export default function Auth() {
   const [loading, setLoading] = useState(false)
   const { session } = useAuth();
   const theme = useTheme();
-  const [value, setValue] = useState("");
   const router = useRouter();
-const [selectedCountry, setSelectedCountry] =
+  const [selectedCountry, setSelectedCountry] =
   useState<null | ICountry>(null);
 
 const [phoneNumber, setphoneNumber] = useState<string>('');
@@ -37,11 +35,7 @@ function handleInputValue(phoneNumber: string) {
 function handleSelectedCountry(country: ICountry) {
   setSelectedCountry(country);
 }
-
   console.log(theme);
-  
-  if (session) return <Redirect href="/" />;
-
   WebBrowser.maybeCompleteAuthSession(); // required for web only
   const redirectTo = makeRedirectUri();
 
@@ -74,7 +68,6 @@ const performOAuth = async (provider: Provider) => {
   });
   if (error) throw error;
 
-
   const res = await WebBrowser.openAuthSessionAsync(
     data?.url ?? "",
     redirectTo
@@ -87,20 +80,7 @@ const performOAuth = async (provider: Provider) => {
   }
 };
 
-  async function handleSignInWithOTP () { 
-  //  const { data, error } = await supabase.auth.signInWithOtp({ 
-  //    phone: phoneNumber,
-  //    options: { 
-  //        shouldCreateUser: false, 
-  //    }
-  //  });
-
-  //  if(error) {
-  //    Alert.alert(error.message);
-  //    return;
-  //  }
-
-  //  console.log(data);
+  async function handleSignInWithOTP () {
    try {
    //create asyncStorage to store phone number
    // eslint-disable-next-line no-unused-expressions
@@ -113,6 +93,10 @@ const performOAuth = async (provider: Provider) => {
 }
 
 const btncolor = "flex-row items-center justify-center w-full h-auto gap-3 py-4 rounded-lg shadow-sm border-[1px] border-gray-300 cursor-pointer"
+
+if(session?.user) { 
+  return <Redirect href="/(tabs)" />
+}
 
   return (
     <SafeAreaView

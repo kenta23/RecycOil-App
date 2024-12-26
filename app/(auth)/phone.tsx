@@ -32,8 +32,8 @@ export default function OTPVerification() {
   // }
 
   return (
-    <View>
-      <Text>hello world: {phone}</Text>
+    <View className=''>
+       
     </View>
   )
 }

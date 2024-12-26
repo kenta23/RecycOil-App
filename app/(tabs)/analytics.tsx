@@ -12,7 +12,7 @@ export default function analytics() {
        console.log(error);
        
        if(!error) { 
-         <Redirect href={'/auth'}/>
+         <Redirect href={'/(auth)'}/>
        }
       }}>
          <Text>Sign Out</Text>

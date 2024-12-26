@@ -20,6 +20,8 @@ export default function _layout() {
         getId={  ({ params }) => String(Date.now())}
         options={{
           headerShown: Platform.OS === "web" ? false : true,
+          headerBackButtonDisplayMode: "generic",
+          headerTitle: 'Log in',
           headerStyle: {
           backgroundColor: "#C8EDA3",
         }}}

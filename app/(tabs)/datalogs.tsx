@@ -1,8 +1,7 @@
 import { View, Text, Pressable, StyleSheet, ScrollView } from 'react-native'
 import React from 'react'
 import { AntDesign, Entypo, Octicons } from '@expo/vector-icons'
-import { useTheme } from '../providers/themeprovider';
-import { DataTable,  } from 'react-native-paper';
+import { useTheme } from '../../providers/themeprovider';
 import { Image } from 'expo-image';
 
 

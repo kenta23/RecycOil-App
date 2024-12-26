@@ -1,8 +1,9 @@
 import { View, Text, StyleSheet, TouchableOpacity, Image, Pressable, Dimensions, Switch } from 'react-native'
 import React, { useState } from 'react'
 import Viewdashboard from '@/components/viewdashboard';
-import { useAuth } from '@/lib/authprovider';
-import { useTheme } from '../providers/themeprovider';
+import { useAuth } from '@/providers/authprovider';
+import { useTheme } from '../../providers/themeprovider';
+import { Redirect } from 'expo-router';
 
 
 const pieData = [
@@ -13,12 +14,10 @@ const pieData = [
 
 export default function Dashboard() {
   const [power, setPower] = useState<boolean>(false);
-  const { session } = useAuth();
   const theme = useTheme();
+  const { session } = useAuth();
 
-
-  console.log(session);
-  
+ 
   return (
     <View style={{ backgroundColor: theme?.colors.background }}>
       {power ? (

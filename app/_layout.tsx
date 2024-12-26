@@ -1,14 +1,13 @@
 import { Inter_400Regular, Inter_300Light, Inter_500Medium, Inter_600SemiBold, Inter_700Bold, useFonts } from '@expo-google-fonts/inter';
-import {  Stack } from 'expo-router';
+import {  Redirect, Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import '../globals.css';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { SystemBars } from 'react-native-edge-to-edge';
-import AuthProvider from '@/lib/authprovider';
+import AuthProvider, { useAuth } from '@/providers/authprovider';
 import 'expo-dev-client';
-import Themeprovider from './providers/themeprovider';
-
+import Themeprovider from '../providers/themeprovider';
 
 
 const darkMode = {
@@ -41,6 +40,8 @@ SplashScreen.preventAutoHideAsync();
 setTimeout(SplashScreen.hideAsync, 5000);
 
 export default function RootLayout() {
+  const { session } = useAuth();
+  
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     Regular: Inter_400Regular,
@@ -60,9 +61,10 @@ export default function RootLayout() {
     return null;
   }
 
+
   return (
     <AuthProvider>
-      <Themeprovider value={colorScheme === "dark" ? darkMode : lightMode}>
+     <Themeprovider value={colorScheme === "dark" ? darkMode : lightMode}>
         <Stack
           screenOptions={{
             headerShown: false,
@@ -72,7 +74,7 @@ export default function RootLayout() {
           <Stack.Screen name="(tabs)" />
         </Stack>
         <SystemBars style="auto" />
-      </Themeprovider>
+    </Themeprovider>
     </AuthProvider>
   );
 }

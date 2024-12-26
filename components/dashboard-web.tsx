@@ -4,7 +4,7 @@ import { AntDesign, Feather, FontAwesome6 } from '@expo/vector-icons';
 import SkiaComponent from '@/skia components/tank-container';
 import { PieChart } from 'react-native-gifted-charts';
 import * as Progress from 'react-native-progress';
-import { useTheme } from '@/app/providers/themeprovider';
+import { useTheme } from '@/providers/themeprovider';
 import { Image } from 'expo-image';
 
 export default function DashboardWeb({ pieData }: { pieData: any }) {

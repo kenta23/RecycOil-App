@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { supabase } from './supabase';
+import { supabase } from '@/lib/supabase';
 import { Session } from '@supabase/supabase-js';
 
 
@@ -13,7 +13,6 @@ const UserAuthContext = createContext<Auth>({
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
     const [session, setSession] = useState<Session | null>(null);
-    // const [user, setUser] = useState<Database['public']['Tables']['user']['Row'] | null>(null);
 
   useEffect(() => {
      supabase.auth.getSession().then( async ({ data: { session } }) => {

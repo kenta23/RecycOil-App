@@ -3,8 +3,8 @@ import React, { useState } from 'react'
 import { Redirect, Tabs, useRouter,  } from 'expo-router'
 import { Feather, FontAwesome, Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs'
-import { useAuth } from '@/lib/authprovider'
-import { useTheme } from '../providers/themeprovider'
+import { useAuth } from '@/providers/authprovider'
+import { useTheme } from '../../providers/themeprovider'
 
 
 
@@ -144,14 +144,11 @@ function TabBarBackground (props: BottomTabBarProps) {
 
 export default function Tablayout() {
   const router = useRouter();
-  const user = useAuth();
- 
+  const { session } = useAuth();
   
-
-
-  if(!user.session) {
-    return <Redirect href={'/auth'}/>
-  }
+   if (!session?.user) { 
+     return <Redirect href={'/(auth)'}/>
+   }
 
   function BackButton () { 
     return  (
