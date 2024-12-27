@@ -15,7 +15,7 @@ import PhoneInput, {
 } from 'react-native-international-phone-number';
 import { Entypo } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { parsePhoneNumberFromString } from 'libphonenumber-js';
 
 
 export default function Auth() {
@@ -27,6 +27,7 @@ export default function Auth() {
   useState<null | ICountry>(null);
 
 const [phoneNumber, setphoneNumber] = useState<string>('');
+console.log(phoneNumber);
 
 function handleInputValue(phoneNumber: string) {
   setphoneNumber(phoneNumber);
@@ -84,8 +85,46 @@ const performOAuth = async (provider: Provider) => {
    try {
    //create asyncStorage to store phone number
    // eslint-disable-next-line no-unused-expressions
-   Platform.OS === "web" ? localStorage.setItem('phone', phoneNumber) : await AsyncStorage.setItem('phone', phoneNumber);
-   router.push('/(auth)/phone');
+
+   const phoneNumberObj = parsePhoneNumberFromString(phoneNumber, 'PH');
+
+   if (!phoneNumberObj || !phoneNumberObj.isValid()) {
+     Alert.alert('Invalid phone number', 'Please enter a valid phone number.');
+     return;
+   }
+
+   //check if the phone number already existed
+
+   const { data: user, error: userError, status } = await supabase.rpc('finduser', { number: phoneNumberObj.format("E.164").slice(1) });
+
+   console.log('the user', user);
+   console.log('the user error', userError);
+    console.log('status text', status);
+   
+  if (user) {
+    router.push("/(tabs)");
+    return;
+  } 
+  
+  else {
+    Alert.alert('Phone number not found', 'Please sign up first.');
+    //  const { data, error } = await supabase.auth.signInWithOtp({
+    //    phone: phoneNumberObj.format("E.164"),
+    //  });
+
+    //  console.log(phoneNumberObj.format("E.164"));
+    //  console.log(error);
+
+    //  if (!error) {
+    //    if (Platform.OS === "web") {
+    //      localStorage.setItem("phone", phoneNumberObj.format("E.164")); //format to string
+    //    } else {
+    //      await AsyncStorage.setItem("phone", phoneNumberObj.format("E.164"));
+    //    }
+    //    router.push("/(auth)/phone");
+    //  }
+   }
+
    } catch (error) {
      console.log(error);
      throw new Error(error as string);

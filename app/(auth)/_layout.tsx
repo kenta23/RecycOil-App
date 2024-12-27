@@ -21,10 +21,10 @@ export default function _layout() {
         options={{
           headerShown: Platform.OS === "web" ? false : true,
           headerBackButtonDisplayMode: "generic",
-          headerTitle: 'Log in',
+          headerTitle: 'Verify OTP',
           headerStyle: {
           backgroundColor: "#C8EDA3",
-        }}}
+        }}} 
       />
     </Stack>
   );
