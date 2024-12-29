@@ -16,8 +16,9 @@ const darkMode = {
     primary: '#BFEC87',
     background: '#141514',
     card: 'rgb(18, 18, 18)',
-    text: '#FFFFFF',
-    border: 'rgb(39, 39, 41)',
+    text: '#FFFFFF', //white
+    gray: '#EEEDEC',
+    border: '#E3E3E8',
     notification: 'rgb(255, 69, 58)',
   },
 };
@@ -28,7 +29,8 @@ const lightMode = {
     primary: '#BFEC87',
     background: 'rgb(255, 255, 255)',
     card: '#C3E1CA',
-    text: '#00000',
+    text: '#000000',
+    gray: '#38362F',
     border: 'rgb(39, 39, 41)',
     notification: 'rgb(255, 69, 58)',
   }
@@ -64,16 +66,17 @@ export default function RootLayout() {
 
   return (
     <AuthProvider>
-     <Themeprovider value={colorScheme === "dark" ? darkMode : lightMode}>
+      <Themeprovider value={colorScheme === "dark" ? darkMode : lightMode}>
         <Stack
           screenOptions={{
             headerShown: false,
+           
           }}
         >
           <Stack.Screen name="(auth)" />
           <Stack.Screen name="(tabs)" />
         </Stack>
-        <SystemBars style="auto" />
+        <SystemBars hidden={false} style={colorScheme === "dark" ? 'dark' : 'light'}/>
     </Themeprovider>
     </AuthProvider>
   );

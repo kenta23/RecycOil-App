@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Alert, Platform, Pressable, StyleSheet, Text, View, TextInput } from 'react-native'
+import { Alert, Platform, Pressable, StyleSheet, Text, View, TextInput, TouchableWithoutFeedback, Keyboard } from 'react-native'
 import { Image } from 'expo-image';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/providers/authprovider';
@@ -92,39 +92,18 @@ const performOAuth = async (provider: Provider) => {
      Alert.alert('Invalid phone number', 'Please enter a valid phone number.');
      return;
    }
+     const { data, error } = await supabase.auth.signInWithOtp({
+       phone: phoneNumberObj.format("E.164"),
+     });
 
-   //check if the phone number already existed
-
-   const { data: user, error: userError, status } = await supabase.rpc('finduser', { number: phoneNumberObj.format("E.164").slice(1) });
-
-   console.log('the user', user);
-   console.log('the user error', userError);
-    console.log('status text', status);
-   
-  if (user) {
-    router.push("/(tabs)");
-    return;
-  } 
-  
-  else {
-    Alert.alert('Phone number not found', 'Please sign up first.');
-    //  const { data, error } = await supabase.auth.signInWithOtp({
-    //    phone: phoneNumberObj.format("E.164"),
-    //  });
-
-    //  console.log(phoneNumberObj.format("E.164"));
-    //  console.log(error);
-
-    //  if (!error) {
-    //    if (Platform.OS === "web") {
-    //      localStorage.setItem("phone", phoneNumberObj.format("E.164")); //format to string
-    //    } else {
-    //      await AsyncStorage.setItem("phone", phoneNumberObj.format("E.164"));
-    //    }
-    //    router.push("/(auth)/phone");
-    //  }
-   }
-
+     if (!error) {
+       if (Platform.OS === "web") {
+         localStorage.setItem("phone", phoneNumberObj.format("E.164")); //format to string
+       } else {
+         await AsyncStorage.setItem("phone", phoneNumberObj.format("E.164"));
+       }
+       router.push("/(auth)/phone");
+     }
    } catch (error) {
      console.log(error);
      throw new Error(error as string);
@@ -138,7 +117,8 @@ if(session?.user) {
 }
 
   return (
-    <SafeAreaView
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+     <SafeAreaView
       style={[styles.container, { backgroundColor: theme?.colors.background }]}
     >
       <View className="flex-col items-center gap-3 mb-10">
@@ -234,6 +214,7 @@ if(session?.user) {
         </Pressable>
       </View>
     </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 }
 

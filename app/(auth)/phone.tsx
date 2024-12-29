@@ -1,4 +1,4 @@
-import { View, Text, Platform, Pressable, TouchableHighlight, Alert } from 'react-native'
+import { View, Text, Platform, Pressable, TouchableHighlight, Alert, TouchableWithoutFeedback, Keyboard } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Image } from 'expo-image';
@@ -6,6 +6,7 @@ import OTPInput from 'react-native-otp-textinput';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'expo-router';
 import parsePhoneNumberFromString, { PhoneNumber } from 'libphonenumber-js';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function OTPVerification() {
     const [phone, setPhone] = useState<PhoneNumber | undefined>(undefined);
@@ -73,60 +74,72 @@ export default function OTPVerification() {
 
   console.log(code);
   return (
-    <View className="w-full h-full min-h-screen px-5">
-      <View className="flex flex-col items-center w-full gap-8 mt-8">
-        <Image
-          source={require("../../assets/images/otp_verification.png")}
-          style={{
-            width: 180,
-            height: 270,
-          }}
-          alt="Phone verification svg"
-          contentFit="contain"
-        />
-
-        <View className="flex flex-col mt-10">
-          <View className="flex-col gap-2">
-            <Text className="text-[20px] font-medium text-center">
-              Verification Code
-            </Text>
-            <Text className="font-normal text-center text-dark">
-              Enter verification code sent to{" "}
-              <Text className="font-semibold">+639489120162</Text>
-            </Text>
-          </View>
-
-          {/** Phone number input */}
-          <View className="flex-col gap-4 mt-4">
-            <OTPInput
-              autoFocus
-              handleTextChange={(text) => setCode(text)}
-              offTintColor={"#9E9C9C"}
-              keyboardType="numeric"
-              inputCount={6}
-              textInputStyle={{
-                borderRadius: 12,
-                borderWidth: 1,
-                height: 45,
-                borderColor: "#0000",
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <SafeAreaView>
+        <View className="w-full h-full min-h-screen px-4">
+          <View className="flex flex-col items-center w-full gap-8 mt-8">
+            <Image
+              source={require("../../assets/images/otp_verification.png")}
+              style={{
+                width: 180,
+                height: 270,
               }}
+              alt="Phone verification svg"
+              contentFit="contain"
             />
 
-            <Pressable onPress={handleSignInWithOTP} className="w-full flex-col items-center py-5 bg-[#303330] rounded-full">
-              <Text className="text-center font-semibold text-[20px] text-white">
-                Verify
-              </Text>
-            </Pressable>
+            <View className="flex flex-col mt-10">
+              <View className="flex-col gap-2">
+                <Text className="text-[20px] font-medium text-center">
+                  Verification Code
+                </Text>
+                <Text className="font-normal text-center text-dark">
+                  Enter verification code sent to{" "}
+                  <Text className="font-semibold">+639489120162</Text>
+                </Text>
+              </View>
 
-          <View className="flex-row justify-center ">
-            <Text>Code didn't receive? </Text>
-            <TouchableHighlight onPress={resendSms} underlayColor="transparent">
-              <Text className="font-semibold text-[#769E45] underline">Resend</Text>
-            </TouchableHighlight>
-          </View>
+              {/** Phone number input */}
+              <View className="flex-col gap-4 mt-4">
+                <OTPInput
+                  autoFocus
+                  handleTextChange={(text) => setCode(text)}
+                  offTintColor={"#9E9C9C"}
+                  keyboardType="numeric"
+                  inputCount={6}
+                  textInputStyle={{
+                    borderRadius: 12,
+                    borderWidth: 1,
+                    height: 45,
+                    borderColor: "#0000",
+                  }}
+                />
+
+                <Pressable
+                  onPress={handleSignInWithOTP}
+                  className="w-full flex-col items-center py-5 bg-[#303330] rounded-full"
+                >
+                  <Text className="text-center font-semibold text-[20px] text-white">
+                    Verify
+                  </Text>
+                </Pressable>
+
+                <View className="flex-row justify-center ">
+                  <Text>Code didn't receive? </Text>
+                  <TouchableHighlight
+                    onPress={resendSms}
+                    underlayColor="transparent"
+                  >
+                    <Text className="font-semibold text-[#769E45] underline">
+                      Resend
+                    </Text>
+                  </TouchableHighlight>
+                </View>
+              </View>
+            </View>
           </View>
         </View>
-      </View>
-    </View>
+    </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 }

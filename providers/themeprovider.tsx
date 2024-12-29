@@ -8,6 +8,7 @@ type ThemeContextProviderProps = {
     background: string;
     card: string;
     text: string;
+    gray: string;
     border: string;
     notification: string;
   };

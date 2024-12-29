@@ -10,12 +10,23 @@ export default function Datalogs() {
   const theme = useTheme();
 
   return (
+    <View className='w-full min-h-screen' style={{ backgroundColor: theme?.colors.background }}>
     <ScrollView
-      className="w-full h-auto"
-      style={{ backgroundColor: theme?.colors.background }}
+      className="w-full h-auto max-h-screen-safe-offset-2"
+      showsVerticalScrollIndicator={false}
     >
-      <View className="px-4 mt-6 ">
-        <View className="flex-row items-center justify-end w-full mb-3">
+      <View className="gap-4 px-4 mt-6">
+        <View className="flex-row items-center justify-between w-full px-3 mb-3">
+          <View>
+            <Text
+              className='text-[22px] font-medium'
+              style={[
+                { color: theme?.colors.text },
+              ]}
+            >
+              Your Data
+            </Text>
+          </View>
           <View className="flex-row items-center gap-2">
             <Pressable className="p-2 flex-row items-center gap-2 rounded-lg bg-[#F9F4EC]">
               <Text className="text-sm text-gray-500">CSV</Text>
@@ -52,7 +63,7 @@ export default function Datalogs() {
                   {/** name and status */}
 
                   <View className="flex-col items-start gap-2">
-                    <Text className="text-[20px] font-medium">204438</Text>
+                    <Text style={{ color: theme?.colors.text}} className="text-[20px] font-medium">204438</Text>
                     <View className="bg-[#EBF9F1] px-3 py-2 rounded-lg">
                       <Text
                         style={[
@@ -71,7 +82,7 @@ export default function Datalogs() {
                 </View>
 
                 <View className="w-5">
-                  <AntDesign name="right" size={24} color="black" />
+                  <AntDesign name="right" size={20} color={theme?.colors.gray} />
                 </View>
               </View>
             </Pressable>
@@ -98,6 +109,7 @@ export default function Datalogs() {
         />
       </View>
     </ScrollView>
+    </View>
   );
 }
 

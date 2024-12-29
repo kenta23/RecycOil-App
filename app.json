@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "recycoil",
-    "slug": "recycoil",
+    "name": "Recycoil",
+    "slug": "Recycoil",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/logo-no-background.png",
@@ -11,11 +11,6 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.recycoil.inv"
-    },
-    "splash": {
-      "image": "./assets/images/logo-no-background.png",
-      "contentFit": "contain",
-      "backgroundColor": "#E9FEB1"
     },
     "android": {
       "package": "com.recycoil.inv",
@@ -35,12 +30,23 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/logo-no-background.png",
-          "resizeMode": "contain",
-          "backgroundColor": "#ECE499",
+          "image": "./assets/images/splash icon/hdpi.png",
+          "resizeMode": "cover",
           "dark": {
-            "image": "./assets/images/logo-no-background.png",
-            "backgroundColor": "#0000"
+            "backgroundColor": "#141514"
+          },
+          "android": {
+            "backgroundColor": "#ECE499",
+            "resizeMode": "cover",
+            "image": "./assets/images/splash icon/hdpi.png", 
+            "mdpi": "./assets/images/splash icon/mdpi.png",
+            "hdpi": "./assets/images/splash icon/hdpi.png",
+            "xhdpi": "./assets/images/splash icon/xhdpi.png",
+            "xxhdpi": "./assets/images/splash icon/xxhdpi.png",
+            "xxxhdpi": "./assets/images/splash icon/xxxhdpi.png",
+            "dark": {
+              "backgroundColor": "#141514"
+            }
           }
         }
       ],

@@ -1,14 +1,5 @@
 import { View, Text, ScrollView, Pressable, Platform } from 'react-native'
 import React from 'react'
-import { AntDesign, Feather, FontAwesome6 } from '@expo/vector-icons'
-import { PieChart } from 'react-native-gifted-charts';
-import * as Progress from 'react-native-progress';
-import { useTheme } from '@/providers/themeprovider';
-import { Image } from 'expo-image';
-import TankChart from './container';
-import { WithSkiaWeb } from '@shopify/react-native-skia/lib/module/web';
-import { version } from 'canvaskit-wasm/package.json';
-import SkiaComponent from '@/skia components/tank-container';
 import DashboardWeb from './dashboard-web';
 import DashboardNative from './dashboard-native';
 
@@ -26,7 +17,6 @@ export default function Viewdashboard() {
   const pieData = [
     { value: oilVolume, color: '#DB2777', },
     { value: remainingVolume, color: 'lightgray', },
-   
   ];
 
 
