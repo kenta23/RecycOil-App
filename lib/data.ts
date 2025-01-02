@@ -13,3 +13,17 @@ export const piechartData = [
     color: "lightgray"
   },
 ]
+
+export enum Status { 
+  SUCCESSFUL = "Successful",
+  RUNNING = "Running",
+  FAILED = "Failed"
+}
+
+export type DataInfo = {
+   id: string;
+   date: string;
+   status: Status;
+}
+
+

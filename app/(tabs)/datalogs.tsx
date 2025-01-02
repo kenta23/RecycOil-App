@@ -10,8 +10,8 @@ export default function Datalogs() {
   const theme = useTheme();
 
   return (
-    <View className='w-full min-h-screen' style={{ backgroundColor: theme?.colors.background }}>
-    <ScrollView
+   <View className='w-full min-h-screen' style={{ backgroundColor: theme?.colors.background }}>
+     <ScrollView
       className="w-full h-auto max-h-screen-safe-offset-2"
       showsVerticalScrollIndicator={false}
     >

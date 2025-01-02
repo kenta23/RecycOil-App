@@ -22,7 +22,7 @@ export default function DashboardWeb({ pieData }: { pieData: any }) {
           className="flex-col items-center w-full"
         >
           {/** Main Sensor view */}
-          <View className="border-[#BAB9AC] w-full bg-white/10 self-center justify-self-center border-[1px] rounded-lg px-6 py-8 mt-4">
+          <View className="border-[1px] border-[#E5E5EF] w-full bg-white/10 self-center justify-self-center rounded-lg px-6 py-8 mt-4">
             <View className="items-center">
               <View className="flex flex-row justify-between w-full mb-6">
                 {/** make a conditional statement here if the machine is running or already finished */}
