@@ -6,7 +6,7 @@ import { BottomTabBarProps } from '@react-navigation/bottom-tabs'
 import { useAuth } from '@/providers/authprovider'
 
 
-const linkStyles = 'flex flex-row group hover:bg-primary hover:text-white transition-all ease-out duration-200 items-center gap-2 py-3 px-4';
+const linkStyles = 'flex flex-row group hover:bg-primaryColor hover:text-white transition-all ease-out duration-200 items-center gap-2 py-3 px-4';
 
 const links = [
   {
@@ -113,7 +113,7 @@ function TabBarBackground (props: BottomTabBarProps) {
                 >
                   {item.icon({ style: isActivelink ? { color: "#fff" } : {} })}
                   <Text
-                    className="text-primary group-hover:text-white text-[18px]"
+                    className="text-primaryColor group-hover:text-white text-[18px]"
                     style={isActivelink ? { color: "#fff" } : {}}
                   >
                     {item.name}
@@ -171,7 +171,7 @@ function TabBarBackground (props: BottomTabBarProps) {
                       >
                         {item.icon({ style: {} })}
                         <Text
-                          className={`text-primary`}
+                          className={`text-primaryColor`}
                           style={{ fontSize: 22 }}
                         >
                           {item.name}

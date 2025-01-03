@@ -1,6 +1,6 @@
 
 Todo:
-  ☐ Fix Splash screen too small
+  ✔ Fix Splash screen too small @done(25-01-03 18:52)
   ✔ complete the authentication function (phone otp, gmail) and remove github auth @done(24-12-28 14:35)
   ✔ analytics page @done(24-12-28 14:35)
   ☐ fix ui on web 

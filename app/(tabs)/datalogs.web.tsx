@@ -5,10 +5,8 @@ import { useTheme } from '@/providers/themeprovider';
 import { AntDesign, Feather, Octicons } from "@expo/vector-icons";
 import {
   useReactTable,
-  Column,
   ColumnDef,
   PaginationState,
-  Table,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -16,16 +14,10 @@ import {
   getSortedRowModel,
 } from "@tanstack/react-table";
 import { DataInfo, Status } from '@/lib/data';
+import { StatusComponent } from '@/components/web/StatusComponent';
+import { ActionsButton } from '@/components/web/ActionsButton';
 
 
-function ActionsButton () { 
-     return ( 
-        <div className='flex flex-row items-center justify-center gap-4'>
-             <Feather name="edit" size={24} color="#6D8A49" />
-             <AntDesign name="delete" size={24} color="#A30D11" />
-        </div>
-     )
-}
 
 export default function DatalogsWeb() {
     const columns = useMemo<ColumnDef<DataInfo>[]>(() => [
@@ -59,19 +51,22 @@ export default function DatalogsWeb() {
     pageIndex: 0,
     pageSize: 10,
   })
+  const [data, setData] = useState<DataInfo[]>([
+    {
+      id: "1",
+      date: "2023-01-01",
+      status: <StatusComponent status={Status.SUCCESSFUL} />,
+    },
+  ]);
 
   const table = useReactTable({
     columns,
-    data: [{
-         id: '1',
-         date: '2023-01-01',
-         status: Status.SUCCESSFUL,
-    }], //fill data from the database later on
+    data, //fill data from the database later on
     debugTable: true,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
+    getPaginationRowModel: getPaginationRowModel(), 
     onPaginationChange: setPagination,
     //no need to pass pageCount or rowCount with client-side pagination as it is calculated automatically
     state: {
@@ -79,8 +74,8 @@ export default function DatalogsWeb() {
     },
   })
 
-
-  return (
+  
+ return (
     <div
       className="w-full min-h-screen"
       style={{ backgroundColor: theme?.colors.background }}
@@ -92,7 +87,7 @@ export default function DatalogsWeb() {
         <h1 className="mt-8 font-medium md:text-lg xl:text-2xl">Your Data</h1>
 
         {/**TABLE */}
-    <div className="w-full flex flex-col justify-between items-center mt-8 min-h-[500px] lg:min-h-[650px] xl:min-h-[700px]">
+    <div className="w-full flex flex-col justify-between items-center mt-8 min-h-[400px] lg:min-h-[500px] xl:min-h-[600px]">
           <table className="w-full">
             <thead>
               {table.getHeaderGroups().map((headerGroup) => (
@@ -100,7 +95,7 @@ export default function DatalogsWeb() {
                   {headerGroup.headers.map((header) => (
                     <th key={header.id} colSpan={header.colSpan}>
                       <div
-                        className={`px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider`}
+                        className={`px-6 py-3 font-bold text-xs text-gray-500 uppercase tracking-wider`}
                       >
                         {flexRender(
                           header.column.columnDef.header,
@@ -117,16 +112,15 @@ export default function DatalogsWeb() {
               {table.getRowModel().rows.map((row) => {
                 return (
                   <tr className={`${row.index % 2 === 0 && 'bg-[#EBE9D7]'}`} key={row.id}>
-                    {row.getVisibleCells().map((cell, index) => {
-                      return (
-                        <td className={`text-center`} key={cell.id}>
+                    {row.getVisibleCells().map((cell, index) => (
+                        <td className={`text-center py-2 text-black`} key={cell.id}>
                           {flexRender(
                             cell.column.columnDef.cell,
                             cell.getContext()
                           )}
                         </td>
-                      );
-                    })}
+                      )
+                    )}
                   </tr>
                 );
               })}
@@ -140,8 +134,8 @@ export default function DatalogsWeb() {
                     <button
                         key={index}
                         onClick={() => table.nextPage()}
-                        className={`px-4 py-2 rounded-lg ${table.getState().pagination.pageIndex === index ? 'bg-[#6D8A49] text-white' : 'bg-[#E0E0E0] text-black'}`}
-                      
+                        className={`px-4 py-2 rounded-lg ${!table.getCanNextPage() && 'text-gray-500'} ${table.getState().pagination.pageIndex === index ? 'bg-[#6D8A49] text-white' : 'bg-[#E0E0E0] text-black'}`}
+                        disabled={!table.getCanNextPage()}
                     >
                        {index + 1}
                     </button>
@@ -149,8 +143,8 @@ export default function DatalogsWeb() {
                     <button
                         key={index}
                         onClick={() => table.nextPage()}
-                        className={`px-4 py-2 rounded-lg ${table.getState().pagination.pageIndex === index ? 'bg-[#6D8A49] text-white' : 'bg-[#E0E0E0] text-black'}`}
-                       
+                        className={`px-4 py-2 rounded-lg ${!table.getCanNextPage() && 'text-gray-500'} ${table.getState().pagination.pageIndex === index ? 'bg-[#6D8A49] text-white' : 'bg-[#E0E0E0] text-black'}`}
+                        disabled={!table.getCanNextPage()}
                     >
                        {index + 1}
                     </button>))}

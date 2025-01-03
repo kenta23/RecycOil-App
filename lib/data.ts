@@ -23,7 +23,7 @@ export enum Status {
 export type DataInfo = {
    id: string;
    date: string;
-   status: Status;
+   status: React.JSX.Element;
 }
 
 
