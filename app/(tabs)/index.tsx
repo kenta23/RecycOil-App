@@ -4,7 +4,7 @@ import Viewdashboard from '@/components/viewdashboard';
 import { useAuth } from '@/providers/authprovider';
 import { useTheme } from '../../providers/themeprovider';
 import { Redirect } from 'expo-router';
-
+import { useRouter } from 'expo-router';
 
 const pieData = [
   {value: 54, color: '#177AD5', text: '54%'},
@@ -15,9 +15,10 @@ const pieData = [
 export default function Dashboard() {
   const [power, setPower] = useState<boolean>(false);
   const theme = useTheme();
+  const router = useRouter();
   const { session } = useAuth();
 
- 
+  
   return (
     <View style={{ backgroundColor: theme?.colors.background }}>
       {power ? (

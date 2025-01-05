@@ -1,5 +1,5 @@
 import { View, Text, Platform, Pressable, TouchableHighlight, Alert, TouchableWithoutFeedback, Keyboard } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Image } from 'expo-image';
 import OTPInput from 'react-native-otp-textinput';
@@ -12,6 +12,7 @@ export default function OTPVerification() {
     const [phone, setPhone] = useState<PhoneNumber | undefined>(undefined);
     const [code, setCode] = useState('');
     const router = useRouter();
+    const otpInputRef = useRef<OTPInput>(null);
 
     async function getPhoneNumber(): Promise<void> { 
        try {
@@ -47,7 +48,13 @@ export default function OTPVerification() {
     
     if (error) {
       console.log(error);
-      Alert.alert('The code is invalid. Please try again.');
+      if (Platform.OS === 'web') {
+        alert(error.message);
+      } else {
+        Alert.alert('The code is invalid. Please try again.');
+      }
+      setCode('');
+      otpInputRef.current?.clear();
       return;
      }
    
@@ -73,10 +80,21 @@ export default function OTPVerification() {
   }
 
   console.log(code);
+
+
+  const handleCodeChange = (code: string) => {
+    setCode(code);
+
+    if(code.length === 6) {
+      handleSignInWithOTP();
+    }
+  };
+
+ 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-    <SafeAreaView>
-        <View className="w-full h-full min-h-screen px-4">
+      <SafeAreaView className='flex-1'>
+        <View className="items-center justify-center w-full h-full min-h-screen px-4">
           <View className="flex flex-col items-center w-full gap-8 mt-8">
             <Image
               source={require("../../assets/images/otp_verification.png")}
@@ -103,7 +121,8 @@ export default function OTPVerification() {
               <View className="flex-col gap-4 mt-4">
                 <OTPInput
                   autoFocus
-                  handleTextChange={(text) => setCode(text)}
+                  ref={otpInputRef}
+                  handleTextChange={handleCodeChange}
                   offTintColor={"#9E9C9C"}
                   keyboardType="numeric"
                   inputCount={6}
@@ -116,6 +135,7 @@ export default function OTPVerification() {
                 />
 
                 <Pressable
+                  disabled={code.length === 6}
                   onPress={handleSignInWithOTP}
                   className="w-full flex-col items-center py-5 bg-[#303330] rounded-full"
                 >

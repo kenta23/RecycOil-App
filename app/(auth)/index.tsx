@@ -145,14 +145,13 @@ if(session?.user) {
           defaultCountry="PH"
           theme={theme?.dark ? "dark" : "light"}
           style={{ width: "100%", outline: "none", color: theme?.colors.text, paddingHorizontal: 10 }}
-          autoFocus={false}
-          clearButtonMode="while-editing"
+          autoFocus
           customCaret={<Entypo name="chevron-down" size={20} color={theme?.colors.text} />} 
           value={phoneNumber}
           onChangePhoneNumber={handleInputValue}
           selectedCountry={selectedCountry}
           onChangeSelectedCountry={handleSelectedCountry}
-          placeholder='Enter your phone'
+          placeholder='Enter your phone'    
         />
 
         <Pressable onPress={handleSignInWithOTP} className="flex-row items-center justify-center w-full h-auto gap-3 py-4 rounded-lg shadow-sm bg-[#668B38] cursor-pointer">

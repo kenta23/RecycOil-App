@@ -42,7 +42,7 @@ class LargeSecureStore {
     return aesjs.utils.utf8.fromBytes(decryptedBytes);
   }
 
-  async getItem(key: string) {
+  async getItem (key: string) {
     if (Platform.OS === 'web') {
       if (typeof localStorage === "undefined") {
         return null;
@@ -95,6 +95,6 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
      storage: isBrowser ? localStorage : new LargeSecureStore(),
      autoRefreshToken: true,
      persistSession: true,
-     detectSessionInUrl: true,
+     detectSessionInUrl: false,
   }
 });

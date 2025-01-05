@@ -38,7 +38,7 @@
           "android": {
             "backgroundColor": "#ECE499",
             "resizeMode": "cover",
-            "image": "./assets/images/splash icon/hdpi.png", 
+            "image": "./assets/images/splash icon/hdpi.png",
             "mdpi": "./assets/images/splash icon/mdpi.png",
             "hdpi": "./assets/images/splash icon/hdpi.png",
             "xhdpi": "./assets/images/splash icon/xhdpi.png",
@@ -62,7 +62,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "8a01ca2e-c641-4085-994e-7f509db35f9a"
+        "projectId": "9b5eb034-33c9-4fa8-a9f8-233352f997b1"
       }
     }
   }

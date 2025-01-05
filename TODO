@@ -5,6 +5,7 @@ Todo:
   ✔ analytics page @done(24-12-28 14:35)
   ☐ fix ui on web 
   ☐ fix table on web 
+  ☐ add logic when app installed on multiple devices and attempt to start the machine simultaneously (only one device)
   
 
 
