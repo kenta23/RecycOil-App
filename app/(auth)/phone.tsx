@@ -1,4 +1,4 @@
-import { View, Text, Platform, Pressable, TouchableHighlight, Alert, TouchableWithoutFeedback, Keyboard } from 'react-native'
+import { View, Text, Platform, Pressable, TouchableHighlight, Alert, TouchableWithoutFeedback, Keyboard, ScrollView } from 'react-native'
 import React, { useEffect, useState, useRef } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Image } from 'expo-image';
@@ -85,16 +85,13 @@ export default function OTPVerification() {
   const handleCodeChange = (code: string) => {
     setCode(code);
 
-    if(code.length === 6) {
-      handleSignInWithOTP();
-    }
   };
 
  
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <SafeAreaView className='flex-1'>
-        <View className="items-center justify-center w-full h-full min-h-screen px-4">
+        <ScrollView contentContainerClassName='items-center justify-center w-full h-full min-h-screen px-4'>
           <View className="flex flex-col items-center w-full gap-8 mt-8">
             <Image
               source={require("../../assets/images/otp_verification.png")}
@@ -135,7 +132,7 @@ export default function OTPVerification() {
                 />
 
                 <Pressable
-                  disabled={code.length === 6}
+               
                   onPress={handleSignInWithOTP}
                   className="w-full flex-col items-center py-5 bg-[#303330] rounded-full"
                 >
@@ -158,7 +155,7 @@ export default function OTPVerification() {
               </View>
             </View>
           </View>
-        </View>
+        </ScrollView>
     </SafeAreaView>
     </TouchableWithoutFeedback>
   );
