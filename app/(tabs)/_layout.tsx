@@ -101,6 +101,7 @@ function TabBarBackground (props: BottomTabBarProps) {
       item.id !== 5 &&
         item.navigationName &&
         props.navigation.navigate(item.navigationName);
+        closeDrawer();
 
       if (item.id === 5) {
         if (Platform.OS === "web") {
