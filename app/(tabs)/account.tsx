@@ -6,7 +6,7 @@ import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import { useAuth } from '@/providers/authprovider';
 import { useRouter } from 'expo-router';
 import PhoneInput, { ICountry } from 'react-native-international-phone-number';
-import { Entypo } from '@expo/vector-icons';
+import { AntDesign, Entypo } from '@expo/vector-icons';
 import { useTheme } from '@/providers/themeprovider';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import OTPInput from 'react-native-otp-textinput';
@@ -134,7 +134,6 @@ export default function Account() {
       {/* <Pressable onPress={signoutHandler}>
         <Text>Sign out</Text>
       </Pressable> */}
-
         <Modal
           animationType="fade"
           visible={phoneChangeModal}

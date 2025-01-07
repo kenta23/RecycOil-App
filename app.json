@@ -10,14 +10,16 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.recycoil.inv"
+      "bundleIdentifier": "com.recycoil.inv",
+      "buildNumber": 1
     },
     "android": {
       "package": "com.recycoil.inv",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/logo-no-background.png",
         "backgroundColor": "#E9FEB1"
-      }
+      },
+      "versionCode": 1
     },
     "web": {
       "bundler": "metro",

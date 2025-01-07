@@ -183,7 +183,7 @@ export default function Analytics() {
 
 
 
-        <View className="size-[290px] shadow-green-300 shadow-lg mt-12 items-center justify-center rounded-full border-[1px] border-[#65DE9D]">
+        <View className="size-[290px] shadow-green-300 shadow-lg  mt-12 items-center justify-center rounded-full border-[1px] border-[#65DE9D]">
           <View className="items-center justify-center w-full">
                <Text className="text-[16px] text-center" style={{ color: theme?.colors.gray }}>
                    You saved carbon footprint of

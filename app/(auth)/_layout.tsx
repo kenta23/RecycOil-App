@@ -16,7 +16,7 @@ export default function _layout() {
         }}
       />
       <Stack.Screen 
-        name="phone"
+        name="verify"
         getId={  ({ params }) => String(Date.now())}
         options={{
           headerShown: Platform.OS === "web" ? false : true,

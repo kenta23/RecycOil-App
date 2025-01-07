@@ -4,19 +4,23 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Image } from 'expo-image';
 import OTPInput from 'react-native-otp-textinput';
 import { supabase } from '@/lib/supabase';
-import { useRouter } from 'expo-router';
+import { useRouter, useNavigation,  } from 'expo-router';
 import parsePhoneNumberFromString, { PhoneNumber } from 'libphonenumber-js';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
+
 
 export default function OTPVerification() {
     const [phone, setPhone] = useState<PhoneNumber | undefined>(undefined);
     const [code, setCode] = useState('');
     const router = useRouter();
     const otpInputRef = useRef<OTPInput>(null);
+    const navigation = useNavigation();
 
     async function getPhoneNumber(): Promise<void> { 
        try {
        const storeData = Platform.OS === 'web' ? localStorage.getItem('phone') : await AsyncStorage.getItem('phone');
+     
        console.log('from phone page', storeData);
          if (storeData !== null) {
            const formattedPhoneNumber = parsePhoneNumberFromString(storeData, 'PH');
@@ -60,7 +64,12 @@ export default function OTPVerification() {
    
 
     else {
-      console.log(data);
+     console.log(data);
+     if (Platform.OS === 'web') {
+      localStorage.removeItem('phone')
+     } else {
+      await AsyncStorage.removeItem('phone');
+     } 
       router.push('/(tabs)');
     }
   }
@@ -91,7 +100,7 @@ export default function OTPVerification() {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <SafeAreaView className='flex-1'>
-        <ScrollView contentContainerClassName='items-center justify-center w-full h-full min-h-screen px-4'>
+        <ScrollView contentContainerClassName='items-center justify-center w-full h-full min-h-auto px-4'>
           <View className="flex flex-col items-center w-full gap-8 mt-8">
             <Image
               source={require("../../assets/images/otp_verification.png")}

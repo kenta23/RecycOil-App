@@ -1,10 +1,22 @@
-import { View, Text, Image, Pressable, Modal, TouchableOpacity, StyleSheet, FlatList, Platform, TouchableWithoutFeedback } from 'react-native'
+import { View, Text, Image, Pressable, Modal, TouchableOpacity, StyleSheet, FlatList, Platform, TouchableWithoutFeedback, Alert } from 'react-native'
 import React, { useState } from 'react'
 import { Redirect, Tabs, useRouter,  } from 'expo-router'
-import { Feather, FontAwesome, Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'
+import { AntDesign, Feather, FontAwesome, Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs'
 import { useAuth } from '@/providers/authprovider'
-
+import { supabase } from '@/lib/supabase'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { Button } from "@/components/ui/button"
 
 const linkStyles = 'flex flex-row group hover:bg-primaryColor hover:text-white transition-all ease-out duration-200 items-center gap-2 py-3 px-4';
 
@@ -65,14 +77,54 @@ const links = [
     navigationName: "account",
     name: "Account",
   },
+  {
+    id: 5,
+    icon: (props: any) => (
+       <AntDesign name="logout" size={24}  className="group-hover:text-white text-[#BFEC87]"  color={Platform.OS !== "web" ? "#BFEC87" : ""}
+       {...props} />
+    ),
+    name: "Sign out",
+  }
 ];
+
+
+
 function TabBarBackground (props: BottomTabBarProps) {
     const [drawerVisible, setDrawerVisible] = useState(false);
     const openDrawer = () => setDrawerVisible(true);
     const closeDrawer = () => setDrawerVisible(false);
+    const [showWebAlert, setShowWebAlert] = useState<boolean>(false);
     
 
-    return Platform.OS === "web" ? (
+
+    const handleTabClicked = (item : typeof links[number]) => {
+      item.id !== 5 &&
+        item.navigationName &&
+        props.navigation.navigate(item.navigationName);
+
+      if (item.id === 5) {
+        if (Platform.OS === "web") {
+          setShowWebAlert(true);
+        } else {
+          Alert.alert("Sign out", "Are you sure you want to sign out?", [
+            {
+              text: "Yes",
+              onPress: () => {
+                closeDrawer();
+                supabase.auth.signOut();
+              },
+            },
+            {
+              text: "No",
+            },
+          ]);
+        }
+      }
+    }
+
+    return (
+      <>
+    {Platform.OS === "web" ? (
       <View className="relative py-2 h-full w-[220px] min-h-svh bg-dark">
         <Image
           source={require("../../assets/images/logo-white.png")}
@@ -88,37 +140,55 @@ function TabBarBackground (props: BottomTabBarProps) {
             data={links}
             accessibilityLabel="Links"
             horizontal={false}
-            className=""
-            contentContainerStyle={{ gap: 30 }}
+            contentContainerStyle={{ gap: 20 }}
             renderItem={({ item }) => {
               const isActivelink =
                 item.navigationName ===
                 props.state.routeNames[props.state.index];
-
+                
               return (
-                <TouchableOpacity
-                  className={linkStyles}
-                  style={
-                    isActivelink
-                      ? {
-                          backgroundColor: "#A7B891",
-                          borderRadius: 17,
-                        }
-                      : {}
-                  }
-                  onPress={() => {
-                    closeDrawer();
-                    props.navigation.navigate(item.navigationName);
-                  }}
-                >
-                  {item.icon({ style: isActivelink ? { color: "#fff" } : {} })}
-                  <Text
-                    className="text-primaryColor group-hover:text-white text-[18px]"
-                    style={isActivelink ? { color: "#fff" } : {}}
-                  >
-                    {item.name}
-                  </Text>
-                </TouchableOpacity>
+                <AlertDialog open={showWebAlert}>
+                  <AlertDialogTrigger asChild>
+                    <TouchableOpacity
+                      className={linkStyles}
+                      style={
+                        isActivelink
+                          ? {
+                              backgroundColor: "#A7B891",
+                              borderRadius: 17,
+                            }
+                          : {}
+                      }
+                      onPress={() => handleTabClicked(item)}
+                    >
+                      {item.icon({
+                        style: isActivelink ? { color: "#fff" } : {},
+                      })}
+                      <Text
+                        className="text-primaryColor group-hover:text-white text-[18px]"
+                        style={isActivelink ? { color: "#fff" } : {}}
+                      >
+                        {item.name}
+                      </Text>
+                    </TouchableOpacity>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        Are you absolutely sure?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This action cannot be undone. This will permanently
+                        delete your account and remove your data from our
+                        servers.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel onClick={() => setShowWebAlert(false)}>Cancel</AlertDialogCancel>
+                      <AlertDialogAction>Continue</AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               );
             }}
             keyExtractor={(item) => item.id.toString()}
@@ -164,10 +234,7 @@ function TabBarBackground (props: BottomTabBarProps) {
                       <TouchableOpacity
                         className={linkStyles}
                         hitSlop={8}
-                        onPress={() => {
-                          closeDrawer();
-                          props.navigation.navigate(item.navigationName);
-                        }}
+                        onPress={() => handleTabClicked(item)}
                       >
                         {item.icon({ style: {} })}
                         <Text
@@ -191,7 +258,9 @@ function TabBarBackground (props: BottomTabBarProps) {
           </TouchableWithoutFeedback>
         </Modal>
       </View>
-    );
+    )}
+      </>
+  ); 
  }
 
 export default function Tablayout() {
@@ -287,7 +356,7 @@ const styles = StyleSheet.create({
       borderRadius: 10,
       padding: 8,
       width: 'auto',
-      height: 400,
+      height: 460,
       alignItems: 'flex-start',
       marginVertical: 20,
       marginLeft: 8

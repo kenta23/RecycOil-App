@@ -3,7 +3,7 @@ import { Alert, Platform, Pressable, StyleSheet, Text, View, TextInput, Touchabl
 import { Image } from 'expo-image';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/providers/authprovider';
-import { Redirect, useRouter } from 'expo-router';
+import { Redirect, useNavigation, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { makeRedirectUri } from "expo-auth-session";
 import * as QueryParams from "expo-auth-session/build/QueryParams";
@@ -25,6 +25,7 @@ export default function Auth() {
   const router = useRouter();
   const [selectedCountry, setSelectedCountry] =
   useState<null | ICountry>(null);
+  const navigat = useNavigation();
 
 const [phoneNumber, setphoneNumber] = useState<string>('');
 console.log(phoneNumber);
@@ -102,7 +103,7 @@ const performOAuth = async (provider: Provider) => {
        } else {
          await AsyncStorage.setItem("phone", phoneNumberObj.format("E.164"));
        }
-       router.push("/(auth)/phone");
+       router.push("/(auth)/verify");
      }
    } catch (error) {
      console.log(error);
