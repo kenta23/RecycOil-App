@@ -1,5 +1,5 @@
-import { AntDesign, Feather } from "@expo/vector-icons";
-import { Alert } from "react-native";
+import { AntDesign, Feather, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Alert, ScrollView } from "react-native";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -11,7 +11,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
   } from "@/components/ui/alert-dialog"
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "@/providers/themeprovider";
 import {
   Sheet,
   SheetClose,
@@ -22,9 +22,16 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
+import { Row } from "@tanstack/react-table";
+import { DataInfo, progressData } from "@/lib/data";
+import SkiaComponent from "@/skia components/tank-container";
+import { ProgressChart } from "react-native-chart-kit";
+import { X } from "@expo/vector-icons";
  
-export function ActionsButton () { 
+export function ActionsButton ({ row }: { row: Row<DataInfo> }) { 
     const theme = useTheme();
+
+    {/** use row prop to ge single data from table */}
    
      return (
        <div className="flex flex-row items-center justify-center gap-4">
@@ -36,17 +43,116 @@ export function ActionsButton () {
                <Feather name="edit" size={24} color="#6D8A49" />
              </button>
            </SheetTrigger>
-           <SheetContent>
+           <SheetContent
+             style={{
+               backgroundColor: theme?.colors.background,
+             }}
+           >
              <SheetHeader>
-               <SheetTitle>Edit profile</SheetTitle>
-               <SheetDescription>
-                 Make changes to your profile here. Click save when you're done.
+               <SheetTitle style={{ color: theme?.colors.text }}>
+                 Viewing data
+               </SheetTitle>
+               <SheetDescription style={{ color: theme?.colors.gray }}>
+                 Make changes to your data here. Click save when you're done.
                </SheetDescription>
              </SheetHeader>
-             <div className="grid gap-4 py-4">Hello</div>
+             <ScrollView className="h-screen w-full min-h-screen">
+               <div className="w-full mt-4 flex items-center justify-between">
+                 {/** Name and date  */}
+                 <div className="flex flex-col">
+                   <div className="flex flex-row items-center gap-1">
+                     <h1 style={{ color: theme?.colors.text }} className="font-semibold text-lg">
+                       {row.original.date}
+                     </h1>
+                     <MaterialCommunityIcons
+                       name="pencil"
+                       size={20}
+                       color={theme?.colors.gray}
+                     />
+                   </div>
+
+                   {/** format the date to mm/dd/yyyy */}
+                   <h2 style={{ color: theme?.colors.gray }} className="font-light">
+                     {row.original.date}
+                   </h2>
+                 </div>
+
+                 {/** STATUS */}
+                 <div className="flex flex-row items-center gap-1">
+                   <h2 className="font-semibold">{row.getValue("status")}</h2>
+                 </div>
+               </div>
+
+               <div className="mt-6">
+                 <div className="flex flex-col items-center gap-6">
+                   <div>
+                     <SkiaComponent
+                       height={210}
+                       width={130}
+                       color="#D6C890"
+                       maxValue={5}
+                       value={3}
+                     />
+                   </div>
+                   <p
+                     style={{ color: theme?.colors.text }}
+                     className="text-lg font-medium text-center"
+                   >
+                     Biodiesel
+                   </p>
+                 </div>
+               </div>
+
+               {/** temp and production time */}
+               <div className="w-full mt-4 px-7">
+                 <div className="flex flex-row items-center w-full justify-between">
+                   {/** temp  */}
+                   <div className="flex flex-col text-[#C66243]  items-center">
+                     <h3 id="temp" className="font-bold text-[25px]">
+                       65°C
+                     </h3>
+                     <label htmlFor="temp">Max. temp</label>
+                   </div>
+
+                   {/**chunks filtered / glycerin */}
+
+                   <div className="flex flex-col text-[#376EC2]  items-center">
+                     <h3 id="chunks" className="font-bold text-[25px]">
+                       75%
+                     </h3>
+                     <label htmlFor="chunks">Chunks filtered</label>
+                   </div>
+                 </div>
+
+                 <div className="items-center flex flex-col mt-2">
+                   <ProgressChart
+                     data={progressData}
+                     height={140}
+                     strokeWidth={6}
+                     radius={20}
+                     width={260}
+                     hideLegend={true}
+                     chartConfig={{
+                       labels: ["Swim", "Bike", "Run"], // optional
+                       backgroundGradientFrom: "transparent",
+                       backgroundGradientTo: "transparent",
+                       color: (opacity = 1) => `rgba(150, 45, 255, ${opacity})`,
+                       strokeWidth: 2, // optional, default 3
+                       useShadowColorFromDataset: false, // optional
+                     }}
+                   />
+                   <p
+                     className="font-semibold"
+                     style={{ color: theme?.colors.text, fontSize: 16 }}
+                   >
+                     1 hour 30 minutes
+                   </p>
+                 </div>
+               </div>
+             </ScrollView>
              <SheetFooter>
                <SheetClose asChild>
-                 <button>Submit</button>
+                 <button>save</button>
                </SheetClose>
              </SheetFooter>
            </SheetContent>
@@ -57,7 +163,7 @@ export function ActionsButton () {
              <AntDesign name="delete" size={24} color="#A30D11" />
            </AlertDialogTrigger>
            <AlertDialogContent
-             style={{ backgroundColor: theme.colors.background }}
+             style={{ backgroundColor: theme?.colors.background }}
            >
              <AlertDialogHeader>
                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>

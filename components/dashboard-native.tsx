@@ -58,7 +58,7 @@ export default function DashboardNative({ pieData }: { pieData: any }) {
         <View className="flex flex-col items-center gap-6">
           {/**Pie chart biodiesel sensor */}
           <View className="flex flex-col gap-3">
-            <SkiaComponent maxValue={5} value={3} />
+            <SkiaComponent color='#78B544' width={160} height={250} maxValue={5} value={3} />
             <Text
               style={{ color: theme?.colors.text }}
               className="text-lg font-medium text-center"

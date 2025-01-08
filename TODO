@@ -3,10 +3,11 @@ Todo:
   ✔ Fix Splash screen too small @done(25-01-03 18:52)
   ✔ complete the authentication function (phone otp, gmail) and remove github auth @done(24-12-28 14:35)
   ✔ analytics page @done(24-12-28 14:35)
-  ☐ fix ui on web  
-  ☐ fix table on web 
+  ✔ fix ui on web @done(25-01-08 21:24)
+  ✔ fix table on web @done(25-01-08 21:24)
   ☐ add logic when app installed on multiple devices and attempt to start the machine simultaneously (only one device)
-  ☐ fix styling on verify otp page on mobile too much spacing on top  
+  ✔ fix styling on verify otp page on mobile too much spacing on top @done(25-01-08 19:45)
+  ☐ fix and finish datalogs ui on native
   
 
 

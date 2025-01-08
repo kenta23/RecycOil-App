@@ -39,7 +39,7 @@ export default function DatalogsWeb() {
           },
           {
             accessorKey: 'actions',
-            cell: () => <ActionsButton />,
+            cell: ({ row }) => <ActionsButton row={row}/>,
             header: () => 'Actions',
           },
         ],
