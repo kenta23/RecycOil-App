@@ -17,6 +17,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
+import BackButton from '@/components/backbutton'
 
 const linkStyles = 'flex flex-row group hover:bg-primaryColor hover:text-white transition-all ease-out duration-200 items-center gap-2 py-3 px-4';
 
@@ -186,7 +187,7 @@ function TabBarBackground (props: BottomTabBarProps) {
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel onClick={() => setShowWebAlert(false)}>Cancel</AlertDialogCancel>
-                      <AlertDialogAction>Continue</AlertDialogAction>
+                      <AlertDialogAction onClick={() => supabase.auth.signOut()} className='bg-red-500 hover:bg-red-200'>Yes</AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
                 </AlertDialog>
@@ -272,18 +273,7 @@ export default function Tablayout() {
      return <Redirect href={'/(auth)'}/>
    }
 
-  function BackButton () { 
-    return  (
-     <Pressable
-     onPress={() => router.back()}
-     className="text-[32px] font-bold flex-row items-center gap-1"
-   >
-     <Ionicons name="chevron-back-outline" size={20} color="black" />
-     <Text className='text-[16px]'>Back</Text>
-   </Pressable>
-    )
-  }
-  
+ 
 
   return (
     <Tabs

@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native'
 import React, { useMemo, useState } from 'react'
 import { Image } from 'expo-image';
 import { useTheme } from '@/providers/themeprovider';
-import { AntDesign, Feather, Octicons } from "@expo/vector-icons";
+import { AntDesign, Feather, Ionicons, Octicons } from "@expo/vector-icons";
 import {
   useReactTable,
   ColumnDef,
@@ -88,7 +88,17 @@ export default function DatalogsWeb() {
 
         {/**TABLE */}
     <div className="w-full flex flex-col justify-between items-center mt-8 min-h-[400px] lg:min-h-[500px] xl:min-h-[600px]">
-          <table className="w-full">
+
+      <div className='flex flex-col items-end w-full'>
+          {/**filter and csv action button */}
+           <div className='flex flex-row items-center gap-3'>
+               <button className='px-3 bg-[#F9F4EC] text-dark py-1 w-auto rounded-lg'>
+                   <span className='me-1'>CSV</span><Feather name="download" size={18} color="#38362F" />
+               </button>
+
+               <Ionicons name="filter" size={24} color={theme?.colors.gray} className='cursor-pointer'/>
+           </div>
+         <table className="w-full">
             <thead>
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
@@ -126,6 +136,7 @@ export default function DatalogsWeb() {
               })}
             </tbody>
           </table>
+         </div>
 
 
           {/**PAGINATION BUTTONS */}

@@ -7,7 +7,9 @@ Todo:
   ✔ fix table on web @done(25-01-08 21:24)
   ☐ add logic when app installed on multiple devices and attempt to start the machine simultaneously (only one device)
   ✔ fix styling on verify otp page on mobile too much spacing on top @done(25-01-08 19:45)
-  ☐ fix and finish datalogs ui on native
+  ☐ fix and finish datalogs ui on native 
+  ✔ add filtering and csv button on datalogs web @done(25-01-14 10:55)
+  ✔ add legend and filtering button on analytics @done(25-01-14 10:20)
   
 
 

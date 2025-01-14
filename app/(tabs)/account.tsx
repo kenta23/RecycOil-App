@@ -129,7 +129,7 @@ export default function Account() {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView className="items-center justify-center w-full h-full min-h-screen">
+      <SafeAreaView style={{ backgroundColor: theme?.colors.background }} className="items-center justify-center w-full h-full min-h-screen">
         {/**Inputs */}
       {/* <Pressable onPress={signoutHandler}>
         <Text>Sign out</Text>
@@ -141,11 +141,11 @@ export default function Account() {
           onRequestClose={() => setPhoneChangeModal(false)}
         >
           <TouchableWithoutFeedback onPress={() => setPhoneChangeModal(false)}>
-            <View className="items-center justify-center flex-1 bg-black/80">
+            <View  className="items-center justify-center flex-1 bg-black/80">
               <View className="bg-white rounded-lg shadow-md w-[80%] px-4 py-6 h-auto">
                 <View className="flex-col items-start gap-2">
                   <View className="flex-row items-center gap-2">
-                    <Text className="text-lg" nativeID="changePhone">
+                    <Text style={[{ color: theme?.colors.text }]} className="text-lg" nativeID="changePhone">
                       Change Phone Number
                     </Text>
                   </View>
@@ -233,14 +233,14 @@ export default function Account() {
         <View className="flex-col max-w-[550px] w-[270px] gap-2">
           <View className="flex-col items-start gap-2">
             <View className="flex-row items-center gap-2">
-              <Text className="text-lg" nativeID="phoneNumber">
+              <Text style={[{ color: theme?.colors.text }]} className="text-lg" nativeID="phoneNumber">
                 Phone Number
               </Text>
               <Pressable
                 disabled={!session?.user.phone}
                 onPress={() => setPhoneChangeModal(true)}
               >
-                <Text className="text-sm text-gray-400 underline cursor-pointer">
+                <Text style={[{ color: theme?.colors.text }]} className="text-sm text-gray-400 underline cursor-pointer">
                   Change
                 </Text>
               </Pressable>
@@ -255,7 +255,7 @@ export default function Account() {
           </View>
 
           <View className="flex-col items-start gap-2">
-            <Text className="text-lg" nativeID="email">
+            <Text style={[{ color: theme?.colors.text }]} className="text-lg" nativeID="email">
               Email
             </Text>
             <TextInput
@@ -268,7 +268,7 @@ export default function Account() {
           </View>
 
           <View className="flex-col items-start gap-2">
-            <Text className="text-lg" nativeID="nickname">
+            <Text style={[{ color: theme?.colors.text }]} className="text-lg" nativeID="nickname">
               Nickname
             </Text>
             <TextInput

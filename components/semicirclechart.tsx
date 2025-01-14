@@ -16,6 +16,8 @@ const SemicircleChart = () => {
   {value: 3, color: '#FFA5BA', gradientCenterColor: '#FF7F97'},
 ];
 
+
+
 const renderDot = (color: string) => {
   return (
     <View

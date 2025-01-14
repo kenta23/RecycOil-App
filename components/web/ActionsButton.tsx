@@ -27,9 +27,11 @@ import { DataInfo, progressData } from "@/lib/data";
 import SkiaComponent from "@/skia components/tank-container";
 import { ProgressChart } from "react-native-chart-kit";
 import { X } from "@expo/vector-icons";
+import { useState } from "react";
  
 export function ActionsButton ({ row }: { row: Row<DataInfo> }) { 
     const theme = useTheme();
+    const [editing, setEditing] = useState<boolean>(false);
 
     {/** use row prop to ge single data from table */}
    
@@ -56,18 +58,28 @@ export function ActionsButton ({ row }: { row: Row<DataInfo> }) {
                  Make changes to your data here. Click save when you're done.
                </SheetDescription>
              </SheetHeader>
-             <ScrollView className="h-screen w-full min-h-screen">
-               <div className="w-full mt-4 flex items-center justify-between">
+             <ScrollView className="w-full h-screen min-h-screen">
+               <div className="flex items-center justify-between w-full mt-8">
                  {/** Name and date  */}
-                 <div className="flex flex-col">
+                 <div className="flex flex-col gap-2">
                    <div className="flex flex-row items-center gap-1">
-                     <h1 style={{ color: theme?.colors.text }} className="font-semibold text-lg">
-                       {row.original.date}
-                     </h1>
+                     {/**title */}
+                    {editing ? (
+                      <input
+                        className="rounded-lg"
+                        type="text"
+                        defaultValue={row.original.date}
+                      /> ) : (
+                        <h1 style={{ color: theme?.colors.text }} className="text-lg font-semibold">
+                          {row.original.date}
+                        </h1>
+                      )
+                    }
                      <MaterialCommunityIcons
                        name="pencil"
                        size={20}
                        color={theme?.colors.gray}
+                       onPress={() => setEditing(prev => !prev)}
                      />
                    </div>
 
@@ -105,7 +117,7 @@ export function ActionsButton ({ row }: { row: Row<DataInfo> }) {
 
                {/** temp and production time */}
                <div className="w-full mt-4 px-7">
-                 <div className="flex flex-row items-center w-full justify-between">
+                 <div className="flex flex-row items-center justify-between w-full">
                    {/** temp  */}
                    <div className="flex flex-col text-[#C66243]  items-center">
                      <h3 id="temp" className="font-bold text-[25px]">
@@ -124,7 +136,7 @@ export function ActionsButton ({ row }: { row: Row<DataInfo> }) {
                    </div>
                  </div>
 
-                 <div className="items-center flex flex-col mt-2">
+                 <div className="flex flex-col items-center mt-2">
                    <ProgressChart
                      data={progressData}
                      height={140}

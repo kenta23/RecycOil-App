@@ -1,11 +1,28 @@
 import { View, Text, Pressable, ScrollView, Dimensions, useWindowDimensions,  } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { BarChart, PieChart } from "react-native-gifted-charts";
 import { Image } from "expo-image";
 import { useTheme } from "@/providers/themeprovider";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/providers/authprovider";
+
+
+
 
 export default function AnalyticsWeb() {
   const theme = useTheme();
+  type FilterType = "weeks" | "months" | "days";
+  const [filterType, setFilterType] = useState<FilterType>("weeks");
+  const { session } = useAuth();
 
   const legend = [
     {
@@ -22,13 +39,24 @@ export default function AnalyticsWeb() {
     },
   ];
 
+  //fetch data
+  const data = session && supabase.from('datalogs').select('*').eq('user_id', session.user.id).order('created_at', { ascending: false });
+
+   data?.then(res => { 
+      res.data && console.log(res.data)
+   })
+
   //passing values as object
+  //total values 
   const dummyValues = [{
     finished: 100,
     unfinished: 190,
     failed: 70
   }];
   
+
+
+  //maximum of 8 stack datas
   const stackData = [
     {
       stacks: [
@@ -45,6 +73,29 @@ export default function AnalyticsWeb() {
         { value: 5, color: legend[2].frontColor},
       ],
       label: '1pm',
+    }, {
+      stacks: [
+        { value: dummyValues[0].finished, color: legend[0].frontColor},
+        { value: dummyValues[0].unfinished, color: legend[1].frontColor},
+        { value: dummyValues[0].failed, color: legend[2].frontColor},
+      ],
+      label: '1pm',
+    },
+    {
+      stacks: [
+        { value: dummyValues[0].finished, color: legend[0].frontColor},
+        { value: dummyValues[0].unfinished, color: legend[1].frontColor},
+        { value: dummyValues[0].failed, color: legend[2].frontColor},
+      ],
+      label: '1pm',
+    },
+    {
+      stacks: [
+        { value: dummyValues[0].finished, color: legend[0].frontColor},
+        { value: dummyValues[0].unfinished, color: legend[1].frontColor},
+        { value: dummyValues[0].failed, color: legend[2].frontColor},
+      ],
+      label: '1pm',
     },
     {
       stacks: [
@@ -70,8 +121,23 @@ export default function AnalyticsWeb() {
       ],
       label: '1pm',
     },
-    
-    
+    {
+      stacks: [
+        { value: dummyValues[0].finished, color: legend[0].frontColor},
+        { value: dummyValues[0].unfinished, color: legend[1].frontColor},
+        { value: dummyValues[0].failed, color: legend[2].frontColor},
+      ],
+      label: '1pm',
+    },
+    {
+      stacks: [
+        { value: dummyValues[0].finished, color: legend[0].frontColor},
+        { value: dummyValues[0].unfinished, color: legend[1].frontColor},
+        { value: dummyValues[0].failed, color: legend[2].frontColor},
+      ],
+      label: '1pm',
+    },
+   
   ];  //today, weekly, monthly
 
   const piechartData = [
@@ -94,6 +160,8 @@ export default function AnalyticsWeb() {
   
   const { width: screenWidth } = useWindowDimensions();
 
+  console.log('selected', filterType);
+
   return (
     <View
       className="w-full h-full min-h-screen"
@@ -101,48 +169,105 @@ export default function AnalyticsWeb() {
     >
       <ScrollView
         showsVerticalScrollIndicator={false}
-        className="w-full h-auto max-h-screen px-8 pb-4"
+        className="w-full h-auto max-h-screen px-4 pb-4 md:px-6 lg:px-8"
       >
-        <View className="flex items-start justify-center w-full px-4 mt-4 lg:items-center">
+        <h1
+          className="mt-8 font-medium md:text-lg xl:text-2xl"
+          style={{ color: theme?.colors.text }}
+        >
+          Analytics
+        </h1>
+
+        <View className="flex items-start justify-center w-full mt-4 lg:items-center">
           {/**Bar chart */}
-          <View className="flex flex-col items-start justify-center w-auto gap-6 mt-6">
-            <Text className="text-[22px]" style={{ color: theme?.colors.gray }}>
-              Total Production
-            </Text>
-            <div>
+          <View className="flex flex-col items-start justify-center w-auto max-w-full gap-6 mt-6">
+            
+            <div className="flex flex-row justify-between w-full">
+              <Text
+                className="text-[18px]"
+                style={{ color: theme?.colors.gray }}
+              >
+                Total Producing Time
+              </Text>
+
+              <div className="flex flex-col items-center lg:flex-row gap-7">
                 {/**legend */}
-                <div></div>
+                <div className="flex flex-row items-center justify-center gap-3">
+                  <div className="flex flex-row items-center justify-center gap-1">
+                    <div className="size-3 bg-[#C8BB2A] rounded-full" />
+                    <p
+                      className="text-sm font-medium"
+                      style={{ color: theme?.colors.text }}
+                    >
+                      Finished
+                    </p>
+                  </div>
+
+                  <div className="flex flex-row items-center justify-center gap-1">
+                    <div className="size-3 bg-[#E5CA7D] rounded-full" />
+                    <p
+                      className="text-sm font-medium"
+                      style={{ color: theme?.colors.text }}
+                    >
+                      Unfinished
+                    </p>
+                  </div>
+
+                  <div className="flex flex-row items-center justify-center gap-1">
+                    <div className="size-3 bg-[#E5E2BB] rounded-full" />
+                    <p
+                      className="text-sm font-medium"
+                      style={{ color: theme?.colors.text }}
+                    >
+                      Failed
+                    </p>
+                  </div>
+                </div>
                 {/**toggle */}
-            {/* <div className="flex flex-row items-center justify-between w-[100px]">
-                
-            </div> */}
-              <BarChart
-                height={400}
-                autoCenterTooltip
-                yAxisColor={theme?.colors.text}
-                verticalLinesColor={theme?.colors.text}
-                yAxisIndicesColor={theme?.colors.text}
-                xAxisIndicesColor={theme?.colors.text}
-                yAxisTextStyle={{ color: theme?.colors.text }}
-                xAxisLabelTextStyle={{ color: theme?.colors.text }}
-                xAxisThickness={1}
-                xAxisColor={theme?.colors.text}
-                yAxisThickness={0.5}
-                width={screenWidth - 500}
-                noOfSections={4}
-                maxValue={500}
-                stackData={stackData}
-                isAnimated
-                animationDuration={2000}
-                barWidth={70}
-           
-              />
+
+                <Select value={filterType} onValueChange={(value: FilterType) => setFilterType(value)}>
+                  <SelectTrigger className="cursor-pointer min-w-[80px] max-w-[100px]" style={{ color: theme?.colors.text }}>
+                    <SelectValue placeholder="Week" defaultChecked />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Filter</SelectLabel>
+                      <SelectItem value="days">Days</SelectItem>
+                      <SelectItem value="weeks" >Weeks</SelectItem>
+                      <SelectItem value="months" >Months</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+
+              </div>
             </div>
+
+            <BarChart
+              height={380}
+              autoCenterTooltip
+              yAxisColor={theme?.colors.text}
+              verticalLinesColor={theme?.colors.text}
+              yAxisIndicesColor={theme?.colors.text}
+              xAxisIndicesColor={theme?.colors.text}
+              yAxisTextStyle={{ color: theme?.colors.text }}
+              xAxisLabelTextStyle={{ color: theme?.colors.text }}
+              xAxisThickness={1}
+              xAxisColor={theme?.colors.text}
+              yAxisThickness={0.5}
+              width={screenWidth < 900 ? screenWidth - 400 : screenWidth - 500}
+              noOfSections={4}
+              maxValue={500}
+              stackData={stackData}
+              spacing={screenWidth < 900 ? 20 : 50}
+              isAnimated
+              animationDuration={2000}
+              barWidth={70}
+            />
           </View>
         </View>
 
-        <View className="flex flex-row items-center mt-16 justify-evenly">
-          <View className="flex-col gap-5">
+        <View className="flex flex-col items-center gap-10 mt-16 lg:flex-row justify-evenly">
+          <View className="flex-col gap-8">
             <View className={cardContainerStyle}>
               <View className="items-center w-full">
                 <View className="flex-col">
