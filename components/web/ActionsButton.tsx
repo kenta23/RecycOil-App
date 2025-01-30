@@ -26,9 +26,10 @@ import { Row } from "@tanstack/react-table";
 import { DataInfo, progressData } from "@/lib/data";
 import SkiaComponent from "@/skia components/tank-container";
 import { ProgressChart } from "react-native-chart-kit";
-import { X } from "@expo/vector-icons";
 import { useState } from "react";
  
+
+
 export function ActionsButton ({ row }: { row: Row<DataInfo> }) { 
     const theme = useTheme();
     const [editing, setEditing] = useState<boolean>(false);
@@ -55,7 +56,7 @@ export function ActionsButton ({ row }: { row: Row<DataInfo> }) {
                  Viewing data
                </SheetTitle>
                <SheetDescription style={{ color: theme?.colors.gray }}>
-                 Make changes to your data here. Click save when you're done.
+                  Make changes to your data here. Click save when you're done.
                </SheetDescription>
              </SheetHeader>
              <ScrollView className="w-full h-screen min-h-screen">
@@ -178,8 +179,8 @@ export function ActionsButton ({ row }: { row: Row<DataInfo> }) {
              style={{ backgroundColor: theme?.colors.background }}
            >
              <AlertDialogHeader>
-               <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-               <AlertDialogDescription>
+               <AlertDialogTitle style={{ color: theme?.colors.text }}>Are you absolutely sure?</AlertDialogTitle>
+               <AlertDialogDescription style={{ color: theme?.colors.text }}>
                  This action cannot be undone. This will permanently delete your
                  data
                </AlertDialogDescription>

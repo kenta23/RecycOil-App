@@ -139,7 +139,7 @@ export default function DashboardWeb({ pieData }: { pieData: any }) {
                     />
                     <View className="flex-col items-center">
                       <Text style={{ color: theme?.colors.text }}>
-                        Chunks filtered
+                        Glycerin level
                       </Text>
                       <Text
                         style={{ color: theme?.colors.text }}

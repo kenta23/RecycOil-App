@@ -341,7 +341,7 @@ export default function AnalyticsWeb() {
                 className="text-[16px] text-center"
                 style={{ color: theme?.colors.gray }}
               >
-                You saved diesel consumption of
+                You saved the carbon footprint of
               </Text>
               <Text className="font-bold text-center text-[64px] text-[#DDA01C]">
                 50 Liters

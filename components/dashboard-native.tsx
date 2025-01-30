@@ -118,7 +118,7 @@ export default function DashboardNative({ pieData }: { pieData: any }) {
               />
               <View className="flex-col items-center">
                 <Text style={{ color: theme?.colors.text }}>
-                  Chunks filtered
+                 Glycerin level
                 </Text>
                 <Text
                   style={{ color: theme?.colors.text }}
@@ -178,13 +178,11 @@ export default function DashboardNative({ pieData }: { pieData: any }) {
               strokeWidth={6}
               radius={20}
               width={300}
-              
               style={{
                  backgroundColor: 'transparent'
               }}
               hideLegend={true}
               chartConfig={{
-              
                 labels: ["Swim", "Bike", "Run"], // optional
                 backgroundGradientFrom: theme?.colors.background,
                 backgroundGradientTo: theme?.colors.background,
