@@ -120,58 +120,65 @@ export default function Analytics() {
             <Text className="text-[22px]" style={{ color: theme?.colors.gray }}>
               Total Production
             </Text>
-            <div className="flex flex-row justify-between w-full">
-              <Text
-                className="text-[18px]"
-                style={{ color: theme?.colors.gray }}
-              >
-                Total Producing Time
-              </Text>
 
-              <div className="flex flex-col items-center lg:flex-row gap-7">
+
+            <View className="flex flex-col justify-between w-full">
+              <View className="flex flex-col items-end gap-3">
                 {/**legend */}
-                <div className="flex flex-row items-center justify-center gap-3">
-                  <div className="flex flex-row items-center justify-center gap-1">
-                    <div className="size-3 bg-[#C8BB2A] rounded-full" />
-                    <p
+                <View className="flex flex-row items-end justify-center gap-3">
+                  <View className="flex flex-row items-center justify-center gap-1">
+                    <View className="size-3 bg-[#C8BB2A] rounded-full" />
+                    <Text
                       className="text-sm font-medium"
                       style={{ color: theme?.colors.text }}
                     >
                       Finished
-                    </p>
-                  </div>
+                    </Text>
+                  </View>
 
-                  <div className="flex flex-row items-center justify-center gap-1">
-                    <div className="size-3 bg-[#E5CA7D] rounded-full" />
-                    <p
+                  <View className="flex flex-row items-center justify-center gap-1">
+                    <View className="size-3 bg-[#E5CA7D] rounded-full" />
+                    <Text
                       className="text-sm font-medium"
                       style={{ color: theme?.colors.text }}
                     >
                       Unfinished
-                    </p>
-                  </div>
+                    </Text>
+                  </View>
 
-                  <div className="flex flex-row items-center justify-center gap-1">
-                    <div className="size-3 bg-[#E5E2BB] rounded-full" />
-                    <p
+                  <View className="flex flex-row items-center justify-center gap-1">
+                    <View className="size-3 bg-[#E5E2BB] rounded-full" />
+                    <Text
                       className="text-sm font-medium"
                       style={{ color: theme?.colors.text }}
                     >
                       Failed
-                    </p>
-                  </div>
-                </div>
+                    </Text>
+                  </View>
+                </View>
                 {/**toggle */}
-                <DropDownPicker
-                  open={open}
-                  value={value}
-                  items={items}
-                  setOpen={setOpen}
-                  setValue={setValue}
-                  setItems={setItems}
-                />
-              </div>
-            </div>
+                <View>
+                  <DropDownPicker
+                    listMode="MODAL"
+                    open={open}
+                    value={value}
+                    items={items}
+                    placeholder="Pick a time"
+                    setOpen={setOpen}
+                    setValue={setValue}
+                    setItems={setItems}
+                    dropDownContainerStyle={{ 
+                      backgroundColor: theme?.colors.background,
+                      borderColor: theme?.colors.gray,
+                      borderWidth: 1
+                    }}
+                    modalTitleStyle={{
+                      color: theme?.colors.text
+                    }}
+                  />
+                </View>
+              </View>
+            </View>
             <BarChart
               height={250}
               yAxisColor={theme?.colors.text}

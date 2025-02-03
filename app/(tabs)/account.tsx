@@ -267,7 +267,7 @@ export default function Account() {
             />
           </View>
 
-          <View className="flex-col items-start gap-2">
+          {/* <View className="flex-col items-start gap-2">
             <Text style={[{ color: theme?.colors.text }]} className="text-lg" nativeID="nickname">
               Nickname
             </Text>
@@ -277,7 +277,7 @@ export default function Account() {
               aria-labelledby="nickname"
               aria-label="nickname input"
             />
-          </View>
+          </View> */}
         </View>
 
         {/**CTA's */}

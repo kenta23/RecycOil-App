@@ -195,22 +195,6 @@ export default function DashboardNative({ pieData }: { pieData: any }) {
           </View>
         </View>
       </View>
-
-      <Image
-        source={
-          theme?.dark
-            ? require("../assets/images/logo-white.png")
-            : require("../assets/images/logo-black.png")
-        }
-        contentFit="contain"
-        style={{
-          width: 100,
-          height: 50,
-          position: "absolute",
-          bottom: 25,
-          right: 10,
-        }}
-      />
      </ScrollView>
     </View>
   );

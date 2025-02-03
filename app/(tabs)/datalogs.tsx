@@ -105,25 +105,6 @@ export default function Datalogs() {
             ))}
           </View>
         </View>
-
-        {/**FOOTER ICON */}
-        <View className="flex-row items-end justify-end mt-12">
-          <Image
-            source={
-              theme?.dark
-                ? require("../../assets/images/logo-white.png")
-                : require("../../assets/images/logo-black.png")
-            }
-            contentFit="contain"
-            style={{
-              width: 100,
-              height: 50,
-              position: "absolute",
-
-              right: 10,
-            }}
-          />
-        </View>
       </ScrollView>
     </View>
   );
