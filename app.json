@@ -19,6 +19,10 @@
         "foregroundImage": "./assets/images/logo-no-background.png",
         "backgroundColor": "#E9FEB1"
       },
+      "dark": {
+        "backgroundColor": "#141514",
+        "foregroundImage": "./assets/images/logo-no-background.png"
+      },
       "versionCode": 1
     },
     "web": {
@@ -52,7 +56,6 @@
           }
         }
       ],
-      "react-native-edge-to-edge",
       "expo-secure-store",
       "expo-font"
     ],

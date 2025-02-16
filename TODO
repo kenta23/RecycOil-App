@@ -10,6 +10,10 @@ Todo:
   ☐ fix and finish datalogs ui on native 
   ✔ add filtering and csv button on datalogs web @done(25-01-14 10:55)
   ✔ add legend and filtering button on analytics @done(25-01-14 10:20)
+
+  @today 
+  ☐ Change the package of phone number input react native (newArch enabled)
+  ☐ fix the splash screen inconsistent background colors around the logo
   
 
 

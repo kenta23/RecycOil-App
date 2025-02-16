@@ -177,7 +177,7 @@ export default function DashboardWeb({ pieData }: { pieData: any }) {
                   data={piechartData}
                   isAnimated
                   radius={100}
-                  innerCircleColor={'#83787A'}
+                  innerCircleColor={theme?.dark ? "#6A6969" : "#fff"}
                   innerRadius={70}
                   centerLabelComponent={() => (
                     <Text

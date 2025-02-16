@@ -8,6 +8,8 @@ import { SystemBars } from 'react-native-edge-to-edge';
 import AuthProvider, { useAuth } from '@/providers/authprovider';
 import 'expo-dev-client';
 import Themeprovider from '../providers/themeprovider';
+import { Platform } from 'react-native';
+import { Toaster } from '@/components/ui/sonner';
 
 
 const darkMode = {
@@ -77,6 +79,8 @@ export default function RootLayout() {
           <Stack.Screen name="(tabs)" />
         </Stack>
         <SystemBars hidden={false} style={colorScheme === "dark" ? 'dark' : 'light'}/>
+        
+        {Platform.OS === 'web' && <Toaster />}
     </Themeprovider>
     </AuthProvider>
   );

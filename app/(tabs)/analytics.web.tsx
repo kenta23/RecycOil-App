@@ -171,12 +171,6 @@ export default function AnalyticsWeb() {
         showsVerticalScrollIndicator={false}
         className="w-full h-auto max-h-screen px-4 pb-4 md:px-6 lg:px-8"
       >
-        <h1
-          className="mt-8 font-medium md:text-lg xl:text-2xl"
-          style={{ color: theme?.colors.text }}
-        >
-          Analytics
-        </h1>
 
         <View className="flex items-start justify-center w-full mt-4 lg:items-center">
           {/**Bar chart */}
@@ -184,10 +178,10 @@ export default function AnalyticsWeb() {
             
             <div className="flex flex-row justify-between w-full">
               <Text
-                className="text-[18px]"
+                className="mt-8 font-medium md:text-lg xl:text-2xl"
                 style={{ color: theme?.colors.gray }}
               >
-                Total Producing Time
+                Total Production
               </Text>
 
               <div className="flex flex-col items-center lg:flex-row gap-7">
@@ -341,10 +335,11 @@ export default function AnalyticsWeb() {
                 className="text-[16px] text-center"
                 style={{ color: theme?.colors.gray }}
               >
-                You saved the carbon footprint of
+                 You saved Carbon footprint (CO₂e) of
               </Text>
               <Text className="font-bold text-center text-[64px] text-[#DDA01C]">
-                50 Liters
+                {/** Formula: used oil litres × 1.8 = kg CO₂e saved */}
+                50kg
               </Text>
             </View>
           </View>

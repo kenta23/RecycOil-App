@@ -16,7 +16,7 @@ import PhoneInput, {
 import { Entypo } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
-
+import { toast } from 'sonner';
 
 export default function Auth() {
   const [loading, setLoading] = useState(false)
@@ -90,9 +90,16 @@ const performOAuth = async (provider: Provider) => {
    const phoneNumberObj = parsePhoneNumberFromString(phoneNumber, 'PH');
 
    if (!phoneNumberObj || !phoneNumberObj.isValid()) {
-     Alert.alert('Invalid phone number', 'Please enter a valid phone number.');
-     return;
-   }
+     if (Platform.OS === "web") {
+       toast.error("Invalid phone number, Please enter a valid phone number.");
+     } else {
+       Alert.alert(
+         "Invalid phone number",
+         "Please enter a valid phone number."
+       );
+       return;
+     }
+   } else {
      const { data, error } = await supabase.auth.signInWithOtp({
        phone: phoneNumberObj.format("E.164"),
      });
@@ -105,6 +112,7 @@ const performOAuth = async (provider: Provider) => {
        }
        router.push("/(auth)/verify");
      }
+   }
    } catch (error) {
      console.log(error);
      throw new Error(error as string);
@@ -129,13 +137,11 @@ if(session?.user) {
           alt="RecycOil logo"
         />
         <Text
-          className={"text-center font-semibold text-2xl"}
-          style={
-            Platform.OS === "web" && {
-              fontSize: 35,
-              color: theme?.colors.text,
-            }
-          }
+          className="text-2xl font-semibold text-center"
+          style={{
+            color: theme?.colors.text,
+            fontSize: Platform.OS === "web" ? 35 : undefined,
+          }}
         >
           RecycOil Login
         </Text>
@@ -154,8 +160,8 @@ if(session?.user) {
           onChangeSelectedCountry={handleSelectedCountry}
           placeholder='Enter your phone'    
         />
-
-        <Pressable onPress={handleSignInWithOTP} className="flex-row items-center justify-center w-full h-auto gap-3 py-4 rounded-lg shadow-sm bg-[#668B38] cursor-pointer">
+      
+        <Pressable onPress={ handleSignInWithOTP } className="flex-row items-center justify-center w-full h-auto gap-3 py-4 rounded-lg shadow-sm bg-[#668B38] cursor-pointer">
           <Text
             style={{ color: '#ffff' }}
             className={`text-lg text-center`}

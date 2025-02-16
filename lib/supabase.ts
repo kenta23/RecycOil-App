@@ -17,7 +17,7 @@ class LargeSecureStore {
     const cipher = new aesjs.ModeOfOperation.ctr(encryptionKey, new aesjs.Counter(1));
     const encryptedBytes = cipher.encrypt(aesjs.utils.utf8.toBytes(value));
 
-  if(Platform.OS === 'web') { 
+  if (Platform.OS === 'web') { 
      localStorage.setItem(key, aesjs.utils.hex.fromBytes(encryptionKey));
   }
   else {
@@ -85,7 +85,7 @@ class LargeSecureStore {
 
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL!
 const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!
-const supabaseServiceRoleKey= process.env.EXPO_PUBLIC_SUPABASE_SERVICE_ROLE!
+// const supabaseServiceRoleKey= process.env.EXPO_PUBLIC_SUPABASE_SERVICE_ROLE!
 
 
 const isBrowser = typeof window !== 'undefined' && typeof localStorage !== 'undefined';

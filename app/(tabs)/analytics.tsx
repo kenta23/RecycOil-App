@@ -123,10 +123,10 @@ export default function Analytics() {
 
 
             <View className="flex flex-col justify-between w-full">
-              <View className="flex flex-col items-end gap-3">
+              <View className="flex flex-row items-end gap-3">
                 {/**legend */}
                 <View className="flex flex-row items-end justify-center gap-3">
-                  <View className="flex flex-row items-center justify-center gap-1">
+                  <View className="flex flex-row items-center justify-between gap-1">
                     <View className="size-3 bg-[#C8BB2A] rounded-full" />
                     <Text
                       className="text-sm font-medium"
@@ -159,7 +159,7 @@ export default function Analytics() {
                 {/**toggle */}
                 <View>
                   <DropDownPicker
-                    listMode="MODAL"
+                    listMode="SCROLLVIEW"
                     open={open}
                     value={value}
                     items={items}
@@ -167,10 +167,11 @@ export default function Analytics() {
                     setOpen={setOpen}
                     setValue={setValue}
                     setItems={setItems}
+                    style={{ height: 30, width: 155, }}
                     dropDownContainerStyle={{ 
                       backgroundColor: theme?.colors.background,
                       borderColor: theme?.colors.gray,
-                      borderWidth: 1
+                      borderWidth: 1,
                     }}
                     modalTitleStyle={{
                       color: theme?.colors.text
@@ -268,16 +269,17 @@ export default function Analytics() {
             </View>
           </View>
 
-          <View className="size-[290px] shadow-green-300 shadow-lg  mt-12 items-center justify-center rounded-full border-[1px] border-[#65DE9D]">
+          <View style={{ backgroundColor: theme?.colors.background }} className="size-[290px] shadow-green-300 shadow-lg  mt-12 items-center justify-center rounded-full border-[1px] border-[#65DE9D]">
             <View className="items-center justify-center w-full">
               <Text
                 className="text-[16px] text-center"
                 style={{ color: theme?.colors.gray }}
               >
-                You saved carbon footprint of
+                 You saved Carbon footprint (CO₂e) of
               </Text>
               <Text className="font-bold text-center text-[48px] text-[#DDA01C]">
-                50 Liters
+                {/** Formula: used oil litres × 1.8 = kg CO₂e saved */}
+                50 kg
               </Text>
             </View>
           </View>
