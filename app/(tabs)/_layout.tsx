@@ -16,8 +16,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { Button } from "@/components/ui/button"
 import BackButton from '@/components/backbutton'
+import { useTheme } from '@/providers/themeprovider'
 
 const linkStyles = 'flex flex-row group hover:bg-primaryColor hover:text-white transition-all ease-out duration-200 items-center gap-2 py-3 px-4';
 
@@ -95,6 +95,7 @@ function TabBarBackground (props: BottomTabBarProps) {
     const openDrawer = () => setDrawerVisible(true);
     const closeDrawer = () => setDrawerVisible(false);
     const [showWebAlert, setShowWebAlert] = useState<boolean>(false);
+    const theme = useTheme();
     
 
 
@@ -177,12 +178,10 @@ function TabBarBackground (props: BottomTabBarProps) {
                   <AlertDialogContent>
                     <AlertDialogHeader>
                       <AlertDialogTitle>
-                        Are you absolutely sure?
+                        Sign out
                       </AlertDialogTitle>
-                      <AlertDialogDescription>
-                        This action cannot be undone. This will permanently
-                        delete your account and remove your data from our
-                        servers.
+                      <AlertDialogDescription style={{ color: theme?.colors.gray }}>
+                         Are you sure you want to sign out?
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>

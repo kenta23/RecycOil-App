@@ -1,9 +1,6 @@
-import { View, Text, Pressable, ScrollView,  } from "react-native";
+import { View, Text, ScrollView } from "react-native";
 import React, { useState } from "react";
-import { supabase } from "@/lib/supabase";
-import { Redirect } from "expo-router";
-import { BarChart, PieChart } from "react-native-gifted-charts";
-import { ProgressChart } from "react-native-chart-kit";
+import { BarChart } from "react-native-gifted-charts";
 import { Image } from "expo-image";
 import { useTheme } from "@/providers/themeprovider";
 import DropDownPicker from "react-native-dropdown-picker";
@@ -163,19 +160,20 @@ export default function Analytics() {
                     open={open}
                     value={value}
                     items={items}
-                    placeholder="Pick a time"
+                    placeholder="Weekly"
                     setOpen={setOpen}
                     setValue={setValue}
                     setItems={setItems}
-                    style={{ height: 30, width: 155, }}
+                    style={{ height: 30, width: 150, }}
                     dropDownContainerStyle={{ 
                       backgroundColor: theme?.colors.background,
                       borderColor: theme?.colors.gray,
                       borderWidth: 1,
                     }}
-                    modalTitleStyle={{
-                      color: theme?.colors.text
-                    }}
+                    maxHeight={200}
+                    textStyle={{  color: theme?.colors.gray }}
+                    placeholderStyle={{ color: theme?.colors.text }}
+                    
                   />
                 </View>
               </View>

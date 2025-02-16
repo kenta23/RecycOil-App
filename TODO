@@ -12,7 +12,7 @@ Todo:
   ✔ add legend and filtering button on analytics @done(25-01-14 10:20)
 
   @today 
-  ☐ Change the package of phone number input react native (newArch enabled)
+  ✔ Change the package of phone number input react native (newArch enabled) @done(25-02-17 07:16)
   ☐ fix the splash screen inconsistent background colors around the logo
   
 

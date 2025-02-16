@@ -17,6 +17,8 @@ import { Entypo } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { toast } from 'sonner';
+import { useFonts } from 'expo-font';
+
 
 export default function Auth() {
   const [loading, setLoading] = useState(false)
@@ -25,7 +27,7 @@ export default function Auth() {
   const router = useRouter();
   const [selectedCountry, setSelectedCountry] =
   useState<null | ICountry>(null);
-  const navigat = useNavigation();
+
 
 const [phoneNumber, setphoneNumber] = useState<string>('');
 console.log(phoneNumber);
@@ -140,7 +142,7 @@ if(session?.user) {
           className="text-2xl font-semibold text-center"
           style={{
             color: theme?.colors.text,
-            fontSize: Platform.OS === "web" ? 35 : undefined,
+            fontSize: Platform.OS === "web" ? 35 : 22,
           }}
         >
           RecycOil Login

@@ -42,7 +42,6 @@
             "backgroundColor": "#141514"
           },
           "android": {
-            "backgroundColor": "#ECE499",
             "resizeMode": "cover",
             "image": "./assets/images/splash icon/hdpi.png",
             "mdpi": "./assets/images/splash icon/mdpi.png",
