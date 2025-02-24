@@ -175,7 +175,8 @@ function TabBarBackground (props: BottomTabBarProps) {
                       </Text>
                     </TouchableOpacity>
                   </AlertDialogTrigger>
-                  <AlertDialogContent>
+
+                  <AlertDialogContent style={{ backgroundColor: theme?.colors.background, color: theme?.colors.text,  }}>
                     <AlertDialogHeader>
                       <AlertDialogTitle>
                         Sign out
@@ -185,7 +186,7 @@ function TabBarBackground (props: BottomTabBarProps) {
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel onClick={() => setShowWebAlert(false)}>Cancel</AlertDialogCancel>
+                      <AlertDialogCancel style={{ color: theme?.colors.text, backgroundColor: theme?.dark ? '#3e3e3e' : '#f4f3f4' }} onClick={() => setShowWebAlert(false)}>Cancel</AlertDialogCancel>
                       <AlertDialogAction onClick={() => supabase.auth.signOut()} className='bg-red-500 hover:bg-red-200'>Yes</AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
