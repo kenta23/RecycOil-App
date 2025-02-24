@@ -13,11 +13,12 @@
         "buildType": "apk",
         "config": "android-build.yml"
       },
-      "ios": { 
+      "ios": {
         "simulator": true,
         "autoIncrement": true,
         "withoutCredentials": true
-      }
+      },
+      "channel": "development"
     },
     "preview": {
       "distribution": "internal",
@@ -28,10 +29,12 @@
       "android": {
         "gradleCommand": ":app:assembleDebug",
         "buildType": "apk"
-      }
+      },
+      "channel": "preview"
     },
     "production": {
-      "autoIncrement": true
+      "autoIncrement": true,
+      "channel": "production"
     }
   },
   "submit": {
