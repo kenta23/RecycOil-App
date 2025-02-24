@@ -10,7 +10,13 @@
       "extends": "production",
       "android": {
         "gradleCommand": ":app:assembleDebug",
-        "buildType": "apk"
+        "buildType": "apk",
+        "config": "android-build.yml"
+      },
+      "ios": { 
+        "simulator": true,
+        "autoIncrement": true,
+        "withoutCredentials": true
       }
     },
     "preview": {
