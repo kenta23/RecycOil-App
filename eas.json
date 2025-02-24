@@ -19,7 +19,7 @@
         "simulator": true
       },
       "android": {
-        "gradleCommand": ":app:assembleDebug",
+        "gradleCommand": ":app:assembleRelease",
         "buildType": "apk"
       }
     },
