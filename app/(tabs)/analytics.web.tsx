@@ -347,14 +347,14 @@ export default function AnalyticsWeb() {
                   </Text>
 
                   <View className="flex-row items-center justify-between w-full">
-                    <Text className="font-bold text-[27px] text-[#D62F19]">
+                    <Text className="font-bold text-[27px] text-[#22546F]">
                       250 liters
                     </Text>
                     <Image
                       source={require("../../assets/images/oil.png")}
                       style={{
-                        width: 140,
-                        height: 100,
+                        width: 100,
+                        height: 85,
                       }}
                       contentFit="contain"
                     />
