@@ -230,6 +230,7 @@ export default function Analytics() {
                     contentFit="contain"
                   />
                 </View>
+                
               </View>
             </View>
           </View>
