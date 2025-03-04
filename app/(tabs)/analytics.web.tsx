@@ -156,7 +156,7 @@ export default function AnalyticsWeb() {
     data: [0.4, 0.6, 0.8]
   };
 
-  const cardContainerStyle = "w-[380px] rounded-lg items-center justify-center px-4 py-2 border-[1px] border-[#E5E5EF] shadow-gray-300 shadow-sm h-[239px]";
+  const cardContainerStyle = "w-[12.5rem] md:w-[14rem] lg:w-[18rem] rounded-lg items-center justify-center px-4 py-2 border-[1px] border-[#E5E5EF] shadow-gray-300 shadow-sm h-[239px]";
   
   const { width: screenWidth } = useWindowDimensions();
 
@@ -260,11 +260,13 @@ export default function AnalyticsWeb() {
           </View>
         </View>
 
-        <View className="flex flex-col items-center gap-10 mt-16 lg:flex-row justify-evenly">
-          <View className="flex-col gap-8">
+        <View className="flex flex-col items-center gap-16 mt-16 justify-evenly">
+          {/**min, max production, oil volume */}
+
+          <View className="flex-row gap-4 md:gap-6 lg:gap-8">
             <View className={cardContainerStyle}>
               <View className="items-center w-full">
-                <View className="flex-col">
+                <View className="flex-col gap-2">
                   <Text
                     className="font-normal text-[12px]"
                     style={{ color: theme?.colors.gray }}
@@ -278,14 +280,14 @@ export default function AnalyticsWeb() {
                     Min. Production Time
                   </Text>
 
-                  <View className="flex-row items-center justify-between">
+                  <View className="flex-row items-center justify-between w-full">
                     <Text className="font-bold text-[27px] text-[#70761D]">
                       2hr 3min
                     </Text>
                     <Image
                       source={require("../../assets/images/line-graph.png")}
                       style={{
-                        width: 150,
+                        width: 120,
                         height: 115,
                       }}
                       contentFit="contain"
@@ -297,7 +299,7 @@ export default function AnalyticsWeb() {
 
             <View className={cardContainerStyle}>
               <View className="items-center w-full">
-                <View className="flex-col">
+                <View className="flex-col gap-2">
                   <Text
                     className="font-normal text-[12px]"
                     style={{ color: theme?.colors.gray }}
@@ -318,8 +320,41 @@ export default function AnalyticsWeb() {
                     <Image
                       source={require("../../assets/images/line-graph-red.png")}
                       style={{
-                        width: 150,
+                        width: 120,
                         height: 115,
+                      }}
+                      contentFit="contain"
+                    />
+                  </View>
+                </View>
+              </View>
+            </View>
+
+            <View className={cardContainerStyle}>
+              <View className="flex items-center w-full">
+                <View className="flex-col gap-2">
+                  <Text
+                    className="font-normal text-[12px]"
+                    style={{ color: theme?.colors.gray }}
+                  >
+                    Oil volume
+                  </Text>
+                  <Text
+                    className="font-bold text-[16px]"
+                    style={{ color: theme?.colors.text }}
+                  >
+                    Total used oil
+                  </Text>
+
+                  <View className="flex-row items-center justify-between w-full">
+                    <Text className="font-bold text-[27px] text-[#22546F]">
+                      250 liters
+                    </Text>
+                    <Image
+                      source={require("../../assets/images/oil.png")}
+                      style={{
+                        width: 100,
+                        height: 85,
                       }}
                       contentFit="contain"
                     />

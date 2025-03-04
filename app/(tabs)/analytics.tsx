@@ -230,6 +230,7 @@ export default function Analytics() {
                     contentFit="contain"
                   />
                 </View>
+                
               </View>
             </View>
           </View>
@@ -263,6 +264,41 @@ export default function Analytics() {
                     contentFit="contain"
                   />
                 </View>
+              </View>
+            </View>
+          </View>
+
+
+          <View style={{ borderRadius: "50px" }} className={cardContainerStyle}>
+            <View className="items-center w-full">
+              <View className="flex-col">
+                <Text
+                  className="font-normal text-[12px]"
+                  style={{ color: theme?.colors.gray }}
+                >
+                  Production
+                </Text>
+                <Text
+                  className="font-bold text-[16px]"
+                  style={{ color: theme?.colors.text }}
+                >
+                  Total used oil
+                </Text>
+
+                <View className="flex-row items-center justify-between">
+                  <Text className="font-bold text-[27px] text-[#22546F]">
+                    2hr 3min
+                  </Text>
+                  <Image
+                    source={require("../../assets/images/oil.png")}
+                    style={{
+                      width: 150,
+                      height: 85,
+                    }}
+                    contentFit="contain"
+                  />
+                </View>
+                
               </View>
             </View>
           </View>

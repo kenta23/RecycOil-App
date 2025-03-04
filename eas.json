@@ -9,8 +9,16 @@
       "distribution": "internal",
       "extends": "production",
       "android": {
-        "gradleCommand": ":app:assembleDebug"
-      }
+        "gradleCommand": ":app:assembleRelease",
+        "buildType": "apk",
+        "config": "android-build.yml"
+      },
+      "ios": {
+        "simulator": true,
+        "autoIncrement": true,
+        "withoutCredentials": true
+      },
+      "channel": "development"
     },
     "preview": {
       "distribution": "internal",
@@ -21,10 +29,12 @@
       "android": {
         "gradleCommand": ":app:assembleRelease",
         "buildType": "apk"
-      }
+      },
+      "channel": "preview"
     },
     "production": {
-      "autoIncrement": true
+      "autoIncrement": true,
+      "channel": "production"
     }
   },
   "submit": {
