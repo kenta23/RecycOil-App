@@ -12,6 +12,8 @@ const pieData = [
   {value: 26, color: '#ED6665', text: '26%'},
   ];
 
+
+  
 export default function Dashboard() {
   const [power, setPower] = useState<boolean>(false);
   const theme = useTheme();
@@ -20,29 +22,8 @@ export default function Dashboard() {
 
   
   return (
-    <View style={{ backgroundColor: theme?.colors.background }}>
-      {power ? (
-        <Viewdashboard />
-      ) : (
-        <View style={{ backgroundColor: theme?.colors.background }} className="flex items-center justify-center w-full h-full min-h-screen">
-          <View style={styles.container}>
-            <Text
-              style={
-                { color: theme?.colors.text, fontSize: 20 }
-              }
-            >
-              The Machine is turned off
-            </Text>
-            <Switch
-              trackColor={{ false: "#767577", true: "#81b0ff" }}
-              thumbColor={power ? "#f5dd4b" : "#f4f3f4"}
-              ios_backgroundColor="#3e3e3e"
-              onValueChange={() => setPower((previousState) => !previousState)}
-              value={power}
-            />
-          </View>
-        </View>
-      )}
+    <View className="w-full h-full min-h-screen pt-2 pb-4" style={{ backgroundColor: theme?.colors.background }}>
+       <Viewdashboard />
     </View>
   );
 }

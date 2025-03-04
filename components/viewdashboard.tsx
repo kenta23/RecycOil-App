@@ -24,6 +24,5 @@ export default function Viewdashboard() {
     { value: remainingVolume, color: 'lightgray', },
   ];
 
-
-  return Platform.OS === "web" ? <DashboardWeb pieData={pieData} /> : <DashboardNative pieData={pieData}/>
+  return <DashboardNative pieData={pieData}/>
 }

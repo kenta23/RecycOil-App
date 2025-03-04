@@ -1,4 +1,4 @@
-import { View, Text, Pressable, ScrollView } from 'react-native'
+import { View, Text, Pressable, ScrollView, Platform } from 'react-native'
 import React from 'react'
 import { AntDesign, Feather, FontAwesome, FontAwesome6, MaterialCommunityIcons } from '@expo/vector-icons';
 import SkiaComponent from '@/skia components/tank-container';
@@ -8,6 +8,7 @@ import { useTheme } from '@/providers/themeprovider';
 import { Image } from 'expo-image';
 import { ProgressChart } from 'react-native-chart-kit';
 import { piechartData, progressData } from '@/lib/data';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 const cardStyle = `w-[300px] px-4 bg-white/20 py-3 h-[180px] shadow-sm border-[1px] border-[#BAB9AC] rounded-lg`;
@@ -17,48 +18,46 @@ export default function DashboardNative({ pieData }: { pieData: any }) {
     const theme = useTheme();
     
   return (
-   <View className='w-full h-full min-h-screen' style={{ backgroundColor: theme?.colors.background }}>
-     <ScrollView showsVerticalScrollIndicator={false} className={`w-full px-4 py-4 max-h-screen-safe-offset-2 h-auto`}>
+   <SafeAreaView edges={['bottom']} className='w-full h-full min-h-screen' style={{ backgroundColor: theme?.colors.background }}>
+     <ScrollView scrollEnabled showsVerticalScrollIndicator={false} className={`w-full pb-4 px-4 max-h-screen-safe-offset-2 h-full`}>
       {/** Main Sensor view */}
-      <View className="w-full mt-2 ">
-        {/**Status  */}
-        <View className="flex flex-row justify-between w-full mb-6">
-            {/** make a conditional statement here if the machine is running or already finished */}
-            <View className="flex flex-row items-center gap-2">
-              {/* <AntDesign name="checkcircle" size={18} color="green" />
-              <Text
-                className="text-sm font-semibold"
-                style={{ color: theme?.colors.text }}
-              >
-                Status
-              </Text> */}
-              <FontAwesome name="circle" size={18} color="#DDAA1D" />
-              <Text  style={{ color: theme?.colors.text, fontSize: 16, fontWeight: 'semibold' }}>Running</Text>
-            </View>
 
-            {/**Machine Start again Button */}
-            <Pressable className="flex-row items-center gap-2">
-              {/* <Feather name="power" size={18} color="green" />
-              <Text
-                className="text-[16px] font-normal"
-                style={{ color: theme?.colors.text }}
-              >
-                Start new
-              </Text>
-            */}
-              <MaterialCommunityIcons name="stop-circle" size={18} color="#EF4949" />
-              <Text
-                style={{ color: theme?.colors.text,  fontSize: 16, fontWeight: 'semibold' }}
-              >
-                Stop
-              </Text>
-            </Pressable>
+      {/**push buttons */}
+      <View className='flex self-center justify-center flex-row w-auto max-w-[19.6rem] h-auto py-2 items-center gap-16'>
+          <View className='flex flex-col items-center gap-2'>
+             <View className='p-2 bg-[#EFE3CA] rounded-full'>
+               <Pressable className='bg-[#6FEA37] size-8 rounded-full'/>
+             </View>
+             <Text className='text-sm' style={{ color: theme?.colors.text }}>Start</Text>
           </View>
 
+          <View className='flex flex-col items-center gap-2'>
+             <View className='p-2 bg-[#EFE3CA] rounded-full'>
+               <Pressable className='bg-[#e9c536] size-8 rounded-full'/>
+             </View>
+             <Text className='text-sm' style={{ color: theme?.colors.text }}>Pause</Text>
+          </View>
+
+          <View className='flex flex-col items-center gap-2'>
+             <View className='p-2 bg-[#EFE3CA] rounded-full'>
+               <Pressable className='bg-[#e93636] size-8 rounded-full'/>
+             </View>
+             <Text className='text-sm' style={{ color: theme?.colors.text }}>Stop</Text>
+          </View>
+            
+      </View>
+
+
+      <View className="w-full mt-2">
         <View className="flex flex-col items-center gap-6">
-          {/**Pie chart biodiesel sensor */}
+          {/**bar chart biodiesel sensor */}
           <View className="flex flex-col gap-3">
-            <SkiaComponent color='#78B544' width={160} height={250} maxValue={5} value={3} />
+            <SkiaComponent
+              color='#78B544'
+              {...(Platform.OS === 'web' ? { width: 190, height: 300 } : {  width: 160, height: 250 })}
+              maxValue={5}
+              value={3}
+            />
             <Text
               style={{ color: theme?.colors.text }}
               className="text-lg font-medium text-center"
@@ -69,7 +68,7 @@ export default function DashboardNative({ pieData }: { pieData: any }) {
 
           {/**Temp sensors, Flow rate, etc. */}
 
-          <View className="flex-row items-center justify-around w-full ">
+          <View className="flex-row items-center w-full justify-evenly ">
             {/** Temp sensor */}
             <View className="flex flex-col items-center w-auto gap-2">
               <Progress.Bar
@@ -107,39 +106,18 @@ export default function DashboardNative({ pieData }: { pieData: any }) {
                 </Text>
               </View>
             </View>
-
-            {/** Chunks filtered */}
-            <View className="flex flex-col items-center w-auto gap-2">
-              <Progress.Bar
-                color="#629EF9"
-                progress={0.4}
-                width={100}
-                height={8}
-              />
-              <View className="flex-col items-center">
-                <Text style={{ color: theme?.colors.text }}>
-                 Glycerin level
-                </Text>
-                <Text
-                  style={{ color: theme?.colors.text }}
-                  className="text-lg font-semibold"
-                >
-                  95%
-                </Text>
-              </View>
-            </View>
           </View>
         </View>
       </View>
 
       {/** Oil Volume and Time production cards */}
-      <View  className="flex-col items-center justify-center gap-5 mt-10 mb-[100px] text-white">
+      <View className={`${Platform.OS === 'web' ? 'flex-row mt-10' : 'flex-col mt-8'} items-center w-full justify-center gap-8 text-white`}>
         <View
           style={{ borderRadius: 16, backgroundColor: theme?.colors.background }}
-          className="w-[80%] gap-8 px-4 py-2 border-[1px] border-[#E5E5EF] shadow-gray-300 shadow-sm h-[250px]"
+          className="w-[20.43rem] h-[16.5rem] gap-8 px-4 py-2 border-[1px] border-[#E5E5EF]"
         >
          <View className="gap-2">
-            <Text className="text-[18px] font-medium" style={{ color: theme?.colors.gray }}>
+            <Text className="text-lg font-medium" style={{ color: theme?.colors.gray }}>
               Oil Volume
             </Text>
             <View className="border-[1px] border-[#E5E5EF] h-[1px] w-full" />
@@ -147,37 +125,36 @@ export default function DashboardNative({ pieData }: { pieData: any }) {
 
 
           {/** Charts here */}
-          <View className="items-center justify-center mt-7">
+          <View className="items-center justify-center">
             <PieChart
-              semiCircle
               donut
               data={piechartData}
               isAnimated
-              radius={100}
+              radius={70}
               backgroundColor={theme?.colors.background}
-              innerRadius={70}
+              innerRadius={50}
               centerLabelComponent={() => (
-                <Text className="text-[18px] font-semibold" style={{ color: theme?.colors.text }}>3 liters</Text>
+                <Text className="text-sm font-semibold" style={{ color: theme?.colors.text }}>3 liters</Text>
               )}
             />
           </View>
         </View>
 
-        <View style={{ borderRadius: 16, backgroundColor: theme?.colors.background }} className="w-[80%] gap-4 px-4 py-2 border-[1px] border-[#E5E5EF] shadow-gray-300 shadow-sm h-[250px]">
+        <View style={{ borderRadius: 16, backgroundColor: theme?.colors.background }} className="w-[20.43rem] h-[16.5rem] gap-2 px-4 py-2 border-[1px] border-[#E5E5EF]">
           <View className="gap-2">
-            <Text className="text-[18px] font-medium" style={{ color: theme?.colors.gray }}>
-              Production Time
+            <Text className="text-lg font-medium" style={{ color: theme?.colors.gray }}>
+              Production Time 
             </Text>
             <View className="border-[1px] border-[#E5E5EF] h-[1px] w-full" />
           </View>
 
-          <View className="items-center ">
+          <View className="items-center">
             <ProgressChart
               data={progressData}
               height={150}
               strokeWidth={6}
               radius={20}
-              width={300}
+              width={260}
               style={{
                  backgroundColor: 'transparent'
               }}
@@ -191,11 +168,11 @@ export default function DashboardNative({ pieData }: { pieData: any }) {
                 useShadowColorFromDataset: false, // optional
               }}
             />
-            <Text className="text-[18px] font-semibold" style={{ color: theme?.colors.text }}>1 hour 30 minutes</Text>
+            <Text className="text-sm font-semibold" style={{ color: theme?.colors.text }}>1 hour 30 minutes</Text>
           </View>
         </View>
       </View>
      </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
