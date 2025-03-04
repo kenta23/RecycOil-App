@@ -104,7 +104,7 @@ export default function Analytics() {
 
   return (
     <View
-      className="w-full h-full min-h-screen"
+      className="w-full h-full min-h-screen pt-2 pb-4"
       style={{ backgroundColor: theme?.colors.background }}
     >
       <ScrollView
@@ -118,85 +118,91 @@ export default function Analytics() {
               Total Production
             </Text>
 
+            <View className="flex flex-row items-center justify-end w-full gap-3">
+              {/**Dropdown picker */}
+              <DropDownPicker
+                listMode="SCROLLVIEW"
+                open={open}
+                value={value}
+                items={items}
+                placeholder="Weekly"
+                setOpen={setOpen}
+                setValue={setValue}
+                setItems={setItems}
+                style={{
+                  height: 40,
+                  width: 120,
+                  alignSelf: "flex-end",
+                }}
+                dropDownContainerStyle={{
+                  backgroundColor: theme?.colors.background,
+                  borderColor: theme?.colors.gray,
+                  borderWidth: 1,
+                }}
+                containerStyle={{
+                  width: 120,
+                  alignSelf: 'flex-end'
+                }}
+                maxHeight={180}
+                textStyle={{ color: theme?.colors.gray }}
+                placeholderStyle={{ color: theme?.colors.text }}
+              />
+            </View>
 
-            <View className="flex flex-col justify-between w-full">
-              <View className="flex flex-row items-end gap-3">
-                {/**legend */}
-                <View className="flex flex-row items-end justify-center gap-3">
-                  <View className="flex flex-row items-center justify-between gap-1">
-                    <View className="size-3 bg-[#C8BB2A] rounded-full" />
-                    <Text
-                      className="text-sm font-medium"
-                      style={{ color: theme?.colors.text }}
-                    >
-                      Finished
-                    </Text>
-                  </View>
+            <View className="flex flex-col items-end justify-end px-2 gap-7">
+              <BarChart
+                height={250}
+                yAxisColor={theme?.colors.text}
+                verticalLinesColor={theme?.colors.text}
+                yAxisIndicesColor={theme?.colors.text}
+                xAxisIndicesColor={theme?.colors.text}
+                yAxisTextStyle={{ color: theme?.colors.text }}
+                xAxisLabelTextStyle={{ color: theme?.colors.text }}
+                xAxisThickness={1}
+                xAxisColor={theme?.colors.text}
+                yAxisThickness={0.5}
+                width={300}
+                noOfSections={4}
+                maxValue={500}
+                stackData={stackData}
+                isAnimated
+                animationDuration={2000}
+                barWidth={40}
+              />
 
-                  <View className="flex flex-row items-center justify-center gap-1">
-                    <View className="size-3 bg-[#E5CA7D] rounded-full" />
-                    <Text
-                      className="text-sm font-medium"
-                      style={{ color: theme?.colors.text }}
-                    >
-                      Unfinished
-                    </Text>
-                  </View>
-
-                  <View className="flex flex-row items-center justify-center gap-1">
-                    <View className="size-3 bg-[#E5E2BB] rounded-full" />
-                    <Text
-                      className="text-sm font-medium"
-                      style={{ color: theme?.colors.text }}
-                    >
-                      Failed
-                    </Text>
-                  </View>
+              {/**legend */}
+              <View className="flex flex-row items-end justify-end gap-4">
+                <View className="flex flex-row items-center justify-between gap-1">
+                  <View className="size-3 bg-[#C8BB2A] rounded-full" />
+                  <Text
+                    className="text-sm font-medium"
+                    style={{ color: theme?.colors.text }}
+                  >
+                    Finished
+                  </Text>
                 </View>
-                {/**toggle */}
-                <View>
-                  <DropDownPicker
-                    listMode="SCROLLVIEW"
-                    open={open}
-                    value={value}
-                    items={items}
-                    placeholder="Weekly"
-                    setOpen={setOpen}
-                    setValue={setValue}
-                    setItems={setItems}
-                    style={{ height: 30, width: 150, }}
-                    dropDownContainerStyle={{ 
-                      backgroundColor: theme?.colors.background,
-                      borderColor: theme?.colors.gray,
-                      borderWidth: 1,
-                    }}
-                    maxHeight={200}
-                    textStyle={{  color: theme?.colors.gray }}
-                    placeholderStyle={{ color: theme?.colors.text }}
-                    
-                  />
+
+                <View className="flex flex-row items-center justify-center gap-1">
+                  <View className="size-3 bg-[#E5CA7D] rounded-full" />
+                  <Text
+                    className="text-sm font-medium"
+                    style={{ color: theme?.colors.text }}
+                  >
+                    Unfinished
+                  </Text>
+                </View>
+
+                <View className="flex flex-row items-center justify-center gap-1">
+                  <View className="size-3 bg-[#E5E2BB] rounded-full" />
+                  <Text
+                    className="text-sm font-medium"
+                    style={{ color: theme?.colors.text }}
+                  >
+                    Failed
+                  </Text>
                 </View>
               </View>
             </View>
-            <BarChart
-              height={250}
-              yAxisColor={theme?.colors.text}
-              verticalLinesColor={theme?.colors.text}
-              yAxisIndicesColor={theme?.colors.text}
-              xAxisIndicesColor={theme?.colors.text}
-              yAxisTextStyle={{ color: theme?.colors.text }}
-              xAxisLabelTextStyle={{ color: theme?.colors.text }}
-              xAxisThickness={1}
-              xAxisColor={theme?.colors.text}
-              yAxisThickness={0.5}
-              width={300}
-              noOfSections={4}
-              maxValue={500}
-              stackData={stackData}
-              isAnimated
-              animationDuration={2000}
-              barWidth={40}
-            />
           </View>
         </View>
 
@@ -230,7 +236,6 @@ export default function Analytics() {
                     contentFit="contain"
                   />
                 </View>
-                
               </View>
             </View>
           </View>
@@ -268,7 +273,6 @@ export default function Analytics() {
             </View>
           </View>
 
-
           <View style={{ borderRadius: "50px" }} className={cardContainerStyle}>
             <View className="items-center w-full">
               <View className="flex-col">
@@ -298,25 +302,28 @@ export default function Analytics() {
                     contentFit="contain"
                   />
                 </View>
-                
               </View>
             </View>
           </View>
 
-          <View style={{ backgroundColor: theme?.colors.background }} className="size-[290px] shadow-green-300 shadow-lg  mt-12 items-center justify-center rounded-full border-[1px] border-[#65DE9D]">
+          <View
+            style={{ backgroundColor: theme?.colors.background }}
+            className="size-[18rem] px-3 py-1 shadow-green-300 shadow-lg  mt-12 mb-8 items-center justify-center rounded-full border-[1px] border-[#65DE9D]"
+          >
             <View className="items-center justify-center w-full">
               <Text
-                className="text-[16px] text-center"
+                className="text-center text-md"
                 style={{ color: theme?.colors.gray }}
               >
-                 You saved Carbon footprint (CO₂e) of
+                You saved total Carbon footprint (CO₂e) of
               </Text>
-              <Text className="font-bold text-center text-[48px] text-[#DDA01C]">
+              <Text className="font-bold text-center text-[3.7rem] text-[#DDA01C]">
                 {/** Formula: used oil litres × 1.8 = kg CO₂e saved */}
                 50 kg
               </Text>
             </View>
           </View>
+
         </View>
       </ScrollView>
     </View>

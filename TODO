@@ -13,7 +13,12 @@ Todo:
 
   @today 
   ✔ Change the package of phone number input react native (newArch enabled) @done(25-02-17 07:16)
-  ☐ fix the splash screen inconsistent background colors around the logo
+  ✔ fix the splash screen inconsistent background colors around the logo @done(25-03-04 09:25)@done(25-03-04 09:25)
+
+  ✔ fix dashboard new ui with three buttons @done(25-03-04 11:03)
+  ✔ fix responsive design for even smaller devices @done(25-03-04 11:03)
+  ✔ fix analytics bar chart ui @done(25-03-04 11:32)
+  ☐ implement bluetooth function 
   
 
 

@@ -12,7 +12,7 @@ export default function Datalogs() {
 
   return (
     <View
-      className="w-full min-h-screen"
+      className="w-full min-h-screen pt-2 pb-4"
       style={{ backgroundColor: theme?.colors.background }}
     >
       <ScrollView

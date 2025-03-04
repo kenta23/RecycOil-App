@@ -87,8 +87,7 @@ export default function DatalogsWeb() {
         <h1 className="mt-8 font-medium md:text-lg xl:text-2xl">Your Data</h1>
 
         {/**TABLE */}
-    <div className="w-full flex flex-col justify-between items-center mt-8 min-h-[400px] lg:min-h-[500px] xl:min-h-[600px]">
-
+  <div className="w-full flex flex-col justify-between items-center mt-8 min-h-[400px] lg:min-h-[500px] xl:min-h-[600px]">
       <div className='flex flex-col items-end w-full'>
           {/**filter and csv action button */}
            <div className='flex flex-row items-center gap-3'>
