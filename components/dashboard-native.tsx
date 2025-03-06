@@ -14,8 +14,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 const cardStyle = `w-[300px] px-4 bg-white/20 py-3 h-[180px] shadow-sm border-[1px] border-[#BAB9AC] rounded-lg`;
 
 
-export default function DashboardNative({ pieData }: { pieData: any }) {
+export default function DashboardNative({ pieData, temperature, flowRate, biodiesel }: { pieData: any, temperature: string | number, flowRate: string | number, biodiesel: string | number }) {
     const theme = useTheme();
+
+    
+    console.log("WEIGHT", biodiesel);
     
   return (
    <SafeAreaView edges={['bottom']} className='w-full h-full min-h-screen' style={{ backgroundColor: theme?.colors.background }}>
@@ -23,29 +26,29 @@ export default function DashboardNative({ pieData }: { pieData: any }) {
       {/** Main Sensor view */}
 
       {/**push buttons */}
-      <View className='flex self-center justify-center flex-row w-auto max-w-[19.6rem] h-auto py-2 items-center gap-16'>
-          <View className='flex flex-col items-center gap-2'>
-             <View className='p-2 bg-[#EFE3CA] rounded-full'>
-               <Pressable className='bg-[#6FEA37] size-8 rounded-full'/>
-             </View>
-             <Text className='text-sm' style={{ color: theme?.colors.text }}>Start</Text>
-          </View>
+          {/* <View className='flex self-center justify-center flex-row w-auto max-w-[19.6rem] h-auto py-2 items-center gap-16'>
+              <View className='flex flex-col items-center gap-2'>
+                  <View className='p-2 bg-[#EFE3CA] rounded-full'>
+                    <Pressable className='bg-[#6FEA37] size-8 rounded-full'/>
+                  </View>
+                  <Text className='text-sm' style={{ color: theme?.colors.text }}>Start</Text>
+              </View>
 
-          <View className='flex flex-col items-center gap-2'>
-             <View className='p-2 bg-[#EFE3CA] rounded-full'>
-               <Pressable className='bg-[#e9c536] size-8 rounded-full'/>
-             </View>
-             <Text className='text-sm' style={{ color: theme?.colors.text }}>Pause</Text>
-          </View>
+              <View className='flex flex-col items-center gap-2'>
+                  <View className='p-2 bg-[#EFE3CA] rounded-full'>
+                    <Pressable className='bg-[#e9c536] size-8 rounded-full'/>
+                  </View>
+                  <Text className='text-sm' style={{ color: theme?.colors.text }}>Pause</Text>
+              </View>
 
-          <View className='flex flex-col items-center gap-2'>
-             <View className='p-2 bg-[#EFE3CA] rounded-full'>
-               <Pressable className='bg-[#e93636] size-8 rounded-full'/>
-             </View>
-             <Text className='text-sm' style={{ color: theme?.colors.text }}>Stop</Text>
-          </View>
-            
-      </View>
+              <View className='flex flex-col items-center gap-2'>
+                  <View className='p-2 bg-[#EFE3CA] rounded-full'>
+                    <Pressable className='bg-[#e93636] size-8 rounded-full'/>
+                  </View>
+                  <Text className='text-sm' style={{ color: theme?.colors.text }}>Stop</Text>
+              </View>
+                
+          </View> */}
 
 
       <View className="w-full mt-2">
@@ -56,7 +59,7 @@ export default function DashboardNative({ pieData }: { pieData: any }) {
               color='#78B544'
               {...(Platform.OS === 'web' ? { width: 190, height: 300 } : {  width: 160, height: 250 })}
               maxValue={5}
-              value={3}
+              value={1.5}
             />
             <Text
               style={{ color: theme?.colors.text }}
@@ -72,7 +75,7 @@ export default function DashboardNative({ pieData }: { pieData: any }) {
             {/** Temp sensor */}
             <View className="flex flex-col items-center w-auto gap-2">
               <Progress.Bar
-                progress={0.3}
+                progress={Number(temperature) / 100}
                 color="#F98662"
                 width={100}
                 height={8}
@@ -83,7 +86,7 @@ export default function DashboardNative({ pieData }: { pieData: any }) {
                   style={{ color: theme?.colors.text }}
                   className="text-lg font-semibold"
                 >
-                  20°C
+                  {temperature}C
                 </Text>
               </View>
             </View>
@@ -92,9 +95,10 @@ export default function DashboardNative({ pieData }: { pieData: any }) {
             <View className="flex flex-col items-center w-auto gap-2">
               <Progress.Bar
                 color="#8962F9"
-                progress={0.6}
+                progress={Number(flowRate) / 10}
                 width={100}
                 height={8}
+                
               />
               <View className="flex-col items-center">
                 <Text style={{ color: theme?.colors.text }}>Flow rate</Text>
@@ -102,7 +106,7 @@ export default function DashboardNative({ pieData }: { pieData: any }) {
                   style={{ color: theme?.colors.text }}
                   className="text-lg font-semibold"
                 >
-                  85%
+                  {Number(flowRate).toFixed(2)}L/min
                 </Text>
               </View>
             </View>
@@ -134,7 +138,7 @@ export default function DashboardNative({ pieData }: { pieData: any }) {
               backgroundColor={theme?.colors.background}
               innerRadius={50}
               centerLabelComponent={() => (
-                <Text className="text-sm font-semibold" style={{ color: theme?.colors.text }}>3 liters</Text>
+                <Text className="text-sm font-semibold" style={{ color: theme?.colors.text }}>2 liters</Text>
               )}
             />
           </View>
