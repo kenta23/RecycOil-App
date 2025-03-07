@@ -72,14 +72,14 @@ export default function AnalyticsWeb() {
         { value: 4, color: legend[1].frontColor},
         { value: 5, color: legend[2].frontColor},
       ],
-      label: '1pm',
+      label: '4pm',
     }, {
       stacks: [
         { value: dummyValues[0].finished, color: legend[0].frontColor},
         { value: dummyValues[0].unfinished, color: legend[1].frontColor},
         { value: dummyValues[0].failed, color: legend[2].frontColor},
       ],
-      label: '1pm',
+      label: '7pm',
     },
     {
       stacks: [
@@ -87,7 +87,7 @@ export default function AnalyticsWeb() {
         { value: dummyValues[0].unfinished, color: legend[1].frontColor},
         { value: dummyValues[0].failed, color: legend[2].frontColor},
       ],
-      label: '1pm',
+      label: '10pm',
     },
     {
       stacks: [
@@ -95,7 +95,7 @@ export default function AnalyticsWeb() {
         { value: dummyValues[0].unfinished, color: legend[1].frontColor},
         { value: dummyValues[0].failed, color: legend[2].frontColor},
       ],
-      label: '1pm',
+      label: '1am',
     },
     {
       stacks: [
@@ -103,7 +103,7 @@ export default function AnalyticsWeb() {
         { value: dummyValues[0].unfinished, color: legend[1].frontColor},
         { value: dummyValues[0].failed, color: legend[2].frontColor},
       ],
-      label: '1pm',
+      label: '3am',
     },
     {
       stacks: [
@@ -111,7 +111,7 @@ export default function AnalyticsWeb() {
         { value: dummyValues[0].unfinished, color: legend[1].frontColor},
         { value: dummyValues[0].failed, color: legend[2].frontColor},
       ],
-      label: '1pm',
+      label: '6am',
     },
     {
       stacks: [
@@ -119,7 +119,7 @@ export default function AnalyticsWeb() {
         { value: dummyValues[0].unfinished, color: legend[1].frontColor},
         { value: dummyValues[0].failed, color: legend[2].frontColor},
       ],
-      label: '1pm',
+      label: '9am',
     },
     {
       stacks: [
@@ -127,7 +127,7 @@ export default function AnalyticsWeb() {
         { value: dummyValues[0].unfinished, color: legend[1].frontColor},
         { value: dummyValues[0].failed, color: legend[2].frontColor},
       ],
-      label: '1pm',
+      label: '12pm',
     },
     {
       stacks: [
@@ -135,7 +135,7 @@ export default function AnalyticsWeb() {
         { value: dummyValues[0].unfinished, color: legend[1].frontColor},
         { value: dummyValues[0].failed, color: legend[2].frontColor},
       ],
-      label: '1pm',
+      label: '4pm',
     },
    
   ];  //today, weekly, monthly

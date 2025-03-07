@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native'
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Image } from 'expo-image';
 import { useTheme } from '@/providers/themeprovider';
 import { AntDesign, Feather, Ionicons, Octicons } from "@expo/vector-icons";
@@ -12,15 +12,42 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  Row,
 } from "@tanstack/react-table";
 import { DataInfo, Status } from '@/lib/data';
 import { StatusComponent } from '@/components/web/StatusComponent';
 import { ActionsButton } from '@/components/web/ActionsButton';
+import { useAuth } from '@/providers/authprovider';
+import { supabase } from '@/lib/supabase';
+import { Database } from '@/database.types';
 
 
 
 export default function DatalogsWeb() {
-    const columns = useMemo<ColumnDef<DataInfo>[]>(() => [
+  const { session } = useAuth();
+
+      const [data, setData] = useState<Database['public']['Tables']['datalogs']['Row'][]>([]);
+      
+
+     useEffect(() => {
+      async function getData() {
+        if (!session?.user?.id) return; // Prevent fetching if user is not logged in
+        
+        const { data, error } = await supabase
+          .from("datalogs") 
+          .select("*")
+          .eq("user_id", session.user.id);
+        
+        if (error) {
+          console.error("Error fetching data:", error.message);
+        } else {
+          setData(data);
+        }
+      }
+      getData();
+     }, [])
+
+    const columns = useMemo<ColumnDef<Database['public']['Tables']['datalogs']['Row']>[]>(() => [
           {
             accessorKey: 'id',
             cell: info => info.getValue(),
@@ -38,7 +65,7 @@ export default function DatalogsWeb() {
             header: () => 'Status',
           },
           {
-            accessorKey: 'actions',
+            accessorKey: 'actions',  
             cell: ({ row }) => <ActionsButton row={row}/>,
             header: () => 'Actions',
           },
@@ -46,18 +73,15 @@ export default function DatalogsWeb() {
         []
       )
 
+      
+
   const theme = useTheme();
+
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
   })
-  const [data, setData] = useState<DataInfo[]>([
-    {
-      id: "1",
-      date: "2023-01-01",
-      status: <StatusComponent status={Status.SUCCESSFUL} />,
-    },
-  ]);
+ 
 
   const table = useReactTable({
     columns,
@@ -73,6 +97,9 @@ export default function DatalogsWeb() {
       pagination,
     },
   })
+
+
+  console.log(data);
 
   
  return (
@@ -122,7 +149,7 @@ export default function DatalogsWeb() {
                 return (
                   <tr className={`${row.index % 2 === 0 && 'bg-[#EBE9D7]'}`} key={row.id}>
                     {row.getVisibleCells().map((cell, index) => (
-                        <td className={`text-center py-2 text-black`} key={cell.id}>
+                        <td className={`text-center py-2`} style={{ color: row.index % 2 === 0 ? '#00000' : '#FFFFF' }} key={cell.id}>
                           {flexRender(
                             cell.column.columnDef.cell,
                             cell.getContext()
