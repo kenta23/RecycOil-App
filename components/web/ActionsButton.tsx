@@ -26,13 +26,51 @@ import { Row } from "@tanstack/react-table";
 import { DataInfo, progressData } from "@/lib/data";
 import SkiaComponent from "@/skia components/tank-container";
 import { ProgressChart } from "react-native-chart-kit";
-import { useState } from "react";
- 
+import { useEffect, useState } from "react";
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { useAuth } from "@/providers/authprovider";
+import { supabase } from "@/lib/supabase";
 
+type Datalog = {
+  id: number;
+  flow_rate: number;
+  oil_volume: number | null;
+  producing_rate: number | null;
+  production_time: string | null;
+  temperature: number | null;
+  user_id: string;
+  created_at: string;
+  name: string;
+  status: string;
+};
 
 export function ActionsButton ({ row }: { row: Row<DataInfo> }) { 
     const theme = useTheme();
     const [editing, setEditing] = useState<boolean>(false);
+    const [values, setValues] = useState<Datalog[]>([]);
+
+    //fetch data
+    const { session } = useAuth();
+    
+
+    useEffect(() => {
+      async function getData() {
+        if (!session?.user?.id) return; // Prevent fetching if user is not logged in
+  
+        const { data, error } = await supabase
+          .from("datalogs") 
+          .select("*")
+          .eq("user_id", session.user.id);
+  
+        if (error) {
+          console.error("Error fetching data:", error.message);
+        } else {
+          setValues(data);
+        }
+      }
+      getData();
+    }, [session]);
+
 
     {/** use row prop to ge single data from table */}
    
@@ -59,7 +97,8 @@ export function ActionsButton ({ row }: { row: Row<DataInfo> }) {
                   Make changes to your data here. Click save when you're done.
                </SheetDescription>
              </SheetHeader>
-             <ScrollView className="w-full h-screen min-h-screen">
+
+             <ScrollView showsVerticalScrollIndicator={false} className="w-full h-full min-h-screen ">
                <div className="flex items-center justify-between w-full mt-8">
                  {/** Name and date  */}
                  <div className="flex flex-col gap-2">
@@ -133,7 +172,7 @@ export function ActionsButton ({ row }: { row: Row<DataInfo> }) {
                      <h3 id="chunks" className="font-bold text-[25px]">
                        75%
                      </h3>
-                     <label htmlFor="chunks">Chunks filtered</label>
+                     <label htmlFor="chunks">Flow/min</label>
                    </div>
                  </div>
 
@@ -160,6 +199,22 @@ export function ActionsButton ({ row }: { row: Row<DataInfo> }) {
                    >
                      1 hour 30 minutes
                    </p>
+                 </div>
+
+
+                 <div className="w-full h-40 px-6 my-10 space-y-2">
+                   <p
+                     style={{ color: theme?.colors.text }}
+                     className="text-lg font-medium text-center"
+                   >
+                     Carbon saved
+                   </p>
+
+
+                     <div className="flex flex-row items-center justify-center gap-3">
+                       <FontAwesome name="leaf" size={22} color="#15D037" />
+                       <p style={{ color: '#15D037' }} className="text-md md:text-xl">0.6 kg of CO<sub>2</sub> saved</p>
+                     </div>
                  </div>
                </div>
              </ScrollView>

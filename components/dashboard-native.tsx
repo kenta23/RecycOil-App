@@ -1,5 +1,5 @@
 import { View, Text, Pressable, ScrollView, Platform } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { AntDesign, Feather, FontAwesome, FontAwesome6, MaterialCommunityIcons } from '@expo/vector-icons';
 import SkiaComponent from '@/skia components/tank-container';
 import { PieChart } from 'react-native-gifted-charts';
@@ -9,16 +9,16 @@ import { Image } from 'expo-image';
 import { ProgressChart } from 'react-native-chart-kit';
 import { piechartData, progressData } from '@/lib/data';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/providers/authprovider';
 
 
 const cardStyle = `w-[300px] px-4 bg-white/20 py-3 h-[180px] shadow-sm border-[1px] border-[#BAB9AC] rounded-lg`;
 
 
-export default function DashboardNative({ pieData, temperature, flowRate, biodiesel }: { pieData: any, temperature: string | number, flowRate: string | number, biodiesel: string | number }) {
+export default function DashboardNative({ pieData, status, temperature, flowRate, biodiesel, carbonFootprint }: { pieData: any, temperature: number, flowRate: number, biodiesel: number, carbonFootprint: number, status: string | null }) {
     const theme = useTheme();
-
-    
-    console.log("WEIGHT", biodiesel);
+  
     
   return (
    <SafeAreaView edges={['bottom']} className='w-full h-full min-h-screen' style={{ backgroundColor: theme?.colors.background }}>
@@ -75,7 +75,7 @@ export default function DashboardNative({ pieData, temperature, flowRate, biodie
             {/** Temp sensor */}
             <View className="flex flex-col items-center w-auto gap-2">
               <Progress.Bar
-                progress={Number(temperature) / 100}
+                progress={(Number(temperature) / 100 ) || 0}
                 color="#F98662"
                 width={100}
                 height={8}
@@ -86,7 +86,7 @@ export default function DashboardNative({ pieData, temperature, flowRate, biodie
                   style={{ color: theme?.colors.text }}
                   className="text-lg font-semibold"
                 >
-                  {temperature}C
+                  {!Number.isNaN(temperature) ? `${Number(temperature).toFixed(2)} C` : `${0.0} C`}
                 </Text>
               </View>
             </View>
@@ -95,7 +95,7 @@ export default function DashboardNative({ pieData, temperature, flowRate, biodie
             <View className="flex flex-col items-center w-auto gap-2">
               <Progress.Bar
                 color="#8962F9"
-                progress={Number(flowRate) / 10}
+                progress={(Number(flowRate) / 10) || 0}
                 width={100}
                 height={8}
                 
@@ -106,13 +106,16 @@ export default function DashboardNative({ pieData, temperature, flowRate, biodie
                   style={{ color: theme?.colors.text }}
                   className="text-lg font-semibold"
                 >
-                  {Number(flowRate).toFixed(2)}L/min
+                  {!Number.isNaN(flowRate) ? `${Number(flowRate).toFixed(2)} L/min` :  `${0.0} L/min`}
                 </Text>
               </View>
             </View>
           </View>
+
         </View>
       </View>
+
+      <View className='flex items-center w-full'><Text style={{ color: theme?.colors.text }} className='text-lg'>Running</Text></View>
 
       {/** Oil Volume and Time production cards */}
       <View className={`${Platform.OS === 'web' ? 'flex-row mt-10' : 'flex-col mt-8'} items-center w-full justify-center gap-8 text-white`}>
