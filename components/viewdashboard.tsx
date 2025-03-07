@@ -8,7 +8,8 @@ import { toast } from "sonner"
 
 
    // Initialize the MQTT client
-   const MQTT_BROKER = "ws://test.mosquitto.org:8081/mqtt";
+   const MQTT_BROKER = "wss://test.mosquitto.org:8081/mqtt";
+
 
    const MQTT_TOPICS = [
      "recycoil/temperature",
@@ -18,7 +19,8 @@ import { toast } from "sonner"
      "recycoil/buttonStop",
      'recycoil/status',
      'recycoil/biodiesel',
-     'recycoil/carbonFootprint'
+     'recycoil/carbonFootprint',
+     'recycoil/producingTime'
    ];
    
 
@@ -30,6 +32,7 @@ import { toast } from "sonner"
     buttonStop: string;
     status: string;
     carbonFootprint: number;
+    producingTime: number;
     biodiesel: number;
   };
   
@@ -48,10 +51,11 @@ export default function Viewdashboard() {
     temperature: 0.0,
     flowRate: 0.0,
     liters: 0.0,
-    buttonStart: "START",
-    buttonStop: "STOP",
+    buttonStart: "",
+    buttonStop: "",
     status: 'Not Running',
     carbonFootprint: 0.0,
+    producingTime: 0,
     biodiesel: 0.0
   })
   
@@ -161,7 +165,8 @@ export default function Viewdashboard() {
             buttonStop: "",
             status: 'Not Running',
             carbonFootprint: 0.0,
-            biodiesel: 0.0
+            biodiesel: 0,
+            producingTime: 0, 
           })
          }
 
@@ -201,6 +206,7 @@ export default function Viewdashboard() {
 
   return (
     <DashboardNative
+      producingTime={topics.producingTime}
       status={topics.status}
       biodiesel={topics.biodiesel}
       carbonFootprint={topics.carbonFootprint}

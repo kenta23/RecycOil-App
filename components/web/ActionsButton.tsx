@@ -40,8 +40,10 @@ type Datalog = {
   temperature: number | null;
   user_id: string;
   created_at: string;
+  biodiesel: string;
   name: string;
   status: string;
+  carbon_footprint: number;
 };
 
 export function ActionsButton ({ row }: { row: Row<DataInfo> }) { 
@@ -84,7 +86,8 @@ export function ActionsButton ({ row }: { row: Row<DataInfo> }) {
                <Feather name="edit" size={24} color="#6D8A49" />
              </button>
            </SheetTrigger>
-           <SheetContent
+          {values.map(item => (
+            <SheetContent
              style={{
                backgroundColor: theme?.colors.background,
              }}
@@ -142,8 +145,8 @@ export function ActionsButton ({ row }: { row: Row<DataInfo> }) {
                        height={210}
                        width={130}
                        color="#D6C890"
-                       maxValue={5}
-                       value={3}
+                       maxValue={5 * parseFloat(item.biodiesel)}
+                       value={3 * parseFloat(item.biodiesel)}
                      />
                    </div>
                    <p
@@ -161,7 +164,7 @@ export function ActionsButton ({ row }: { row: Row<DataInfo> }) {
                    {/** temp  */}
                    <div className="flex flex-col text-[#C66243]  items-center">
                      <h3 id="temp" className="font-bold text-[25px]">
-                       65°C
+                       {item.temperature}C
                      </h3>
                      <label htmlFor="temp">Max. temp</label>
                    </div>
@@ -170,7 +173,7 @@ export function ActionsButton ({ row }: { row: Row<DataInfo> }) {
 
                    <div className="flex flex-col text-[#376EC2]  items-center">
                      <h3 id="chunks" className="font-bold text-[25px]">
-                       75%
+                       {item.flow_rate}
                      </h3>
                      <label htmlFor="chunks">Flow/min</label>
                    </div>
@@ -197,7 +200,7 @@ export function ActionsButton ({ row }: { row: Row<DataInfo> }) {
                      className="font-semibold"
                      style={{ color: theme?.colors.text, fontSize: 16 }}
                    >
-                     1 hour 30 minutes
+                     {item.production_time}
                    </p>
                  </div>
 
@@ -213,7 +216,7 @@ export function ActionsButton ({ row }: { row: Row<DataInfo> }) {
 
                      <div className="flex flex-row items-center justify-center gap-3">
                        <FontAwesome name="leaf" size={22} color="#15D037" />
-                       <p style={{ color: '#15D037' }} className="text-md md:text-xl">0.6 kg of CO<sub>2</sub> saved</p>
+                       <p style={{ color: '#15D037' }} className="text-md md:text-xl">{item.carbon_footprint} kg of CO<sub>2</sub> saved</p>
                      </div>
                  </div>
                </div>
@@ -224,6 +227,7 @@ export function ActionsButton ({ row }: { row: Row<DataInfo> }) {
                </SheetClose>
              </SheetFooter>
            </SheetContent>
+          ))} 
          </Sheet>
 
          <AlertDialog>

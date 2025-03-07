@@ -16,8 +16,26 @@ import { useAuth } from '@/providers/authprovider';
 const cardStyle = `w-[300px] px-4 bg-white/20 py-3 h-[180px] shadow-sm border-[1px] border-[#BAB9AC] rounded-lg`;
 
 
-export default function DashboardNative({ pieData, status, temperature, flowRate, biodiesel, carbonFootprint }: { pieData: any, temperature: number, flowRate: number, biodiesel: number, carbonFootprint: number, status: string | null }) {
-    const theme = useTheme();
+export default function DashboardNative({ pieData, status, producingTime, temperature, flowRate, biodiesel, carbonFootprint }: { pieData: any, temperature: number, flowRate: number, biodiesel: number, carbonFootprint: number, status: string | null, producingTime: number }) {
+    const theme = useTheme(); 
+
+
+    const formatTime = (seconds: number) => {
+      const hours = Math.floor(seconds / 3600);
+      const minutes = Math.floor((seconds % 3600) / 60);
+      const secs = seconds % 60;
+  
+      let formatted = "";
+      if (hours > 0) formatted += `${hours} hour${hours > 1 ? "s" : ""} `;
+      if (minutes > 0) formatted += `${minutes} minute${minutes > 1 ? "s" : ""} `;
+      if (secs > 0) formatted += `${secs} second${secs > 1 ? "s" : ""}`;
+      
+      return formatted.trim();
+  };
+  
+  // Example Usage
+  console.log(formatTime(5400)); // Output: "1 hour 30 minutes"
+
   
     
   return (
@@ -58,8 +76,8 @@ export default function DashboardNative({ pieData, status, temperature, flowRate
             <SkiaComponent
               color='#78B544'
               {...(Platform.OS === 'web' ? { width: 190, height: 300 } : {  width: 160, height: 250 })}
-              maxValue={5}
-              value={1.5}
+              maxValue={5 * biodiesel}
+              value={1.5 * biodiesel}
             />
             <Text
               style={{ color: theme?.colors.text }}
@@ -175,7 +193,7 @@ export default function DashboardNative({ pieData, status, temperature, flowRate
                 useShadowColorFromDataset: false, // optional
               }}
             />
-            <Text className="text-sm font-semibold" style={{ color: theme?.colors.text }}>1 hour 30 minutes</Text>
+            <Text className="text-sm font-semibold" style={{ color: theme?.colors.text }}>{formatTime(producingTime)  || '0 min'}</Text>
           </View>
         </View>
       </View>
