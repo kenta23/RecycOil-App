@@ -1,5 +1,5 @@
 import { View, Text, Pressable, ScrollView, Platform } from 'react-native'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { AntDesign, Feather, FontAwesome, FontAwesome6, MaterialCommunityIcons } from '@expo/vector-icons';
 import SkiaComponent from '@/skia components/tank-container';
 import { PieChart } from 'react-native-gifted-charts';
@@ -18,6 +18,17 @@ const cardStyle = `w-[300px] px-4 bg-white/20 py-3 h-[180px] shadow-sm border-[1
 
 export default function DashboardNative({ pieData, status, producingTime, temperature, flowRate, biodiesel, carbonFootprint }: { pieData: any, temperature: number, flowRate: number, biodiesel: number, carbonFootprint: number, status: string | null, producingTime: number }) {
     const theme = useTheme(); 
+
+   const [piechartData] = useState([
+    { 
+      value: flowRate,
+      color: "#DB2777"
+    },
+    {
+      value: 100 - flowRate,
+      color: "lightgray"
+    },
+  ])
 
 
     const formatTime = (seconds: number) => {
@@ -76,8 +87,8 @@ export default function DashboardNative({ pieData, status, producingTime, temper
             <SkiaComponent
               color='#78B544'
               {...(Platform.OS === 'web' ? { width: 190, height: 300 } : {  width: 160, height: 250 })}
-              maxValue={5 * biodiesel}
-              value={1.5 * biodiesel}
+              maxValue={5}
+              value={0}
             />
             <Text
               style={{ color: theme?.colors.text }}
@@ -133,7 +144,7 @@ export default function DashboardNative({ pieData, status, producingTime, temper
         </View>
       </View>
 
-      <View className='flex items-center w-full'><Text style={{ color: theme?.colors.text }} className='text-lg'>Running</Text></View>
+      <View className='flex items-center w-full'><Text style={{ color: theme?.colors.text }} className='text-lg'>{status === 'Not Running' ? 'Not Running' : 'Running'}</Text></View>
 
       {/** Oil Volume and Time production cards */}
       <View className={`${Platform.OS === 'web' ? 'flex-row mt-10' : 'flex-col mt-8'} items-center w-full justify-center gap-8 text-white`}>
@@ -159,7 +170,7 @@ export default function DashboardNative({ pieData, status, producingTime, temper
               backgroundColor={theme?.colors.background}
               innerRadius={50}
               centerLabelComponent={() => (
-                <Text className="text-sm font-semibold" style={{ color: theme?.colors.text }}>2 liters</Text>
+                <Text className="text-sm font-semibold" style={{ color: theme?.colors.text }}>{flowRate} liters</Text>
               )}
             />
           </View>

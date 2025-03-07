@@ -31,6 +31,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useAuth } from "@/providers/authprovider";
 import { supabase } from "@/lib/supabase";
 import { Database } from "@/database.types";
+import { toast } from "sonner";
 
 // type Datalog = {
 //   id: number;
@@ -47,7 +48,8 @@ import { Database } from "@/database.types";
 //   carbon_footprint: number;
 // };
 
-export function ActionsButton ({ row }: { row: Row<Database['public']['Tables']['datalogs']['Row']> }) { 
+export function ActionsButton ({ row, setRefresh }: { row: Row<Database['public']['Tables']['datalogs']['Row']>, setRefresh: React.Dispatch<React.SetStateAction<boolean>> }) {
+
     const theme = useTheme();
     const [editing, setEditing] = useState<boolean>(false);
 
@@ -72,7 +74,25 @@ export function ActionsButton ({ row }: { row: Row<Database['public']['Tables'][
     };
     
 
-    
+    const handleDelete = async (id: number) => { 
+      try {
+       const { status, error,  } = await supabase.from('datalogs').delete().eq('id', id);
+
+       if (status === 204) {
+         toast.success('Data deleted successfully.');
+         setRefresh(prev => !prev);
+       }
+
+       if(status === 500) { 
+         toast.error('Error deleting data.');
+         setRefresh(prev => !prev);
+       }
+
+        console.log('Data deleted successfully.');
+      } catch (error) {
+        console.error('Error deleting data:', error);
+      }
+    }
    
      return (
        <div className="flex flex-row items-center justify-center gap-4">
@@ -244,7 +264,7 @@ export function ActionsButton ({ row }: { row: Row<Database['public']['Tables'][
              </AlertDialogHeader>
              <AlertDialogFooter>
                <AlertDialogCancel>Cancel</AlertDialogCancel>
-               <AlertDialogAction className="bg-red-500">
+               <AlertDialogAction onClick={() => handleDelete(row.original.id)} className="bg-red-500">
                  Continue
                </AlertDialogAction>
              </AlertDialogFooter>
