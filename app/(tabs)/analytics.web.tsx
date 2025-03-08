@@ -282,7 +282,7 @@ export default function AnalyticsWeb() {
 
                   <View className="flex-row items-center justify-between w-full">
                     <Text className="font-bold text-[27px] text-[#70761D]">
-                      2hr 3min
+                      0hr 0min
                     </Text>
                     <Image
                       source={require("../../assets/images/line-graph.png")}
@@ -315,7 +315,7 @@ export default function AnalyticsWeb() {
 
                   <View className="flex-row items-center justify-between">
                     <Text className="font-bold text-[27px] text-[#D62F19]">
-                      5hr 3min
+                      0hr 0min
                     </Text>
                     <Image
                       source={require("../../assets/images/line-graph-red.png")}
@@ -374,7 +374,7 @@ export default function AnalyticsWeb() {
               </Text>
               <Text className="font-bold text-center text-[64px] text-[#DDA01C]">
                 {/** Formula: used oil litres × 1.8 = kg CO₂e saved */}
-                50kg
+                0kg
               </Text>
             </View>
           </View>
