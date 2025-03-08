@@ -30,51 +30,69 @@ import { useEffect, useState } from "react";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useAuth } from "@/providers/authprovider";
 import { supabase } from "@/lib/supabase";
+import { Database } from "@/database.types";
+import { toast } from "sonner";
 
-type Datalog = {
-  id: number;
-  flow_rate: number;
-  oil_volume: number | null;
-  producing_rate: number | null;
-  production_time: string | null;
-  temperature: number | null;
-  user_id: string;
-  created_at: string;
-  biodiesel: string;
-  name: string;
-  status: string;
-  carbon_footprint: number;
-};
+// type Datalog = {
+//   id: number;
+//   flow_rate: number;
+//   oil_volume: number | null;
+//   producing_rate: number | null;
+//   production_time: string | null;
+//   temperature: number | null;
+//   user_id: string;
+//   created_at: string;
+//   biodiesel: string;
+//   name: string;
+//   status: string;
+//   carbon_footprint: number;
+// };
 
-export function ActionsButton ({ row }: { row: Row<DataInfo> }) { 
+export function ActionsButton ({ row, setRefresh }: { row: Row<Database['public']['Tables']['datalogs']['Row']>, setRefresh: React.Dispatch<React.SetStateAction<boolean>> }) {
+
     const theme = useTheme();
     const [editing, setEditing] = useState<boolean>(false);
-    const [values, setValues] = useState<Datalog[]>([]);
+
+
+    // Extract row values as an array
+    const [rowValues] = Object.values(row.original);
 
     //fetch data
     const { session } = useAuth();
-    
 
-    useEffect(() => {
-      async function getData() {
-        if (!session?.user?.id) return; // Prevent fetching if user is not logged in
-  
-        const { data, error } = await supabase
-          .from("datalogs") 
-          .select("*")
-          .eq("user_id", session.user.id);
-  
-        if (error) {
-          console.error("Error fetching data:", error.message);
-        } else {
-          setValues(data);
-        }
-      }
-      getData();
-    }, [session]);
-
+    console.log('rows', row);
 
     {/** use row prop to ge single data from table */}
+
+    const formatDate = (dateString: string) => {
+      const date = new Date(dateString);
+      return new Intl.DateTimeFormat("en-US", { 
+        month: "long", 
+        day: "2-digit", 
+        year: "numeric" 
+      }).format(date);
+    };
+    
+
+    const handleDelete = async (id: number) => { 
+      try {
+       const { status, error,  } = await supabase.from('datalogs').delete().eq('id', id);
+
+       if (status === 204) {
+         toast.success('Data deleted successfully.');
+         setRefresh(prev => !prev);
+       }
+
+       if(status === 500) { 
+         toast.error('Error deleting data.');
+         setRefresh(prev => !prev);
+       }
+
+        console.log('Data deleted successfully.');
+      } catch (error) {
+        console.error('Error deleting data:', error);
+      }
+    }
    
      return (
        <div className="flex flex-row items-center justify-center gap-4">
@@ -86,7 +104,7 @@ export function ActionsButton ({ row }: { row: Row<DataInfo> }) {
                <Feather name="edit" size={24} color="#6D8A49" />
              </button>
            </SheetTrigger>
-          {values.map(item => (
+
             <SheetContent
              style={{
                backgroundColor: theme?.colors.background,
@@ -111,10 +129,10 @@ export function ActionsButton ({ row }: { row: Row<DataInfo> }) {
                       <input
                         className="rounded-lg"
                         type="text"
-                        defaultValue={row.original.date}
+                        defaultValue={formatDate(row.original.created_at)}
                       /> ) : (
                         <h1 style={{ color: theme?.colors.text }} className="text-lg font-semibold">
-                          {row.original.date}
+                          {formatDate(row.original.created_at)}
                         </h1>
                       )
                     }
@@ -128,7 +146,7 @@ export function ActionsButton ({ row }: { row: Row<DataInfo> }) {
 
                    {/** format the date to mm/dd/yyyy */}
                    <h2 style={{ color: theme?.colors.gray }} className="font-light">
-                     {row.original.date}
+                     {formatDate(row.original.created_at)}
                    </h2>
                  </div>
 
@@ -145,8 +163,8 @@ export function ActionsButton ({ row }: { row: Row<DataInfo> }) {
                        height={210}
                        width={130}
                        color="#D6C890"
-                       maxValue={5 * parseFloat(item.biodiesel)}
-                       value={3 * parseFloat(item.biodiesel)}
+                       maxValue={5}
+                       value={row.original.biodiesel as number}
                      />
                    </div>
                    <p
@@ -164,7 +182,7 @@ export function ActionsButton ({ row }: { row: Row<DataInfo> }) {
                    {/** temp  */}
                    <div className="flex flex-col text-[#C66243]  items-center">
                      <h3 id="temp" className="font-bold text-[25px]">
-                       {item.temperature}C
+                       {row.original.temperature}C
                      </h3>
                      <label htmlFor="temp">Max. temp</label>
                    </div>
@@ -173,7 +191,7 @@ export function ActionsButton ({ row }: { row: Row<DataInfo> }) {
 
                    <div className="flex flex-col text-[#376EC2]  items-center">
                      <h3 id="chunks" className="font-bold text-[25px]">
-                       {item.flow_rate}
+                       {row.original.flow_rate}
                      </h3>
                      <label htmlFor="chunks">Flow/min</label>
                    </div>
@@ -200,7 +218,7 @@ export function ActionsButton ({ row }: { row: Row<DataInfo> }) {
                      className="font-semibold"
                      style={{ color: theme?.colors.text, fontSize: 16 }}
                    >
-                     {item.production_time}
+                     {row.original.production_time}
                    </p>
                  </div>
 
@@ -216,7 +234,7 @@ export function ActionsButton ({ row }: { row: Row<DataInfo> }) {
 
                      <div className="flex flex-row items-center justify-center gap-3">
                        <FontAwesome name="leaf" size={22} color="#15D037" />
-                       <p style={{ color: '#15D037' }} className="text-md md:text-xl">{item.carbon_footprint} kg of CO<sub>2</sub> saved</p>
+                       <p style={{ color: '#15D037' }} className="text-md md:text-xl">{row.original.carbon_footprint} kg of CO<sub>2</sub> saved</p>
                      </div>
                  </div>
                </div>
@@ -227,7 +245,7 @@ export function ActionsButton ({ row }: { row: Row<DataInfo> }) {
                </SheetClose>
              </SheetFooter>
            </SheetContent>
-          ))} 
+
          </Sheet>
 
          <AlertDialog>
@@ -246,7 +264,7 @@ export function ActionsButton ({ row }: { row: Row<DataInfo> }) {
              </AlertDialogHeader>
              <AlertDialogFooter>
                <AlertDialogCancel>Cancel</AlertDialogCancel>
-               <AlertDialogAction className="bg-red-500">
+               <AlertDialogAction onClick={() => handleDelete(row.original.id)} className="bg-red-500">
                  Continue
                </AlertDialogAction>
              </AlertDialogFooter>

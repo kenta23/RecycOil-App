@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native'
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Image } from 'expo-image';
 import { useTheme } from '@/providers/themeprovider';
 import { AntDesign, Feather, Ionicons, Octicons } from "@expo/vector-icons";
@@ -12,19 +12,70 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  Row,
 } from "@tanstack/react-table";
 import { DataInfo, Status } from '@/lib/data';
 import { StatusComponent } from '@/components/web/StatusComponent';
 import { ActionsButton } from '@/components/web/ActionsButton';
+import { useAuth } from '@/providers/authprovider';
+import { supabase } from '@/lib/supabase';
+import { Database } from '@/database.types';
 
 
 
 export default function DatalogsWeb() {
-    const columns = useMemo<ColumnDef<DataInfo>[]>(() => [
+  const { session } = useAuth();
+
+      const [data, setData] = useState<Database['public']['Tables']['datalogs']['Row'][]>([]);
+      const [refresh, setRefresh] = useState(false);
+
+      const downloadCSV = () => {
+        // Convert the data array into a CSV string
+        const csvString = [
+          ["id", "user_id", "biodiesel", "created_at", "production_time", "status", "temperature", "carbon_footprint", "flow_rate", "oil_volume"], // Specify your headers here
+          ...data.map(item => [item.id, item.user_id, item.biodiesel, item.created_at, item.production_time, item.status, item.temperature, item.carbon_footprint, item.flow_rate, item.oil_volume, ]) // Map your data fields accordingly
+        ]
+        .map(row => row.join(","))
+        .join("\n");
+    
+        // Create a Blob from the CSV string
+        const blob = new Blob([csvString], { type: 'text/csv' });
+    
+        // Generate a download link and initiate the download
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'download.csv';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      };
+      
+
+     useEffect(() => {
+      async function getData() {
+        if (!session?.user?.id) return; // Prevent fetching if user is not logged in
+        
+        const { data, error } = await supabase
+          .from("datalogs") 
+          .select("*")
+          .eq("user_id", session.user.id);
+        
+        if (error) {
+          console.error("Error fetching data:", error.message);
+        } else {
+          setData(data);
+        }
+      }
+      getData();
+     }, [session?.user.id,  refresh]);
+
+    const columns = useMemo<ColumnDef<Database['public']['Tables']['datalogs']['Row']>[]>(() => [
           {
             accessorKey: 'id',
             cell: info => info.getValue(),
-            header: () => <span>ID</span>,
+            header: () => <span >ID</span>,
           },
           {
             accessorKey: 'date',
@@ -38,26 +89,23 @@ export default function DatalogsWeb() {
             header: () => 'Status',
           },
           {
-            accessorKey: 'actions',
-            cell: ({ row }) => <ActionsButton row={row}/>,
+            accessorKey: 'actions',  
+            cell: ({ row }) => <ActionsButton  setRefresh={setRefresh} row={row}/>,
             header: () => 'Actions',
           },
         ],
         []
       )
 
+      
+
   const theme = useTheme();
+
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
   })
-  const [data, setData] = useState<DataInfo[]>([
-    {
-      id: "1",
-      date: "2023-01-01",
-      status: <StatusComponent status={Status.SUCCESSFUL} />,
-    },
-  ]);
+ 
 
   const table = useReactTable({
     columns,
@@ -73,6 +121,9 @@ export default function DatalogsWeb() {
       pagination,
     },
   })
+
+
+  console.log(data);
 
   
  return (
@@ -91,7 +142,7 @@ export default function DatalogsWeb() {
       <div className='flex flex-col items-end w-full'>
           {/**filter and csv action button */}
            <div className='flex flex-row items-center gap-3'>
-               <button className='px-3 bg-[#F9F4EC] text-dark py-1 w-auto rounded-lg'>
+               <button onClick={downloadCSV} className='px-3 bg-[#F9F4EC] text-dark py-1 w-auto rounded-lg'>
                    <span className='me-1'>CSV</span><Feather name="download" size={18} color="#38362F" />
                </button>
 
@@ -120,9 +171,9 @@ export default function DatalogsWeb() {
             <tbody>
               {table.getRowModel().rows.map((row) => {
                 return (
-                  <tr className={`${row.index % 2 === 0 && 'bg-[#EBE9D7]'}`} key={row.id}>
+                  <tr className={`${row.index % 2 === 0 && 'bg-[#EBE9D7] text-black'}`} key={row.id}>
                     {row.getVisibleCells().map((cell, index) => (
-                        <td className={`text-center py-2 text-black`} key={cell.id}>
+                        <td className={`text-center py-2 ${index === 0 && 'text-black'}`}  style={{ color: row.index % 2 === 0 ? '#00000' : '#FFFFFF' }} key={cell.id}>
                           {flexRender(
                             cell.column.columnDef.cell,
                             cell.getContext()

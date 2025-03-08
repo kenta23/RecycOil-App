@@ -148,7 +148,6 @@ export default function Viewdashboard() {
          console.log('UPLOADSTATUS' ,uploadStatus);
   
          if (uploadStatus === 201 || uploadStatus === 200) {
-           alert('Data has been uploaded successfully.');
            console.log(datalogs);
 
            // eslint-disable-next-line no-unused-expressions
