@@ -268,7 +268,7 @@ export default function Analytics() {
 
                 <View className="flex-row items-center justify-between">
                   <Text className="font-bold text-[27px] text-[#D62F19]">
-                    5hr 3min
+                    0hr 0min
                   </Text>
                   <Image
                     source={require("../../assets/images/line-graph-red.png")}
@@ -301,7 +301,7 @@ export default function Analytics() {
 
                 <View className="flex-row items-center justify-between">
                   <Text className="font-bold text-[27px] text-[#22546F]">
-                    2hr 3min
+                    0hr 0min
                   </Text>
                   <Image
                     source={require("../../assets/images/oil.png")}
@@ -330,7 +330,7 @@ export default function Analytics() {
               </Text>
               <Text className="font-bold text-center text-[3.7rem] text-[#DDA01C]">
                 {/** Formula: used oil litres × 1.8 = kg CO₂e saved */}
-                50 kg
+                0 kg
               </Text>
             </View>
           </View>
