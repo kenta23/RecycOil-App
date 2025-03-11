@@ -105,7 +105,7 @@ export function ActionsButton ({ row, setRefresh }: { row: Row<Database['public'
              </button>
            </SheetTrigger>
 
-            <SheetContent
+           <SheetContent
              style={{
                backgroundColor: theme?.colors.background,
              }}
@@ -115,37 +115,46 @@ export function ActionsButton ({ row, setRefresh }: { row: Row<Database['public'
                  Viewing data
                </SheetTitle>
                <SheetDescription style={{ color: theme?.colors.gray }}>
-                  Make changes to your data here. Click save when you're done.
+                 Make changes to your data here. Click save when you're done.
                </SheetDescription>
              </SheetHeader>
 
-             <ScrollView showsVerticalScrollIndicator={false} className="w-full h-full min-h-screen ">
+             <ScrollView
+               showsVerticalScrollIndicator={false}
+               className="w-full h-full min-h-screen "
+             >
                <div className="flex items-center justify-between w-full mt-8">
                  {/** Name and date  */}
                  <div className="flex flex-col gap-2">
                    <div className="flex flex-row items-center gap-1">
                      {/**title */}
-                    {editing ? (
-                      <input
-                        className="rounded-lg"
-                        type="text"
-                        defaultValue={formatDate(row.original.created_at)}
-                      /> ) : (
-                        <h1 style={{ color: theme?.colors.text }} className="text-lg font-semibold">
-                          {formatDate(row.original.created_at)}
-                        </h1>
-                      )
-                    }
+                     {editing ? (
+                       <input
+                         className="rounded-lg"
+                         type="text"
+                         defaultValue={formatDate(row.original.created_at)}
+                       />
+                     ) : (
+                       <h1
+                         style={{ color: theme?.colors.text }}
+                         className="text-lg font-semibold"
+                       >
+                         {formatDate(row.original.created_at)}
+                       </h1>
+                     )}
                      <MaterialCommunityIcons
                        name="pencil"
                        size={20}
                        color={theme?.colors.gray}
-                       onPress={() => setEditing(prev => !prev)}
+                       onPress={() => setEditing((prev) => !prev)}
                      />
                    </div>
 
                    {/** format the date to mm/dd/yyyy */}
-                   <h2 style={{ color: theme?.colors.gray }} className="font-light">
+                   <h2
+                     style={{ color: theme?.colors.gray }}
+                     className="font-light"
+                   >
                      {formatDate(row.original.created_at)}
                    </h2>
                  </div>
@@ -222,7 +231,6 @@ export function ActionsButton ({ row, setRefresh }: { row: Row<Database['public'
                    </p>
                  </div>
 
-
                  <div className="w-full h-40 px-6 my-10 space-y-2">
                    <p
                      style={{ color: theme?.colors.text }}
@@ -231,11 +239,16 @@ export function ActionsButton ({ row, setRefresh }: { row: Row<Database['public'
                      Carbon saved
                    </p>
 
-
-                     <div className="flex flex-row items-center justify-center gap-3">
-                       <FontAwesome name="leaf" size={22} color="#15D037" />
-                       <p style={{ color: '#15D037' }} className="text-md md:text-xl">{row.original.carbon_footprint} kg of CO<sub>2</sub> saved</p>
-                     </div>
+                   <div className="flex flex-row items-center justify-center gap-3">
+                     <FontAwesome name="leaf" size={22} color="#15D037" />
+                     <p
+                       style={{ color: "#15D037" }}
+                       className="text-md md:text-xl"
+                     >
+                       {row.original.carbon_footprint} kg of CO<sub>2</sub>{" "}
+                       saved
+                     </p>
+                   </div>
                  </div>
                </div>
              </ScrollView>
@@ -245,7 +258,6 @@ export function ActionsButton ({ row, setRefresh }: { row: Row<Database['public'
                </SheetClose>
              </SheetFooter>
            </SheetContent>
-
          </Sheet>
 
          <AlertDialog>
@@ -256,7 +268,9 @@ export function ActionsButton ({ row, setRefresh }: { row: Row<Database['public'
              style={{ backgroundColor: theme?.colors.background }}
            >
              <AlertDialogHeader>
-               <AlertDialogTitle style={{ color: theme?.colors.text }}>Are you absolutely sure?</AlertDialogTitle>
+               <AlertDialogTitle style={{ color: theme?.colors.text }}>
+                 Are you absolutely sure?
+               </AlertDialogTitle>
                <AlertDialogDescription style={{ color: theme?.colors.text }}>
                  This action cannot be undone. This will permanently delete your
                  data
@@ -264,7 +278,10 @@ export function ActionsButton ({ row, setRefresh }: { row: Row<Database['public'
              </AlertDialogHeader>
              <AlertDialogFooter>
                <AlertDialogCancel>Cancel</AlertDialogCancel>
-               <AlertDialogAction onClick={() => handleDelete(row.original.id)} className="bg-red-500">
+               <AlertDialogAction
+                 onClick={() => handleDelete(row.original.id)}
+                 className="bg-red-500"
+               >
                  Continue
                </AlertDialogAction>
              </AlertDialogFooter>

@@ -1,16 +1,15 @@
-import { View, Text, ScrollView, Pressable, Platform, Alert } from 'react-native'
+import { Platform, Alert } from 'react-native'
 import React, { useEffect, useMemo, useState } from 'react'
 import DashboardNative from './dashboard-native';
 import Paho from 'paho-mqtt';
 import { useAuth } from '@/providers/authprovider';
 import { supabase } from '@/lib/supabase';
 import { toast } from "sonner"
+import { useButtonStart } from '@/lib/store';
 
 
    // Initialize the MQTT client
    const MQTT_BROKER = "wss://test.mosquitto.org:8081/mqtt";
-
-
    const MQTT_TOPICS = [
      "recycoil/temperature",
      "recycoil/flowRate",
@@ -20,30 +19,28 @@ import { toast } from "sonner"
      'recycoil/status',
      'recycoil/biodiesel',
      'recycoil/carbonFootprint',
-     'recycoil/producingTime'
+     'recycoil/producingTime',
+     'recycoil/eneryConsumption'
    ];
    
-
    type topicsDT = {
     temperature: number;
     flowRate: number;
     liters: number;
-    buttonStart: string;
-    buttonStop: string;
     status: string;
     carbonFootprint: number;
     producingTime: number;
     biodiesel: number;
+    oilVolume: number;
   };
-  
+
 
 export default function Viewdashboard() {
   //max value is 5 liters
   //measure the volume based on the sensor
     const { session } = useAuth();
+    const {setButtonStart, buttonStart} = useButtonStart();
   
-  //sample data
-  //logic mqtt here
 
   //if one app already starts the machine then the others can't publish to the topic 
   //create new topic to start the machine then make a conditional statement there.
@@ -51,35 +48,45 @@ export default function Viewdashboard() {
     temperature: 0.0,
     flowRate: 0.0,
     liters: 0.0,
-    buttonStart: "",
-    buttonStop: "",
     status: 'Not Running',
     carbonFootprint: 0.0,
     producingTime: 0,
-    biodiesel: 0.0
+    biodiesel: 0.0,
+    oilVolume: 0.0
   })
+
+  console.log(topics);
   
   useEffect(() => {
     // Create MQTT Client
     const client = new Paho.Client(MQTT_BROKER, "ReactNativeClient" + Math.random());
     client.onConnectionLost = (responseObject) => {
-      console.log("Connection Lost:", responseObject.errorMessage);
-    };
+      console.log("Connection Lost:", responseObject.errorMessage);    };
 
     client.onMessageArrived = (message) => {
       console.log(`Received ${message.destinationName}: ${message.payloadString}`);
 
       const key = message.destinationName.toString().split('/').pop() || ""; //{temperature, flowRate, liters, button} topic name
-      let data: number | string = message.payloadString;
+      let data: number | string  = message.payloadString;
 
       if(!isNaN(parseFloat(data))) { //if the value is number
          data = parseFloat(data);
       }
 
-      setTopics(prevTopics => ({  
-         ...prevTopics, 
-         [key]: data
-      }))
+      
+      setTopics((prevTopics) => ({
+        ...prevTopics,
+        [key]: data,
+      }));
+
+      if (message.destinationName === 'recycoil/buttonStart') {
+          if(message.payloadString === 'true') {
+            setButtonStart(true);
+          }
+          else {
+            setButtonStart(false);
+          }
+      }
     };
 
     // Connect to MQTT Broker
@@ -118,13 +125,12 @@ export default function Viewdashboard() {
 
     return () => {
       client.disconnect();
-    };
-  }, []);
+    }
+  }, [])
 
 
     //save the data from the supabase database
     useEffect(() => { 
-
       if (topics.status === 'SUCCESSFUL') { 
         async function uploadData() { 
    
@@ -145,7 +151,7 @@ export default function Viewdashboard() {
             alert(error.message);
          }
   
-         console.log('UPLOADSTATUS' ,uploadStatus);
+         console.log('UPLOADSTATUS', uploadStatus);
   
          if (uploadStatus === 201 || uploadStatus === 200) {
            console.log(datalogs);
@@ -160,13 +166,14 @@ export default function Viewdashboard() {
             temperature: 0.0,
             flowRate: 0.0,
             liters: 0.0,
-            buttonStart: "",
-            buttonStop: "",
             status: 'Not Running',
             carbonFootprint: 0.0,
             biodiesel: 0,
             producingTime: 0, 
+            oilVolume: 0
           })
+
+          setButtonStart(false);
          }
 
          else if (topics.status === 'FAILED') {
@@ -177,7 +184,6 @@ export default function Viewdashboard() {
         }
 
         else { 
-           //do nothing 
            uploadData();
         }
     }
@@ -189,19 +195,25 @@ export default function Viewdashboard() {
      }, [topics.status]);
 
 
+     //turning on and off the machine 
+     useEffect(() => { 
+      
+     }, [buttonStart]);
+
+
   console.log(topics);
 
   
-  const oilVolume = 4 * 20; 
+  const oilVolume = topics.flowRate * 20; 
   const maxVolume = 5 * 20;
-  const remainingVolume = maxVolume - oilVolume; // 1.5 liters
+  const remainingVolume = maxVolume - oilVolume; // 1.5 liters 
 
 
   const pieData = [
     { value: oilVolume, color: '#DB2777', },
     { value: remainingVolume, color: 'lightgray', },
   ];
-  console.log("flow rate", topics.flowRate);
+
 
   return (
     <DashboardNative

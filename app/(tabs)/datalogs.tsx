@@ -18,6 +18,9 @@ export default function Datalogs() {
       <ScrollView
         className="w-full h-auto max-h-screen-safe-offset-2"
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+           paddingBottom: 25
+          }}
       >
         <View className="gap-4 px-4 mt-6">
           <View className="flex-row items-center justify-between w-full px-3 mb-3">

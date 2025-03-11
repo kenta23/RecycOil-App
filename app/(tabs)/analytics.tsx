@@ -4,6 +4,7 @@ import { BarChart } from "react-native-gifted-charts";
 import { Image } from "expo-image";
 import { useTheme } from "@/providers/themeprovider";
 import DropDownPicker from "react-native-dropdown-picker";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 
 export default function Analytics() {
@@ -103,17 +104,19 @@ export default function Analytics() {
   
 
   return (
-    <View
+    <SafeAreaView
+      edges={['bottom']}
       className="w-full h-full min-h-screen pt-2 pb-4"
       style={{ backgroundColor: theme?.colors.background }}
     >
       <ScrollView
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 30 }}
         className="w-full h-auto max-h-screen-safe-offset-2"
       >
         <View className="px-4 mt-4">
           {/**Bar chart */}
-          <View className="gap-6 mt-6">
+          <View className="gap-6 mt-4">
             <Text className="text-[22px]" style={{ color: theme?.colors.gray }}>
               Total Production
             </Text>
@@ -139,6 +142,13 @@ export default function Analytics() {
                   borderColor: theme?.colors.gray,
                   borderWidth: 1,
                 }}
+
+                //start
+                labelStyle={{ color: theme?.colors.text }}
+                selectedItemContainerStyle={{
+                  backgroundColor: theme?.colors.background,
+                }}
+                theme={theme?.dark ? 'DARK' : 'LIGHT'}
                 containerStyle={{
                   width: 120,
                   alignSelf: 'flex-end'
@@ -206,8 +216,8 @@ export default function Analytics() {
           </View>
         </View>
 
-        <View className="flex-col items-center w-full gap-5 mt-12">
-          <View style={{ borderRadius: "50px" }} className={cardContainerStyle}>
+        <View className="flex-col items-center w-full gap-5 mt-10">
+          <View style={{ backgroundColor: theme?.colors.background }} className={cardContainerStyle}>
             <View className="items-center w-full">
               <View className="flex-col">
                 <Text
@@ -240,7 +250,7 @@ export default function Analytics() {
             </View>
           </View>
 
-          <View className={cardContainerStyle}>
+          <View style={{ backgroundColor: theme?.colors.background }} className={cardContainerStyle}>
             <View className="items-center w-full">
               <View className="flex-col">
                 <Text
@@ -273,7 +283,7 @@ export default function Analytics() {
             </View>
           </View>
 
-          <View style={{ borderRadius: "50px" }} className={cardContainerStyle}>
+          <View style={{ backgroundColor: theme?.colors.background }} className={cardContainerStyle}>
             <View className="items-center w-full">
               <View className="flex-col">
                 <Text
@@ -306,9 +316,10 @@ export default function Analytics() {
             </View>
           </View>
 
+  {/**Carbon footprint */}
           <View
             style={{ backgroundColor: theme?.colors.background }}
-            className="size-[18rem] px-3 py-1 shadow-green-300 shadow-lg  mt-12 mb-8 items-center justify-center rounded-full border-[1px] border-[#65DE9D]"
+            className="size-[18rem] px-3 py-1 shadow-green-300 shadow-lg mt-8 items-center justify-center rounded-full border-[1px] border-[#65DE9D]"
           >
             <View className="items-center justify-center w-full">
               <Text
@@ -326,6 +337,6 @@ export default function Analytics() {
 
         </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
