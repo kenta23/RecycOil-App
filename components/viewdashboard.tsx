@@ -9,7 +9,7 @@ import { useButtonStart } from '@/lib/store';
 
 
    // Initialize the MQTT client
-   const MQTT_BROKER = "wss://test.mosquitto.org:8081/mqtt";
+   const MQTT_BROKER = "wss://broker.emqx.io:8084/mqtt";
    const MQTT_TOPICS = [
      "recycoil/temperature",
      "recycoil/flowRate",
@@ -20,7 +20,7 @@ import { useButtonStart } from '@/lib/store';
      'recycoil/biodiesel',
      'recycoil/carbonFootprint',
      'recycoil/producingTime',
-     'recycoil/eneryConsumption'
+     'recycoil/energyConsumption'
    ];
    
    type topicsDT = {
@@ -32,6 +32,7 @@ import { useButtonStart } from '@/lib/store';
     producingTime: number;
     biodiesel: number;
     oilVolume: number;
+    energyConsumption: number
   };
 
 
@@ -52,7 +53,8 @@ export default function Viewdashboard() {
     carbonFootprint: 0.0,
     producingTime: 0,
     biodiesel: 0.0,
-    oilVolume: 0.0
+    oilVolume: 0.0,
+    energyConsumption: 0.0
   })
 
   console.log(topics);
@@ -159,7 +161,9 @@ export default function Viewdashboard() {
            // eslint-disable-next-line no-unused-expressions
            Platform.OS === "web"
              ? toast.success("Your Biodiesel has been made successfully.")
-             : Alert.alert("Your Biodiesel has been made successfully.");
+             : Alert.alert("Successful", "Your Biodiesel has been made successfully.", [{
+              text: "Ok",
+             }]);
 
            //reset data     
            setTopics({
@@ -170,7 +174,8 @@ export default function Viewdashboard() {
             carbonFootprint: 0.0,
             biodiesel: 0,
             producingTime: 0, 
-            oilVolume: 0
+            oilVolume: 0,
+            energyConsumption: 0.0
           })
 
           setButtonStart(false);
@@ -223,6 +228,7 @@ export default function Viewdashboard() {
       carbonFootprint={topics.carbonFootprint}
       flowRate={topics.flowRate}
       temperature={topics.temperature}
+      energyConsumption={topics.energyConsumption}
       pieData={pieData}
     />
   );

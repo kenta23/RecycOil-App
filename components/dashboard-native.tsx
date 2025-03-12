@@ -1,6 +1,5 @@
-import { View, Text, Pressable, ScrollView, Platform, ActivityIndicator, Alert, TouchableWithoutFeedback, TouchableOpacity } from 'react-native'
+import { View, Text, Pressable, ScrollView, Platform, ActivityIndicator, Alert, } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { AntDesign, Feather, FontAwesome, FontAwesome6, MaterialCommunityIcons } from '@expo/vector-icons';
 import SkiaComponent from '@/skia components/tank-container';
 import { PieChart } from 'react-native-gifted-charts';
 import * as Progress from 'react-native-progress';
@@ -26,6 +25,11 @@ import {
 } from "@/components/ui/alert-dialog"
 
 
+//for web 
+import { WithSkiaWeb } from '@shopify/react-native-skia/lib/module/web';
+import RenderTankOnWeb from './renderTankOnWeb';
+
+
 const cardStyle = `w-[300px] px-4 bg-white/20 py-3 h-[180px] shadow-sm border-[1px] border-[#BAB9AC] rounded-lg`;
 
 
@@ -37,6 +41,7 @@ export default function DashboardNative({
   flowRate,
   biodiesel,
   carbonFootprint,
+  energyConsumption
 }: {
   pieData: any;
   temperature: number;
@@ -45,6 +50,7 @@ export default function DashboardNative({
   carbonFootprint: number;
   status: string | null;
   producingTime: number;
+  energyConsumption: number 
 }) {
   const theme = useTheme();
   const [loading, setLoading] = useState<boolean>(false);
@@ -162,9 +168,12 @@ export default function DashboardNative({
                 }}
               >
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Do you want to stop the machine?</AlertDialogTitle>
+                  <AlertDialogTitle>
+                    Do you want to stop the machine?
+                  </AlertDialogTitle>
                   <AlertDialogDescription style={{ color: theme?.colors.gray }}>
-                     the machine is currently running, if you wish to stop, the process might be discontinued
+                    the machine is currently running, if you wish to stop, the
+                    process might be discontinued
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
@@ -213,14 +222,15 @@ export default function DashboardNative({
             <View className="flex flex-col items-center gap-6">
               {/**bar chart biodiesel sensor */}
               <View className="flex flex-col gap-3">
-                <SkiaComponent
-                  color="#78B544"
-                  {...(Platform.OS === "web"
-                    ? { width: 190, height: 300 }
-                    : { width: 160, height: 250 })}
-                  maxValue={5}
-                  value={loading && !buttonStart ? 0 : biodiesel}
-                />
+
+                  <SkiaComponent
+                    color="#78B544"
+                    width={160}
+                    height={250}
+                    maxValue={5}
+                    value={loading && !buttonStart ? 0 : biodiesel}
+                  />
+               
                 <Text
                   style={{ color: theme?.colors.text }}
                   className="text-lg font-medium text-center"
@@ -385,6 +395,61 @@ export default function DashboardNative({
                     : formatMsToHMS(producingTime) || "0 min"}
                 </Text>
               </View>
+            </View>
+          </View>
+
+          {/** Carbon footprint and energy consumption cards */}
+          <View className="flex flex-row items-center justify-center gap-6 mt-5">
+            {/**Carbon footprint */}
+            <View
+              style={{
+                borderRadius: 16,
+                backgroundColor: theme?.colors.background,
+              }}
+              className="w-[20.43rem] flex items-center justify-center h-[12rem] gap-2 px-4 py-2 border-[1px] border-[#E5E5EF]"
+            >
+              <View className="flex-row items-center gap-2">
+                <Image
+                  source={require("../assets/images/mdi_leaf.svg")}
+                  style={{ width: 30, height: 30 }}
+                />
+                <Text className="text-[#15D037] text-lg">
+                  You saved {carbonFootprint} kg of CO2
+                </Text>
+              </View>
+
+              <Text
+                className="font-normal text-center"
+                style={{ color: theme?.colors.gray }}
+              >
+                By reusing oil, you can save up to 1 kg per 5 liter
+              </Text>
+            </View>
+
+            {/**Energy consumption */}
+            <View
+              style={{
+                borderRadius: 16,
+                backgroundColor: theme?.colors.background,
+              }}
+              className="w-[20.43rem] flex items-center justify-center h-[12rem] gap-2 px-4 py-2 border-[1px] border-[#E5E5EF]"
+            >
+              <View className="flex-row items-center gap-2">
+                <Image
+                  source={require("../assets/images/mdi_thunder.svg")}
+                  style={{ width: 30, height: 30 }}
+                />
+                <Text className="text-[#DEC536] font-normal text-lg">
+                  Energy consumption
+                </Text>
+              </View>
+
+              <Text
+                className="text-xl font-medium text-center"
+                style={{ color: theme?.colors.gray }}
+              >
+                {energyConsumption} kWh
+              </Text>
             </View>
           </View>
         </View>
