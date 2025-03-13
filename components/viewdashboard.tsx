@@ -22,8 +22,9 @@ import { useButtonStart } from '@/lib/store';
      'recycoil/producingTime',
      'recycoil/energyConsumption'
    ];
+  
    
-   type topicsDT = {
+  type topicsDT = {
     temperature: number;
     flowRate: number;
     liters: number;
@@ -41,10 +42,8 @@ export default function Viewdashboard() {
   //measure the volume based on the sensor
     const { session } = useAuth();
     const {setButtonStart, buttonStart} = useButtonStart();
-  
-
-  //if one app already starts the machine then the others can't publish to the topic 
-  //create new topic to start the machine then make a conditional statement there.
+    const client = new Paho.Client(MQTT_BROKER, "ReactNativeClient" + Math.random());
+    
   const [topics, setTopics] = useState<topicsDT>({ 
     temperature: 0.0,
     flowRate: 0.0,
@@ -58,44 +57,50 @@ export default function Viewdashboard() {
   })
 
   console.log(topics);
+  console.log('buttonStart', buttonStart);
   
   useEffect(() => {
-    // Create MQTT Client
-    const client = new Paho.Client(MQTT_BROKER, "ReactNativeClient" + Math.random());
+    // Handle Connection Loss
     client.onConnectionLost = (responseObject) => {
-      console.log("Connection Lost:", responseObject.errorMessage);    };
-
+      if (responseObject.errorCode !== 0) {
+        console.log("onConnectionLost:", responseObject.errorMessage);
+      }
+  
+      // Attempt Reconnection
+      client.connect({
+        onSuccess: () => {
+          console.log("Reconnected to MQTT!");
+          MQTT_TOPICS.forEach((topic: string) => client.subscribe(topic));
+        },
+        onFailure: (err: any) => {
+          console.log("MQTT Reconnection failed:", err.errorMessage);
+        },
+        keepAliveInterval: 120 * 60,
+        useSSL: true,
+      });
+    };
+  
+    // Handle Incoming Messages
     client.onMessageArrived = (message) => {
       console.log(`Received ${message.destinationName}: ${message.payloadString}`);
-
-      const key = message.destinationName.toString().split('/').pop() || ""; //{temperature, flowRate, liters, button} topic name
-      let data: number | string  = message.payloadString;
-
-      if(!isNaN(parseFloat(data))) { //if the value is number
-         data = parseFloat(data);
+  
+      const key = message.destinationName.split('/').pop() || "";
+      let data: number | string = message.payloadString;
+  
+      if (!isNaN(parseFloat(data))) {
+        data = parseFloat(data);
       }
-
-      
+  
       setTopics((prevTopics) => ({
         ...prevTopics,
         [key]: data,
       }));
-
-      if (message.destinationName === 'recycoil/buttonStart') {
-          if(message.payloadString === 'true') {
-            setButtonStart(true);
-          }
-          else {
-            setButtonStart(false);
-          }
-      }
     };
-
+  
     // Connect to MQTT Broker
     client.connect({
       onSuccess: () => {
         console.log("Connected to MQTT!");
-        // Subscribe to all topics
         MQTT_TOPICS.forEach((topic: string) => client.subscribe(topic));
       },
       onFailure: (err: any) => {
@@ -103,33 +108,32 @@ export default function Viewdashboard() {
       },
       useSSL: true,
     });
-
-
-    client.onConnectionLost = (responseObject) => {
-      if (responseObject.errorCode !== 0) {
-        console.log("onConnectionLost:" + responseObject.errorMessage);
-      }
-      client.connect(
-        {
-          onSuccess: () => {
-            console.log("Connected to MQTT!");
-            // Subscribe to all topics
-            MQTT_TOPICS.forEach((topic: string) => client.subscribe(topic));
-          },
-          onFailure: (err: any) => {
-            console.log("MQTT Connection failed:", err.errorMessage);
-          },
-          keepAliveInterval: 120 * 60,
-          useSSL: true,
-        }
-      );
-    }
-
+  
     return () => {
-      client.disconnect();
-    }
-  }, [])
+      if (client.isConnected()) {
+        client.disconnect();
+      }
+    };
+  }, []);
+  
+  useEffect(() => {  
+    if (buttonStart === true) {
+       client.connect({
+         onSuccess: () => {
+            const messageSend = new Paho.Message("true");
+            messageSend.destinationName = "recycoil/buttonStart";
+            console.log("Sending MQTT Message:", messageSend.destinationName, messageSend.payloadString); // Debug Log
+            client.send(messageSend);
+         },
 
+         onFailure: (err: any) => {
+           console.log("Failed sending back to mqtt", err.errorMessage);
+         },
+       })
+    }
+  }, [buttonStart]);
+  
+  
 
     //save the data from the supabase database
     useEffect(() => { 
@@ -200,13 +204,6 @@ export default function Viewdashboard() {
      }, [topics.status]);
 
 
-     //turning on and off the machine 
-     useEffect(() => { 
-      
-     }, [buttonStart]);
-
-
-  console.log(topics);
 
   
   const oilVolume = topics.flowRate * 20; 
