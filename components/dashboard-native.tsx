@@ -83,13 +83,13 @@ export default function DashboardNative({
   ]);
 
   const formatMsToHMS = (milliseconds: number) => {
-    const date = new Date(milliseconds);
-    const hours = date.getUTCHours();
-    const minutes = date.getUTCMinutes();
-    const seconds = date.getUTCSeconds();
+    const totalSeconds = Math.floor(milliseconds / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
 
-    return `${hours.toString()} hours and ${minutes.toString()} minutes`;
-  };
+    return `${hours} hours, ${minutes} minutes, and ${seconds} seconds`;
+};
 
   console.log('button start', buttonStart);
   console.log('show dialog', showDialog);
@@ -143,7 +143,7 @@ export default function DashboardNative({
 
           {Platform.OS === "web" ? (
             <AlertDialog>
-              <AlertDialogTrigger>
+              <AlertDialogTrigger disabled={!buttonStart}>
                 <View>
                   <View
                     style={{ opacity: !buttonStart ? 0.5 : 1 }}
@@ -199,7 +199,7 @@ export default function DashboardNative({
               </AlertDialogContent>
             </AlertDialog>
           ) : (
-            <Pressable>
+            <Pressable onPress={showAlert}>
               <View
                 style={{ opacity: !buttonStart ? 0.5 : 1 }}
                 className="flex flex-col items-center gap-2"
