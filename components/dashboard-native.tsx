@@ -28,9 +28,8 @@ import {
 //for web 
 import { WithSkiaWeb } from '@shopify/react-native-skia/lib/module/web';
 import RenderTankOnWeb from './renderTankOnWeb';
+import { ProgressChartData } from 'react-native-chart-kit/dist/ProgressChart';
 
-
-const cardStyle = `w-[300px] px-4 bg-white/20 py-3 h-[180px] shadow-sm border-[1px] border-[#BAB9AC] rounded-lg`;
 
 
 export default function DashboardNative({
@@ -71,25 +70,67 @@ export default function DashboardNative({
   }, [buttonStart]);
 
 
-  const [piechartData] = useState([
+  const MAX_LITERS = 6; // Maximum capacity of the pie chart
+
+  const [piechartData, setPiechartData] = useState([
     {
-      value: flowRate,
+      value: (flowRate / MAX_LITERS) * 100, // Convert flowRate into a percentage
       color: "#DB2777",
     },
     {
-      value: 100 - flowRate,
+      value: 100 - (flowRate / MAX_LITERS) * 100, // Remaining part of the pie chart
       color: "lightgray",
     },
   ]);
 
-  const formatMsToHMS = (milliseconds: number) => {
-    const totalSeconds = Math.floor(milliseconds / 1000);
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
 
-    return `${hours} hours, ${minutes} minutes, and ${seconds} seconds`;
+  useEffect(() => {
+    setPiechartData([
+      {
+        value: (flowRate / MAX_LITERS) * 100, // Convert flowRate into a percentage
+        color: "#DB2777",
+      },
+      {
+        value: 100 - (flowRate / MAX_LITERS) * 100, // Remaining part
+        color: "lightgray",
+      },
+    ]);
+  }, [flowRate]);
+
+
+  //format milliseconds to hours, minutes, and seconds 
+  const formatMsToHMS = (milliseconds: number) => {
+    const totalSeconds = Math.floor(milliseconds / 1000) || 0;
+    const hours = Math.floor(totalSeconds / 3600) || 0;
+    const minutes = Math.floor((totalSeconds % 3600) / 60) || 0;
+    const seconds = totalSeconds % 60 || 0;
+
+    return {
+      hours,
+      minutes,
+      seconds
+    }
 };
+
+ function formatTimeStr (milliseconds: number) { 
+  const { hours, minutes, seconds } = formatMsToHMS(milliseconds);
+  return `${hours} hours, ${minutes} minutes, and ${seconds} seconds`;
+ }
+
+
+  function timeProgressFormat (milliseconds: number): ProgressChartData {
+    const { hours, minutes, seconds } = formatMsToHMS(milliseconds);
+
+    console.log(hours, minutes, seconds);
+    return { 
+      labels: ['Hours', 'Minutes', 'Seconds'],
+      data:  [hours, minutes, seconds].map(val => val === 1 ? 1 : val / 60), //max is 1 min is 0
+      colors: ['#DB2777', '#DB2777', '#DB2777']
+    };
+
+ } 
+    
+ 
 
   console.log('button start', buttonStart);
   console.log('show dialog', showDialog);
@@ -109,6 +150,9 @@ export default function DashboardNative({
       { text: "OK", onPress: () => console.log("Stopped") },
     ]);
   };
+
+
+ 
   
   return (
     <SafeAreaView
@@ -368,7 +412,7 @@ export default function DashboardNative({
 
               <View className="items-center">
                 <ProgressChart
-                  data={progressData}
+                  data={timeProgressFormat(producingTime)}
                   height={150}
                   strokeWidth={6}
                   radius={20}
@@ -378,11 +422,11 @@ export default function DashboardNative({
                   }}
                   hideLegend={true}
                   chartConfig={{
-                    labels: ["Swim", "Bike", "Run"], // optional
+                    labels: ["Hours", "Minutes", "Seconds"], // optional
                     backgroundGradientFrom: theme?.colors.background,
                     backgroundGradientTo: theme?.colors.background,
                     color: (opacity = 1) => `rgba(150, 45, 255, ${opacity})`,
-                    strokeWidth: 2, // optional, default 3
+                    strokeWidth: 2, // optional, default 3 
                     useShadowColorFromDataset: false, // optional
                   }}
                 />
@@ -392,7 +436,7 @@ export default function DashboardNative({
                 >
                   {loading && !buttonStart
                     ? "..."
-                    : formatMsToHMS(producingTime) || "0 min"}
+                    : formatTimeStr(producingTime) || "0 min"}
                 </Text>
               </View>
             </View>

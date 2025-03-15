@@ -15,9 +15,9 @@ export const piechartData = [
 ]
 
 export enum Status { 
-  SUCCESSFUL = "Successful",
-  RUNNING = "Running",
-  FAILED = "Failed"
+  SUCCESSFUL = "SUCCESSFUL",
+  RUNNING = "RUNNING",
+  FAILED = "FAILED"
 }
 
 export type DataInfo = {

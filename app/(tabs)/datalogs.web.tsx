@@ -85,12 +85,12 @@ export default function DatalogsWeb() {
           },
           {
             accessorKey: 'status',
-            cell: info => info.getValue(),
+            cell: info =>  <StatusComponent status={info.getValue() as Status}/>,
             header: () => 'Status',
           },
           {
             accessorKey: 'actions',  
-            cell: ({ row }) => <ActionsButton  setRefresh={setRefresh} row={row}/>,
+            cell: ({ row }) => <ActionsButton setRefresh={setRefresh} row={row}/>,
             header: () => 'Actions',
           },
         ],

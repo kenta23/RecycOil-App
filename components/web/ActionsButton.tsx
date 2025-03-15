@@ -23,7 +23,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import { Row } from "@tanstack/react-table";
-import { DataInfo, progressData } from "@/lib/data";
+import { DataInfo, progressData, Status } from "@/lib/data";
 import SkiaComponent from "@/skia components/tank-container";
 import { ProgressChart } from "react-native-chart-kit";
 import { useEffect, useState } from "react";
@@ -32,6 +32,9 @@ import { useAuth } from "@/providers/authprovider";
 import { supabase } from "@/lib/supabase";
 import { Database } from "@/database.types";
 import { toast } from "sonner";
+import { StatusComponent } from "./StatusComponent";
+
+
 
 // type Datalog = {
 //   id: number;
@@ -160,8 +163,8 @@ export function ActionsButton ({ row, setRefresh }: { row: Row<Database['public'
                  </div>
 
                  {/** STATUS */}
-                 <div className="flex flex-row items-center gap-1">
-                   <h2 className="font-semibold">{row.getValue("status")}</h2>
+                 <div className="flex flex-row items-center gap-1"> 
+                    <StatusComponent status={row.original.status as Status} />
                  </div>
                </div>
 

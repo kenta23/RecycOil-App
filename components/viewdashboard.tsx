@@ -1,16 +1,16 @@
-import { Platform, Alert, Pressable, View, Text } from 'react-native'
-import React, { useEffect, useMemo, useState } from 'react'
+import { Platform, Alert } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import DashboardNative from './dashboard-native';
-import Paho from 'paho-mqtt';
 import { useAuth } from '@/providers/authprovider';
 import { supabase } from '@/lib/supabase';
 import { toast } from "sonner"
 import { useButtonStart } from '@/lib/store';
 import mqtt from 'mqtt';
 
+
    // Initialize the MQTT client
-   const MQTT_BROKER = "ws://broker.emqx.io:8083/mqtt";
-   const MQTT_TOPICS = [
+const MQTT_BROKER = "ws://broker.emqx.io:8083/mqtt";
+const MQTT_TOPICS = [
      "recycoil/temperature",
      "recycoil/flowRate",
      "recycoil/liters",
@@ -258,12 +258,6 @@ export default function Viewdashboard() {
 
 
 
-     function close () { 
-     }
-
-
-
-  
   const oilVolume = topics.flowRate * 20; 
   const maxVolume = 5 * 20;
   const remainingVolume = maxVolume - oilVolume; // 1.5 liters 
