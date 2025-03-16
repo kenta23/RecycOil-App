@@ -1,14 +1,46 @@
 import { View, Text, Pressable, StyleSheet, ScrollView } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { AntDesign, Entypo, Octicons } from '@expo/vector-icons'
 import { useTheme } from '../../providers/themeprovider';
 import { Image } from 'expo-image';
 import { Link } from 'expo-router';
+import { useAuth } from '@/providers/authprovider';
+import { supabase } from '@/lib/supabase';
+import { Database } from '@/database.types';
 
 
 
 export default function Datalogs() {
   const theme = useTheme();
+  const { session } = useAuth();
+  const [data, setData] = useState<Database['public']['Tables']['datalogs']['Row'][]>([]);
+  const [refresh, setRefresh] = useState(false);
+  
+     useEffect(() => {
+        async function getData() {
+          if (!session?.user?.id) return; // Prevent fetching if user is not logged in
+          
+          const { data, error } = await supabase
+            .from("datalogs")  
+            .select("*")
+            .eq("user_id", session.user.id);
+          
+          if (error) {
+            console.error("Error fetching data:", error.message);
+          } else {
+            setData(data);
+          }
+        }
+        getData();
+       }, [session?.user.id,  refresh]);
+
+       console.log(data);
+
+
+        function formatDateTime(dateTime: string) {
+          return dateTime.slice(0, 4) + dateTime.slice(5, 7) + dateTime.slice(8, 10);
+        }    
+
 
   return (
     <View
@@ -45,14 +77,13 @@ export default function Datalogs() {
           </View>
 
           <View className="w-full px-2">
-            {Array.from({ length: 10 }).map((_, index) => (
+            {data.map((item) => (
               <Link
                 href={{
-                  pathname: "/datalog/[itemId]",
-                  params: { itemId: index },
+                  pathname: `/datalog/[itemId]`,
+                  params: { itemId: item.id },
                 }}
-                push
-                key={index}
+                key={item.id}
               >
                 <View
                   className="min-h-[65px] cursor-pointer rounded-full h-auto px-4 py-3 w-full"
@@ -76,7 +107,7 @@ export default function Datalogs() {
                           style={{ color: theme?.colors.text }}
                           className="text-[20px] font-medium"
                         >
-                          204438
+                          {formatDateTime(item.created_at)}
                         </Text>
                         <View className="bg-[#EBF9F1] px-3 py-2 rounded-lg">
                           <Text
@@ -89,7 +120,7 @@ export default function Datalogs() {
                               styles.success,
                             ]}
                           >
-                            Success
+                            {item.status}
                           </Text>
                         </View>
                       </View>

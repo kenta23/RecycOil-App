@@ -1,17 +1,13 @@
-import { View, Text, Pressable, ScrollView, Platform, ActivityIndicator, Alert, } from 'react-native'
+import { View, Text, Pressable, ScrollView, Platform, ActivityIndicator, Alert, PermissionsAndroid, } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import SkiaComponent from '@/skia components/tank-container';
-import { PieChart } from 'react-native-gifted-charts';
 import * as Progress from 'react-native-progress';
 import { useTheme } from '@/providers/themeprovider';
 import { Image } from 'expo-image';
 import { ProgressChart } from 'react-native-chart-kit';
-import { piechartData, progressData } from '@/lib/data';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { supabase } from '@/lib/supabase';
-import { useAuth } from '@/providers/authprovider';
 import { useButtonStart } from '@/lib/store';
-import { Button } from "@/components/ui/button"
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -29,6 +25,8 @@ import {
 import { WithSkiaWeb } from '@shopify/react-native-skia/lib/module/web';
 import RenderTankOnWeb from './renderTankOnWeb';
 import { ProgressChartData } from 'react-native-chart-kit/dist/ProgressChart';
+import { useAuth } from '@/providers/authprovider';
+import { formatTimeStr, timeProgressFormat } from '@/lib/utils';
 
 
 
@@ -55,8 +53,11 @@ export default function DashboardNative({
   const [loading, setLoading] = useState<boolean>(false);
   const {buttonStart, setButtonStart } = useButtonStart();
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  
+  const { session } = useAuth();
+ 
 
+
+  
   useEffect(() => {
     if (buttonStart) {
       setLoading(true);
@@ -98,37 +99,8 @@ export default function DashboardNative({
   }, [flowRate]);
 
 
-  //format milliseconds to hours, minutes, and seconds 
-  const formatMsToHMS = (milliseconds: number) => {
-    const totalSeconds = Math.floor(milliseconds / 1000) || 0;
-    const hours = Math.floor(totalSeconds / 3600) || 0;
-    const minutes = Math.floor((totalSeconds % 3600) / 60) || 0;
-    const seconds = totalSeconds % 60 || 0;
 
-    return {
-      hours,
-      minutes,
-      seconds
-    }
-};
-
- function formatTimeStr (milliseconds: number) { 
-  const { hours, minutes, seconds } = formatMsToHMS(milliseconds);
-  return `${hours} hours, ${minutes} minutes, and ${seconds} seconds`;
- }
-
-
-  function timeProgressFormat (milliseconds: number): ProgressChartData {
-    const { hours, minutes, seconds } = formatMsToHMS(milliseconds);
-
-    console.log(hours, minutes, seconds);
-    return { 
-      labels: ['Hours', 'Minutes', 'Seconds'],
-      data:  [hours, minutes, seconds].map(val => val === 1 ? 1 : val / 60), //max is 1 min is 0
-      colors: ['#DB2777', '#DB2777', '#DB2777']
-    };
-
- } 
+  
     
  
 
@@ -147,16 +119,48 @@ export default function DashboardNative({
   const showAlert = () => {
     Alert.alert("Warning", "Are you sure you want to stop?", [
       { text: "Cancel", style: "cancel" },
-      { text: "OK", onPress: () => console.log("Stopped") },
+      { text: "OK", onPress: () => setButtonStart(false) },
     ]);
   };
 
 
- 
-  
+  const handleButtonStart = async () => { 
+      //alert for asking bluetooth connection
+      if (Platform.OS === "android") {
+        try {
+          const granted = await PermissionsAndroid.requestMultiple([
+            PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
+            PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
+            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+          ]);
+    
+          if (
+            granted["android.permission.BLUETOOTH_CONNECT"] === PermissionsAndroid.RESULTS.GRANTED &&
+            granted["android.permission.BLUETOOTH_SCAN"] === PermissionsAndroid.RESULTS.GRANTED &&
+            granted["android.permission.ACCESS_FINE_LOCATION"] === PermissionsAndroid.RESULTS.GRANTED
+          ) {
+            console.log("Bluetooth permissions granted!");
+            setButtonStart(true);
+            return true;
+          } else {
+            Alert.alert("Permission Denied", "Bluetooth permissions are required.");
+            return false;
+          }
+        } catch (error) {
+          console.error("Permission error:", error);
+          return false;
+        }
+      }
+      setButtonStart(true);
+      return true; // iOS does not need this
+  }
+
+
+
+
   return (
     <SafeAreaView
-      edges={["bottom"]}
+      edges={["bottom"]} 
       className="w-full h-full min-h-screen"
       style={{ backgroundColor: theme?.colors.background }}
     >
@@ -176,8 +180,8 @@ export default function DashboardNative({
             <View className="p-2 bg-[#EFE3CA] rounded-full">
               <Pressable
                 disabled={buttonStart}
-                onPress={() => setButtonStart(true)}
-                className="bg-[#6FEA37] size-8 rounded-full"
+                onPress={handleButtonStart}
+                className="bg-[#6FEA37] size-8 rounded-full" 
               />
             </View>
             <Text className="text-sm" style={{ color: theme?.colors.text }}>
@@ -265,8 +269,8 @@ export default function DashboardNative({
           <View className="w-full mt-2">
             <View className="flex flex-col items-center gap-6">
               {/**bar chart biodiesel sensor */}
-              <View className="flex flex-col gap-3">
 
+              <View className="flex flex-col gap-3">
                   <SkiaComponent
                     color="#78B544"
                     width={160}
@@ -285,18 +289,22 @@ export default function DashboardNative({
 
               {/**Temp sensors, Flow rate, etc. */}
 
-              <View className="flex-row items-center w-full justify-evenly ">
+              <View className="flex-row items-center w-full mt-6 justify-evenly">
+              
                 {/** Temp sensor */}
+
                 <View className="flex flex-col items-center w-auto gap-2">
                   <Progress.Bar
+                    animated
+                    borderRadius={10}
                     progress={
                       loading && !buttonStart
                         ? 0
                         : Number(temperature) / 100 || 0
                     }
                     color="#F98662"
-                    width={100}
-                    height={8}
+                    width={250}
+                    height={18}
                   />
                   <View className="flex-col items-center">
                     <Text style={{ color: theme?.colors.text }}>
@@ -315,37 +323,15 @@ export default function DashboardNative({
                   </View>
                 </View>
 
-                {/** Flow rate sensor */}
-                <View className="flex flex-col items-center w-auto gap-2">
-                  <Progress.Bar
-                    color="#8962F9"
-                    progress={
-                      loading && !buttonStart ? 0 : Number(flowRate) / 10 || 0
-                    }
-                    width={100}
-                    height={8}
-                  />
-                  <View className="flex-col items-center">
-                    <Text style={{ color: theme?.colors.text }}>Flow rate</Text>
-                    <Text
-                      style={{ color: theme?.colors.text }}
-                      className="text-lg font-semibold"
-                    >
-                      {loading && !buttonStart
-                        ? "..."
-                        : !Number.isNaN(flowRate)
-                        ? `${Number(flowRate).toFixed(2)} L/min`
-                        : `${0.0} L/min`}
-                    </Text>
-                  </View>
-                </View>
+     
+
               </View>
             </View>
           </View>
 
-          <View className="flex items-center w-full my-6">
+          <View className="flex items-center w-full my-10">
             <Text style={{ color: theme?.colors.text }} className="text-lg">
-              {status === "Not Running" ? "Not Running" : "Running"}
+              {!buttonStart ? "Not Running" : "Running"}
             </Text>
           </View>
 
@@ -371,25 +357,23 @@ export default function DashboardNative({
                 </Text>
                 <View className="border-[1px] border-[#E5E5EF] h-[1px] w-full" />
               </View>
-
-              {/** Charts here */}
+ 
+              {/** Oil volume progress chart */}
+              
               <View className="items-center justify-center">
-                <PieChart
-                  donut
-                  data={piechartData}
-                  isAnimated
-                  radius={70}
-                  backgroundColor={theme?.colors.background}
-                  innerRadius={50}
-                  centerLabelComponent={() => (
-                    <Text
-                      className="text-sm font-semibold"
-                      style={{ color: theme?.colors.text }}
-                    >
-                      {loading && !buttonStart ? "..." : flowRate + " liters"}
-                    </Text>
-                  )}
-                />
+                <Progress.Circle 
+                     color="#2E99E5"
+                     progress={loading && !buttonStart ? 0 : Number(flowRate) / 6 || 0}
+                     size={150}
+                     thickness={6}
+                     strokeCap='square'
+                     textStyle={{ color: theme?.colors.text, fontSize: 18, fontWeight: '600', fontFamily: 'Inter' }}
+                     endAngle={1}
+                     showsText
+                     formatText={(value) => `${Number(value * 6).toFixed(1)} Liters`}
+                     allowFontScaling
+                     animated
+                 />
               </View>
             </View>
 
@@ -443,8 +427,9 @@ export default function DashboardNative({
           </View>
 
           {/** Carbon footprint and energy consumption cards */}
-          <View className="flex flex-row items-center justify-center gap-6 mt-5">
+          <View className={`${Platform.OS === 'web' ? 'flex-row flex' : 'flex-col'} items-center justify-center gap-6 mt-5`}> 
             {/**Carbon footprint */}
+
             <View
               style={{
                 borderRadius: 16,
@@ -493,7 +478,7 @@ export default function DashboardNative({
                 style={{ color: theme?.colors.gray }}
               >
                 {energyConsumption} kWh
-              </Text>
+              </Text> 
             </View>
           </View>
         </View>
