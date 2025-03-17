@@ -6,7 +6,7 @@ import { useTheme } from '@/providers/themeprovider';
 import { Image } from 'expo-image';
 import { ProgressChart } from 'react-native-chart-kit';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useButtonStart } from '@/lib/store';
+import { useBTconnection, useButtonStart } from '@/lib/store';
 
 import {
   AlertDialog,
@@ -27,6 +27,7 @@ import RenderTankOnWeb from './renderTankOnWeb';
 import { ProgressChartData } from 'react-native-chart-kit/dist/ProgressChart';
 import { useAuth } from '@/providers/authprovider';
 import { formatTimeStr, timeProgressFormat } from '@/lib/utils';
+import { BleManager, Device } from "react-native-ble-plx";
 
 
 
@@ -54,10 +55,10 @@ export default function DashboardNative({
   const {buttonStart, setButtonStart } = useButtonStart();
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const { session } = useAuth();
+  const [receivedData, setReceivedData] = useState<string | null>(null);
+  const { setBTconnected } = useBTconnection();
  
 
-
-  
   useEffect(() => {
     if (buttonStart) {
       setLoading(true);
@@ -99,11 +100,6 @@ export default function DashboardNative({
   }, [flowRate]);
 
 
-
-  
-    
- 
-
   console.log('button start', buttonStart);
   console.log('show dialog', showDialog);
 
@@ -124,43 +120,112 @@ export default function DashboardNative({
   };
 
 
-  const handleButtonStart = async () => { 
-      //alert for asking bluetooth connection
-      if (Platform.OS === "android") {
-        try {
-          const granted = await PermissionsAndroid.requestMultiple([
-            PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
+  
+    const requestBluetoothPermission = async () => {
+      if (Platform.OS === 'ios') {
+        console.log("iOS detected, no additional permissions required.");
+        return true;
+      }
+    
+      if (Platform.OS === 'android' && PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION) {
+        const apiLevel = parseInt(Platform.Version.toString(), 10);
+    
+        if (apiLevel < 31) {
+          const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+            console.log("Location permission granted.");
+            return true;
+          } else {
+            console.log("Location permission denied.");
+            return false;
+          }
+        }
+    
+        if (PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN && PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT) {
+          const result = await PermissionsAndroid.requestMultiple([
             PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
-            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+            PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
+            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
           ]);
     
           if (
-            granted["android.permission.BLUETOOTH_CONNECT"] === PermissionsAndroid.RESULTS.GRANTED &&
-            granted["android.permission.BLUETOOTH_SCAN"] === PermissionsAndroid.RESULTS.GRANTED &&
-            granted["android.permission.ACCESS_FINE_LOCATION"] === PermissionsAndroid.RESULTS.GRANTED
+            result['android.permission.BLUETOOTH_CONNECT'] === PermissionsAndroid.RESULTS.GRANTED &&
+            result['android.permission.BLUETOOTH_SCAN'] === PermissionsAndroid.RESULTS.GRANTED &&
+            result['android.permission.ACCESS_FINE_LOCATION'] === PermissionsAndroid.RESULTS.GRANTED
           ) {
-            console.log("Bluetooth permissions granted!");
-            setButtonStart(true);
+            console.log("All Bluetooth and location permissions granted.");
             return true;
           } else {
-            Alert.alert("Permission Denied", "Bluetooth permissions are required.");
+            console.log("One or more Bluetooth permissions denied.");
             return false;
           }
-        } catch (error) {
-          console.error("Permission error:", error);
-          return false;
         }
       }
-      setButtonStart(true);
-      return true; // iOS does not need this
-  }
+    
+      console.log('Permissions have not been granted.');
+      return false;
+    };
+  
+    const scanAndConnect = async () => {
+      const permissionGranted = await requestBluetoothPermission();
+      if (Platform.OS === 'web') {
+        setButtonStart(true);
+      }
+      
+      if (!permissionGranted) {
+        console.error("Bluetooth permissions not granted!");
+        Alert.alert("Bluetooth permissions not granted!");
+        return;
+      }
+    
+      const bleManager = new BleManager();
+    
+      bleManager.startDeviceScan(null, null, (error, device) => {
+        
+        if(!device?.isConnected) { 
+          Alert.alert("No ESP32 device found.");
+       }
+       
+        if (error) {
+          console.error("Bluetooth scan error:", error);
+          return;
+        }
 
+        console.log('Devices', device);
+    
+        if (device?.name === "ESP32") {  // Match ESP32 name
+          console.log("Found ESP32:", device.id);
+          bleManager.stopDeviceScan();
+    
+          device
+            .connect()
+            .then((device) => device.discoverAllServicesAndCharacteristics())
+            .then((device) => {
+              setBTconnected(device);
+              console.log("Connected to ESP32");
+    
+               //turn on the button
+              setButtonStart(true);
+  
+              return device.readCharacteristicForService(
+                "4fafc201-1fb5-459e-8fcc-c5c9c331914b", // SERVICE_UUID (must match ESP32)
+                "beb5483e-36e1-4688-b7f5-ea07361b26a8"  // CHARACTERISTIC_UUID (must match ESP32)
+              );
+            })
+            .then((characteristic) => {
+              setReceivedData(characteristic.value);
+              console.log("Received Data:", characteristic.value);
+            })
+            .catch((error) => console.error("Connection error:", error));
+        }
 
+      });
+    };
 
 
   return (
     <SafeAreaView
-      edges={["bottom"]} 
+      edges={["bottom"]}
       className="w-full h-full min-h-screen"
       style={{ backgroundColor: theme?.colors.background }}
     >
@@ -180,8 +245,8 @@ export default function DashboardNative({
             <View className="p-2 bg-[#EFE3CA] rounded-full">
               <Pressable
                 disabled={buttonStart}
-                onPress={handleButtonStart}
-                className="bg-[#6FEA37] size-8 rounded-full" 
+                onPress={scanAndConnect}
+                className="bg-[#6FEA37] size-8 rounded-full"
               />
             </View>
             <Text className="text-sm" style={{ color: theme?.colors.text }}>
@@ -271,14 +336,14 @@ export default function DashboardNative({
               {/**bar chart biodiesel sensor */}
 
               <View className="flex flex-col gap-3">
-                  <SkiaComponent
-                    color="#78B544"
-                    width={160}
-                    height={250}
-                    maxValue={5}
-                    value={loading && !buttonStart ? 0 : biodiesel}
-                  />
-               
+                <SkiaComponent
+                  color="#78B544"
+                  width={160}
+                  height={250}
+                  maxValue={5}
+                  value={loading && !buttonStart ? 0 : biodiesel}
+                />
+
                 <Text
                   style={{ color: theme?.colors.text }}
                   className="text-lg font-medium text-center"
@@ -290,9 +355,7 @@ export default function DashboardNative({
               {/**Temp sensors, Flow rate, etc. */}
 
               <View className="flex-row items-center w-full mt-6 justify-evenly">
-              
                 {/** Temp sensor */}
-
                 <View className="flex flex-col items-center w-auto gap-2">
                   <Progress.Bar
                     animated
@@ -322,9 +385,6 @@ export default function DashboardNative({
                     </Text>
                   </View>
                 </View>
-
-     
-
               </View>
             </View>
           </View>
@@ -357,23 +417,32 @@ export default function DashboardNative({
                 </Text>
                 <View className="border-[1px] border-[#E5E5EF] h-[1px] w-full" />
               </View>
- 
+
               {/** Oil volume progress chart */}
-              
+
               <View className="items-center justify-center">
-                <Progress.Circle 
-                     color="#2E99E5"
-                     progress={loading && !buttonStart ? 0 : Number(flowRate) / 6 || 0}
-                     size={150}
-                     thickness={6}
-                     strokeCap='square'
-                     textStyle={{ color: theme?.colors.text, fontSize: 18, fontWeight: '600', fontFamily: 'Inter' }}
-                     endAngle={1}
-                     showsText
-                     formatText={(value) => `${Number(value * 6).toFixed(1)} Liters`}
-                     allowFontScaling
-                     animated
-                 />
+                <Progress.Circle
+                  color="#2E99E5"
+                  progress={
+                    loading && !buttonStart ? 0 : Number(flowRate) / 6 || 0
+                  }
+                  size={150}
+                  thickness={6}
+                  strokeCap="square"
+                  textStyle={{
+                    color: theme?.colors.text,
+                    fontSize: 18,
+                    fontWeight: "600",
+                    fontFamily: "Inter",
+                  }}
+                  endAngle={1}
+                  showsText
+                  formatText={(value) =>
+                    `${Number(value * 6).toFixed(1)} Liters`
+                  }
+                  allowFontScaling
+                  animated
+                />
               </View>
             </View>
 
@@ -410,7 +479,7 @@ export default function DashboardNative({
                     backgroundGradientFrom: theme?.colors.background,
                     backgroundGradientTo: theme?.colors.background,
                     color: (opacity = 1) => `rgba(150, 45, 255, ${opacity})`,
-                    strokeWidth: 2, // optional, default 3 
+                    strokeWidth: 2, // optional, default 3
                     useShadowColorFromDataset: false, // optional
                   }}
                 />
@@ -427,9 +496,12 @@ export default function DashboardNative({
           </View>
 
           {/** Carbon footprint and energy consumption cards */}
-          <View className={`${Platform.OS === 'web' ? 'flex-row flex' : 'flex-col'} items-center justify-center gap-6 mt-5`}> 
+          <View
+            className={`${
+              Platform.OS === "web" ? "flex-row flex" : "flex-col"
+            } items-center justify-center gap-6 mt-5`}
+          >
             {/**Carbon footprint */}
-
             <View
               style={{
                 borderRadius: 16,
@@ -456,6 +528,7 @@ export default function DashboardNative({
             </View>
 
             {/**Energy consumption */}
+
             <View
               style={{
                 borderRadius: 16,
@@ -478,11 +551,11 @@ export default function DashboardNative({
                 style={{ color: theme?.colors.gray }}
               >
                 {energyConsumption} kWh
-              </Text> 
+              </Text>
             </View>
           </View>
         </View>
       </ScrollView>
     </SafeAreaView>
   );
-}
+} 

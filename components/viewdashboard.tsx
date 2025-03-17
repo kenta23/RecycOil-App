@@ -1,17 +1,26 @@
-import { Platform, Alert } from 'react-native'
+import { Platform, Alert, PermissionsAndroid } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import DashboardNative from './dashboard-native';
 import { useAuth } from '@/providers/authprovider';
 import { supabase } from '@/lib/supabase';
 import { toast } from "sonner"
-import { useButtonStart } from '@/lib/store';
+import { useBTconnection, useButtonStart } from '@/lib/store';
 import mqtt from 'mqtt';
 import RNBluetoothClassic, { BluetoothDevice } from 'react-native-bluetooth-classic';
-import { getMacAddress } from 'react-native-device-info';
+import { getMacAddress, getDeviceId } from 'react-native-device-info';
+import * as Location from 'expo-location';
+import { BleManager, Device } from "react-native-ble-plx";
+
 
 
    // Initialize the MQTT client
-const MQTT_BROKER = "ws://broker.emqx.io:8083/mqtt";
+//if this website is in production 
+const checkSecure = process.env.NODE_ENV === "production";
+
+const MQTT_BROKER = checkSecure
+  ? "wss://broker.emqx.io:8084/mqtt"  // Use WSS in production (HTTPS)
+  : "ws://broker.emqx.io:8083/mqtt";  // Use WS in development (HTTP)
+
 const MQTT_TOPICS = [
      "recycoil/temperature",
      "recycoil/flowRate",
@@ -44,14 +53,15 @@ export default function Viewdashboard() {
   //measure the volume based on the sensor
   const { session } = useAuth();
   const { setButtonStart, buttonStart } = useButtonStart();
+  const { BTconnected } = useBTconnection();
+  
   // const client = new Paho.Client(MQTT_BROKER, "ReactNativeClient" + Math.random());
   const client: mqtt.MqttClient = mqtt.connect(MQTT_BROKER, {
     clientId: "ReactNativeClient" + Math.random(),
     keepalive: 7200,
   });
-  const [connectedDevices, setConnectedDevices] = useState<BluetoothDevice[]>(
-    []
-  );
+  const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
+  const device = BTconnected?.name || location?.latitude.toString();
 
   const [topics, setTopics] = useState<topicsDT>({
     temperature: 0.0,
@@ -69,72 +79,69 @@ export default function Viewdashboard() {
   console.log("buttonStart", buttonStart);
 
 
+  console.log(location);
 
-  // Bluetooth connection effect
-  useEffect(() => {
-    const fetchConnectedDevices = async () => {
-      if (!buttonStart) return; 
-  
-      try {
-        const devices = await RNBluetoothClassic.getConnectedDevices();
-        if (devices.length === 0) {
-          console.warn("No Bluetooth devices connected.");
-        }
-        setConnectedDevices(devices);
-        console.log("Connected Devices:", devices);
-      } catch (err) {
-        console.error("Error fetching Bluetooth devices:", err);
-      }
-    };
-  
-    fetchConnectedDevices();
-  }, [buttonStart]);
-  
 
   useEffect(() => {
     const setupMqtt = async () => {
-      if (buttonStart) {
+      //get my own address from expo
+      console.log('device', device);
+      const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
+
+      if (Platform.OS === 'web') {
+          const navigator = window.navigator.geolocation;
+          navigator.getCurrentPosition((position) => {
+            setLocation({
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+            });
+          });
+      }
+
+      if (buttonStart && (isMobile ? BTconnected !== null : location?.latitude)) {
         if (!client.connected) {
           try {
             console.log("Connecting to MQTT...");
-
+      
             client.on("connect", async () => {
               console.log("Connected to MQTT!");
+      
+              console.log("My Device MAC Address:", device);
+              console.log("My device location:", location);
 
-              //get my own address from expo
-              const myMacAddress = await getMacAddress();
-
-              console.log("My Device MAC Address:", myMacAddress.toString());
-              const os = Platform.OS;
-
-              client.publish(`recycoil/deviceType`, os);
-              client.publish(`recycoil/${myMacAddress}/buttonStart`, "true");
-
-              client?.subscribe(MQTT_TOPICS, (err) => {
-                if (err) console.error("Subscription Error:", err);
-                else console.log("Subscribed to topics:", MQTT_TOPICS);
-              });
+                  // ✅ Subscribe to topics BEFORE publishing
+              const TOPIC_ID = `recycoil/${device}/buttonStart`;
+              const TOPIC_DEVICE_ID = "recycoil/deviceId";
               
+              client.subscribe([TOPIC_ID, TOPIC_DEVICE_ID], { qos: 2 }, (err) => {
+                if (err) console.error("❌ Subscription Error:", err);
+                else console.log("✅ Subscribed to topics:", [TOPIC_ID, TOPIC_DEVICE_ID]);
+              });
+      
+              client.publish(`recycoil/${device}/buttonStart`, "true");
+              client.publish("recycoil/deviceId", device || "", { qos: 2 });
+           
             });
-
+      
             // Handle incoming messages
             client.on("message", (topic, message) => {
               const payload = message.toString();
               console.log(`Received message from ${topic}: ${payload}`);
 
               const key = topic.split("/").pop() || "";
-              let data: number | string = payload;
+              let data = isNaN(parseFloat(payload)) ? payload : parseFloat(payload);
 
-              if (!isNaN(parseFloat(payload))) {
-                data = parseFloat(payload);
-              }
+              client?.subscribe(MQTT_TOPICS, (err) => {
+                if (err) console.error("Subscription Error:", err);
+                else console.log("Subscribed to topics:", MQTT_TOPICS);
+              });
 
               setTopics((prevTopics) => ({
                 ...prevTopics,
                 [key]: data,
               }));
             });
-
+      
             client.on("error", (err) => console.error("MQTT Error:", err));
             client.on("disconnect", () =>
               console.warn("Disconnected from MQTT broker.")

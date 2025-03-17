@@ -34,6 +34,12 @@
       "react-native-edge-to-edge",
       "expo-router",
       [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+        }
+      ],
+      [
         "expo-splash-screen",
         {
           "image": "./assets/images/splash icon/hdpi.png",
@@ -57,7 +63,8 @@
       ],
       "expo-secure-store",
       "expo-font",
-      ["with-rn-bluetooth-classic",
+      [
+        "with-rn-bluetooth-classic",
         {
           "peripheralUsageDescription": "Allow myDevice to check bluetooth peripheral info",
           "alwaysUsageDescription": "Allow myDevice to always use bluetooth info",
@@ -65,6 +72,14 @@
             "com.myCompany.p1",
             "com.myCompany.p2"
           ]
+        }
+      ],
+      [
+        "react-native-ble-plx",
+        {
+          "isBackgroundEnabled": true,
+          "modes": ["peripheral", "central"],
+          "bluetoothAlwaysPermission": "Allow $(PRODUCT_NAME) to connect to bluetooth devices"
         }
       ]
     ],
