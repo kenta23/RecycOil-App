@@ -32,6 +32,8 @@ import { BleManager, Device } from "react-native-ble-plx";
 
 
 export default function DashboardNative({
+  loading,
+  setLoading,
   pieData,
   status,
   producingTime,
@@ -41,6 +43,8 @@ export default function DashboardNative({
   carbonFootprint,
   energyConsumption
 }: {
+  loading: boolean;
+  setLoading:  React.Dispatch<React.SetStateAction<boolean>>;
   pieData: any;
   temperature: number;
   flowRate: number;
@@ -51,7 +55,7 @@ export default function DashboardNative({
   energyConsumption: number 
 }) {
   const theme = useTheme();
-  const [loading, setLoading] = useState<boolean>(false);
+  // const [loading, setLoading] = useState<boolean>(false);
   const {buttonStart, setButtonStart } = useButtonStart();
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const { session } = useAuth();
@@ -59,17 +63,17 @@ export default function DashboardNative({
   const { setBTconnected } = useBTconnection();
  
 
-  useEffect(() => {
-    if (buttonStart) {
-      setLoading(true);
+  // useEffect(() => {
+  //   if (buttonStart) {
+  //     setLoading(true);
 
-      const timer = setTimeout(() => {
-        setLoading(false); // Show content after delay
-      }, 1500); // Delay for 3 seconds
+  //     const timer = setTimeout(() => {
+  //       setLoading(false); // Show content after delay
+  //     }, 1500); // Delay for 3 seconds
 
-      return () => clearTimeout(timer);
-    }
-  }, [buttonStart]);
+  //     return () => clearTimeout(timer);
+  //   }
+  // }, [buttonStart]);
 
 
   const MAX_LITERS = 6; // Maximum capacity of the pie chart
@@ -166,10 +170,11 @@ export default function DashboardNative({
       return false;
     };
   
+
     const scanAndConnect = async () => {
       const permissionGranted = await requestBluetoothPermission();
       if (Platform.OS === 'web') {
-        setButtonStart(true);
+        setLoading(true);
       }
       
       if (!permissionGranted) {
@@ -205,7 +210,7 @@ export default function DashboardNative({
               console.log("Connected to ESP32");
     
                //turn on the button
-              setButtonStart(true);
+              setLoading(true);
   
               return device.readCharacteristicForService(
                 "4fafc201-1fb5-459e-8fcc-c5c9c331914b", // SERVICE_UUID (must match ESP32)
@@ -222,6 +227,8 @@ export default function DashboardNative({
       });
     };
 
+
+    console.log('loading', loading);
 
   return (
     <SafeAreaView

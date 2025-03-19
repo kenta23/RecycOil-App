@@ -33,6 +33,7 @@ import { supabase } from "@/lib/supabase";
 import { Database } from "@/database.types";
 import { toast } from "sonner";
 import { StatusComponent } from "./StatusComponent";
+import { formatDate } from "@/lib/utils";
 
 
 
@@ -67,15 +68,7 @@ export function ActionsButton ({ row, setRefresh }: { row: Row<Database['public'
 
     {/** use row prop to ge single data from table */}
 
-    const formatDate = (dateString: string) => {
-      const date = new Date(dateString);
-      return new Intl.DateTimeFormat("en-US", { 
-        month: "long", 
-        day: "2-digit", 
-        year: "numeric" 
-      }).format(date);
-    };
-    
+
 
     const handleDelete = async (id: number) => { 
       try {

@@ -6,7 +6,25 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+export const formatTime = (milliseconds: number | null) => {
+  if (!milliseconds || milliseconds <= 0) return "0hr 0min"; // Handle null or invalid cases
 
+  const hours = Math.floor(milliseconds / (1000 * 60 * 60));
+  const minutes = Math.floor((milliseconds % (1000 * 60 * 60)) / (1000 * 60));
+
+  return `${hours}hr ${minutes}min`;
+};
+
+
+export const formatDate = (dateString: string) => {
+      const date = new Date(dateString);
+      return new Intl.DateTimeFormat("en-US", { 
+        month: "long", 
+        day: "2-digit", 
+        year: "numeric" 
+      }).format(date);
+    };
+    
 
   //format milliseconds to hours, minutes, and seconds 
  export const formatMsToHMS = (milliseconds: number) => {

@@ -20,6 +20,7 @@ import { ActionsButton } from '@/components/web/ActionsButton';
 import { useAuth } from '@/providers/authprovider';
 import { supabase } from '@/lib/supabase';
 import { Database } from '@/database.types';
+import { formatDate, formatTimeStr } from '@/lib/utils';
 
 
 
@@ -78,9 +79,8 @@ export default function DatalogsWeb() {
             header: () => <span >ID</span>,
           },
           {
-            accessorKey: 'date',
-            id: 'Date',
-            cell: info => info.getValue(),
+            accessorKey: 'created_at',
+            cell: info => formatDate(info.row.original.created_at),
             header: () => <span>Date</span>,
           },
           {
@@ -103,7 +103,7 @@ export default function DatalogsWeb() {
 
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 10,
+    pageSize: 8,
   })
  
 
@@ -127,93 +127,110 @@ export default function DatalogsWeb() {
 
   
  return (
-    <div
-      className="w-full min-h-screen"
-      style={{ backgroundColor: theme?.colors.background }}
-    >
-      <div
-        style={{ color: theme?.colors.text }}
-        className="w-full h-auto max-h-screen px-6 py-4 "
-      >
-        <h1 className="mt-8 font-medium md:text-lg xl:text-2xl">Your Data</h1>
+   <div
+     className="w-full min-h-screen"
+     style={{ backgroundColor: theme?.colors.background }}
+   >
+     <div
+       style={{ color: theme?.colors.text }}
+       className="w-full h-auto max-h-screen px-6 py-4 "
+     >
+       <h1 className="mt-4 font-medium md:text-lg xl:text-2xl">Your Data</h1>
 
-        {/**TABLE */}
-  <div className="w-full flex flex-col justify-between items-center mt-8 min-h-[400px] lg:min-h-[500px] xl:min-h-[600px]">
-      <div className='flex flex-col items-end w-full'>
-          {/**filter and csv action button */}
-           <div className='flex flex-row items-center gap-3'>
-               <button onClick={downloadCSV} className='px-3 bg-[#F9F4EC] text-dark py-1 w-auto rounded-lg'>
-                   <span className='me-1'>CSV</span><Feather name="download" size={18} color="#38362F" />
-               </button>
+       {/**TABLE */}
+       <div className="w-full flex flex-col justify-between items-center mt-2 min-h-[300px] lg:min-h-[500px] xl:min-h-[600px]">
+         <div className="flex flex-col items-end w-full h-full">
+           {/**filter and csv action button */}
+           <div className="flex flex-row items-center gap-3">
+             <button
+               onClick={downloadCSV}
+               className="px-3 bg-[#F9F4EC] text-dark py-1 w-auto rounded-lg"
+             >
+               <span className="me-1">CSV</span>
+               <Feather name="download" size={18} color="#38362F" />
+             </button>
 
-               <Ionicons name="filter" size={24} color={theme?.colors.gray} className='cursor-pointer'/>
+             <Ionicons
+               name="filter"
+               size={24}
+               color={theme?.colors.gray}
+               className="cursor-pointer"
+             />
            </div>
-         <table className="w-full">
-            <thead>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <th key={header.id} colSpan={header.colSpan}>
-                      <div
-                        className={`px-6 py-3 font-bold text-xs text-gray-500 uppercase tracking-wider`}
-                      >
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                      </div>
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
+           <table className="w-full h-auto">
+             <thead>
+               {table.getHeaderGroups().map((headerGroup) => (
+                 <tr key={headerGroup.id}>
+                   {headerGroup.headers.map((header) => (
+                     <th key={header.id} colSpan={header.colSpan}>
+                       <div
+                         className={`px-4 py-2 font-bold text-xs text-gray-500 uppercase tracking-wider`}
+                       >
+                         {flexRender(
+                           header.column.columnDef.header,
+                           header.getContext()
+                         )}
+                       </div>
+                     </th>
+                   ))}
+                 </tr>
+               ))}
+             </thead>
 
-            <tbody>
-              {table.getRowModel().rows.map((row) => {
-                return (
-                  <tr className={`${row.index % 2 === 0 && 'bg-[#EBE9D7] text-black'}`} key={row.id}>
-                    {row.getVisibleCells().map((cell, index) => (
-                        <td className={`text-center py-2 ${index === 0 && 'text-black'}`}  style={{ color: row.index % 2 === 0 ? '#00000' : '#FFFFFF' }} key={cell.id}>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </td>
-                      )
-                    )}
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+             <tbody className="">
+               {table.getRowModel().rows.map((row) => {
+                 return (
+                   <tr
+                     className={`${
+                       row.index % 2 === 0 && "bg-[#EBE9D7] text-black"
+                     } `}
+                     key={row.id}
+                   >
+                     {row.getVisibleCells().map((cell, index) => (
+                       <td
+                         className={`text-center py-2 ${
+                           index === 0 && "text-black"
+                         }`}
+                         style={{
+                           color: row.index % 2 === 0 ? "#00000" : "#FFFFFF",
+                         }}
+                         key={cell.id}
+                       >
+                         {flexRender(
+                           cell.column.columnDef.cell,
+                           cell.getContext()
+                         )}
+                       </td>
+                     ))}
+                   </tr>
+                 );
+               })}
+             </tbody>
+           </table>
          </div>
 
-
-          {/**PAGINATION BUTTONS */}
-            <div className='flex flex-row items-center gap-2'>
-                {table.getPageCount() > 1 ? Array.from({ length: table.getPageCount() }).map((_, index) => (
-                    <button
-                        key={index}
-                        onClick={() => table.nextPage()}
-                        className={`px-4 py-2 rounded-lg ${!table.getCanNextPage() && 'text-gray-500'} ${table.getState().pagination.pageIndex === index ? 'bg-[#6D8A49] text-white' : 'bg-[#E0E0E0] text-black'}`}
-                        disabled={!table.getCanNextPage()}
-                    >
-                       {index + 1}
-                    </button>
-                )) : Array.from({ length: 2 }).map((_, index) => (
-                    <button
-                        key={index}
-                        onClick={() => table.nextPage()}
-                        className={`px-4 py-2 rounded-lg ${!table.getCanNextPage() && 'text-gray-500'} ${table.getState().pagination.pageIndex === index ? 'bg-[#6D8A49] text-white' : 'bg-[#E0E0E0] text-black'}`}
-                        disabled={!table.getCanNextPage()}
-                    >
-                       {index + 1}
-                    </button>))}
-            </div>
-        </div>
-      </div>
-    </div>
-  );
+         {/**PAGINATION BUTTONS */}
+         <div className="flex flex-row items-center gap-2">
+           {table.getPageCount() > 1 &&
+             Array.from({ length: table.getPageCount() }).map((_, index) => (
+               <button
+                 key={index}
+                 onClick={() => table.setPageIndex(index)} // ✅ Change this to setPageIndex
+                 className={`px-4 py-2 rounded-lg 
+                    ${
+                      table.getState().pagination.pageIndex === index
+                        ? "bg-[#6D8A49] text-white"
+                        : "bg-[#E0E0E0] text-black"
+                    }`}
+               >
+                 {index + 1}
+               </button>
+             ))}
+         </div>
+       </div>
+     </div>
+   </div>
+ );
 }
 
 const styles = StyleSheet.create({
