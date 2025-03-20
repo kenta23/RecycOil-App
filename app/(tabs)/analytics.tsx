@@ -12,8 +12,8 @@ export default function Analytics() {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
   const [items, setItems] = useState([
-    {label: 'Apple', value: 'apple'},
-    {label: 'Banana', value: 'banana'}
+    {label: 'Weekly', value: 'weekly'},
+    {label: 'Monthly', value: 'monthly'}
   ]);
 
 
