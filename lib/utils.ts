@@ -7,6 +7,12 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 
+export const formatTime = (timeString: string): string => {
+  const [hours, minutes, seconds] = timeString?.split(":");
+  return `${hours.padStart(2, "0")}:${minutes.padStart(2, "0")}:${seconds.padStart(2, "0")}`;
+};
+
+
 
   //format milliseconds to hours, minutes, and seconds 
  export const formatMsToHMS = (milliseconds: number) => {

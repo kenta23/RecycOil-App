@@ -1,5 +1,5 @@
 import { View, Text, Pressable, ScrollView, Dimensions, useWindowDimensions,  } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BarChart, PieChart } from "react-native-gifted-charts";
 import { Image } from "expo-image";
 import { useTheme } from "@/providers/themeprovider";
@@ -14,147 +14,172 @@ import {
 } from "@/components/ui/select"
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/authprovider";
+import { Database } from "@/database.types";
+import { formatTime } from "@/lib/utils";
 
 
+type LegendItem = {
+  label: string;
+  frontColor: string;
+};
+
+type DataLog = {
+  created_at: string;
+  status: "SUCCESSFUL" | "FAILED" | "RUNNING";
+};
+
+type GroupedData = {
+  successful: number;
+  failed: number;
+  running: number;
+};
+
+type StackDataItem = {
+  label: string;
+  stacks: { value: number; color: string }[];
+};
+
+// Define the legend
+const legend: LegendItem[] = [
+  { label: "Finished", frontColor: "#C8BB2A" },
+  { label: "Failed", frontColor: "#E5E2BB" },
+  { label: "Running", frontColor: "#E5CA7D" },
+];
 
 
 export default function AnalyticsWeb() {
   const theme = useTheme();
   type FilterType = "weeks" | "months" | "days";
   const [filterType, setFilterType] = useState<FilterType>("weeks");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [maxProdTime, setMaxProdTime] = useState<string>("");
+  const [minProdTime, setMinProdTime] = useState<string>("");
   const { session } = useAuth();
-
-  const legend = [
-    {
-      label: "Finished",
-      frontColor: "#C8BB2A",
-    },
-    {
-      label: "Unfinished",
-      frontColor: "#E5CA7D",
-    },
-    {
-      label: "Failed",
-      frontColor: "#E5E2BB",
-    },
-  ];
-
-  //fetch data
-  const data = session && supabase.from('datalogs').select('*').eq('user_id', session.user.id).order('created_at', { ascending: false });
-
-   data?.then(res => { 
-      res.data && console.log(res.data)
-   })
-
-  //passing values as object
-  //total values 
-  const dummyValues = [{
-    finished: 100,
-    unfinished: 190,
-    failed: 70
-  }];
+  const [stackData, setStackData] = useState<StackDataItem[]>([]);
+  const [totalUsedOil, setTotalUsedOil] = useState<number>(0);
+  const [totalSavedCo2, setTotalSavedCo2] = useState<number>(0);
+  
+  const getMaxTime = (timeArray: string[]): string => timeArray.reduce((max, current) => (current > max ? current : max), "00:00:00");
+  const getMinTime = (timeArray: string[]): string => timeArray.reduce((min, current) => (current < min ? current : min), "00:00:00");
   
 
-
-  //maximum of 8 stack datas
-  const stackData = [
-    {
-      stacks: [
-        { value: dummyValues[0].finished, color: legend[0].frontColor},
-        { value: dummyValues[0].unfinished, color: legend[1].frontColor},
-        { value: dummyValues[0].failed, color: legend[2].frontColor},
-      ],
-      label: '1pm',
-    },
-    {
-      stacks: [
-        { value: 2, color: legend[0].frontColor},
-        { value: 4, color: legend[1].frontColor},
-        { value: 5, color: legend[2].frontColor},
-      ],
-      label: '4pm',
-    }, {
-      stacks: [
-        { value: dummyValues[0].finished, color: legend[0].frontColor},
-        { value: dummyValues[0].unfinished, color: legend[1].frontColor},
-        { value: dummyValues[0].failed, color: legend[2].frontColor},
-      ],
-      label: '7pm',
-    },
-    {
-      stacks: [
-        { value: dummyValues[0].finished, color: legend[0].frontColor},
-        { value: dummyValues[0].unfinished, color: legend[1].frontColor},
-        { value: dummyValues[0].failed, color: legend[2].frontColor},
-      ],
-      label: '10pm',
-    },
-    {
-      stacks: [
-        { value: dummyValues[0].finished, color: legend[0].frontColor},
-        { value: dummyValues[0].unfinished, color: legend[1].frontColor},
-        { value: dummyValues[0].failed, color: legend[2].frontColor},
-      ],
-      label: '1am',
-    },
-    {
-      stacks: [
-        { value: dummyValues[0].finished, color: legend[0].frontColor},
-        { value: dummyValues[0].unfinished, color: legend[1].frontColor},
-        { value: dummyValues[0].failed, color: legend[2].frontColor},
-      ],
-      label: '3am',
-    },
-    {
-      stacks: [
-        { value: dummyValues[0].finished, color: legend[0].frontColor},
-        { value: dummyValues[0].unfinished, color: legend[1].frontColor},
-        { value: dummyValues[0].failed, color: legend[2].frontColor},
-      ],
-      label: '6am',
-    },
-    {
-      stacks: [
-        { value: dummyValues[0].finished, color: legend[0].frontColor},
-        { value: dummyValues[0].unfinished, color: legend[1].frontColor},
-        { value: dummyValues[0].failed, color: legend[2].frontColor},
-      ],
-      label: '9am',
-    },
-    {
-      stacks: [
-        { value: dummyValues[0].finished, color: legend[0].frontColor},
-        { value: dummyValues[0].unfinished, color: legend[1].frontColor},
-        { value: dummyValues[0].failed, color: legend[2].frontColor},
-      ],
-      label: '12pm',
-    },
-    {
-      stacks: [
-        { value: dummyValues[0].finished, color: legend[0].frontColor},
-        { value: dummyValues[0].unfinished, color: legend[1].frontColor},
-        { value: dummyValues[0].failed, color: legend[2].frontColor},
-      ],
-      label: '4pm',
-    },
-   
-  ];  //today, weekly, monthly
-
-  const piechartData = [
-    { 
-      value: 30,
-      color: "#DB2777"
-    },
-    {
-      value: 70,
-      color: "lightgray"
-    },
-  ]
-
-  const progressData = {
-    labels: ["Swim", "Bike", "Run"], // optional
-    data: [0.4, 0.6, 0.8]
+  const fetchMaxProductionTime = async (): Promise<{ maxTime: string; minTime: string }> => {
+    const { data, error } = await supabase
+      .from("datalogs")
+      .select("production_time");
+  
+    if (error || !data || data.length === 0) {
+      console.error("Error fetching production times:", error);
+      return { maxTime: "00:00:00", minTime: "00:00:00" }; // Default values
+    }
+  
+    // Extract max and min times
+    const timeArray = data.map((item) => item.production_time || "00:00:00");
+    const maxTime = getMaxTime(timeArray);
+    const minTime = getMinTime(timeArray);
+  
+    return { maxTime, minTime };
   };
+  
+  
+  useEffect(() => {
+    if (!session?.user.id) return;
+  
+    const fetchData = async () => {
+      // Fetch Data from Supabase
+      const { data, error } = await supabase
+        .from("datalogs")
+        .select("*")
+        .eq("user_id", session.user.id)
+        .order("created_at", { ascending: false });
+  
+      if (error) {
+        console.error("Error fetching data:", error);
+        return;
+      }
+  
+      if (data) {
+        console.log("Fetched Data:", data);
+        processChartData(data as DataLog[]); 
+
+        const { maxTime, minTime } = await fetchMaxProductionTime();
+        setMaxProdTime(maxTime as string);
+        setMinProdTime(minTime as string);
+
+        //for total used Oil 
+        const totalUsedOil = data.reduce((total, curr) => total + (curr.flow_rate || 0), 0);
+        setTotalUsedOil(totalUsedOil);
+
+        //total saved co2 
+        const totalSaved = data.reduce((total, curr) => total + (curr.carbon_footprint || 0), 0);
+        setTotalSavedCo2(totalSaved);
+      }
+    };
+  
+    fetchData();
+  }, [session?.user.id, filterType]);
+  
+  
+  const processChartData = (data: DataLog[]) => {
+    let groupedData: Record<string, GroupedData> = {};
+  
+    data.forEach((log) => {
+      const date = new Date(log.created_at);
+      let label: string = "";
+  
+      if (filterType === "days") {
+        label = date.toLocaleDateString("en-US", { weekday: "short" });
+      } else if (filterType === "weeks") {
+        label = `Week ${getWeekNumber(date)}`;
+      } else if (filterType === "months") {
+        label = date.toLocaleDateString("en-US", { month: "short" });
+      }
+  
+      if (!groupedData[label]) {
+        groupedData[label] = { successful: 0, failed: 0, running: 0 };
+      }
+  
+      // Increment values based on status
+      if (log.status === "SUCCESSFUL") groupedData[label].successful += 1;
+      else if (log.status === "FAILED") groupedData[label].failed += 1;
+      else if (log.status === "RUNNING") groupedData[label].running += 1;
+    });
+  
+    let labels: string[] = [];
+  
+    if (filterType === "days") {
+      labels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]; // Fixed weekday order
+    } else if (filterType === "weeks") {
+      labels = Object.keys(groupedData).sort((a, b) => Number(a.split(" ")[1]) - Number(b.split(" ")[1])); // Sort week numbers
+    } else if (filterType === "months") {
+      labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]; // Fixed month order
+    }
+  
+    // Generate Stack Data
+    const newStackData: StackDataItem[] = labels
+      .filter((label) => groupedData[label]) // Ensure only existing labels are included
+      .map((label) => ({
+        label,
+        stacks: [
+          { value: groupedData[label].successful, color: legend[0].frontColor },
+          { value: groupedData[label].failed, color: legend[1].frontColor },
+          { value: groupedData[label].running, color: legend[2].frontColor },
+        ],
+      }));
+  
+    setStackData(newStackData);
+  };
+  
+  
+  // Helper Function to Get Week Number
+  const getWeekNumber = (date: Date): number => {
+    const firstJan = new Date(date.getFullYear(), 0, 1);
+    const days = Math.floor((date.getTime() - firstJan.getTime()) / (24 * 60 * 60 * 1000));
+    return Math.ceil((days + firstJan.getDay() + 1) / 7);
+  };
+
+  
+  console.log('max time', maxProdTime);
 
   const cardContainerStyle = "w-[12.5rem] md:w-[14rem] lg:w-[18rem] rounded-lg items-center justify-center px-4 py-2 border-[1px] border-[#E5E5EF] shadow-gray-300 shadow-sm h-[239px]";
   
@@ -282,7 +307,7 @@ export default function AnalyticsWeb() {
 
                   <View className="flex-row items-center justify-between w-full">
                     <Text className="font-bold text-[27px] text-[#70761D]">
-                      0hr 0min
+                      {minProdTime}
                     </Text>
                     <Image
                       source={require("../../assets/images/line-graph.png")}
@@ -315,7 +340,7 @@ export default function AnalyticsWeb() {
 
                   <View className="flex-row items-center justify-between">
                     <Text className="font-bold text-[27px] text-[#D62F19]">
-                      0hr 0min
+                      {maxProdTime}
                     </Text>
                     <Image
                       source={require("../../assets/images/line-graph-red.png")}
@@ -348,7 +373,7 @@ export default function AnalyticsWeb() {
 
                   <View className="flex-row items-center justify-between w-full">
                     <Text className="font-bold text-[27px] text-[#22546F]">
-                      250 liters
+                      {totalUsedOil} liters
                     </Text>
                     <Image
                       source={require("../../assets/images/oil.png")}
@@ -374,7 +399,7 @@ export default function AnalyticsWeb() {
               </Text>
               <Text className="font-bold text-center text-[64px] text-[#DDA01C]">
                 {/** Formula: used oil litres × 1.8 = kg CO₂e saved */}
-                0kg
+                {totalSavedCo2} kg
               </Text>
             </View>
           </View>
