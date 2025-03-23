@@ -9,5 +9,5 @@ jobs:
   build:
     type: build
     params:
-      platform: android
+      platform: ios
       profile: production

@@ -50,7 +50,7 @@ const legend: LegendItem[] = [
 export default function AnalyticsWeb() {
   const theme = useTheme();
   type FilterType = "weeks" | "months" | "days";
-  const [filterType, setFilterType] = useState<FilterType>("weeks");
+  const [filterType, setFilterType] = useState<FilterType>("days");
   const [loading, setLoading] = useState<boolean>(false);
   const [maxProdTime, setMaxProdTime] = useState<string>("");
   const [minProdTime, setMinProdTime] = useState<string>("");
@@ -185,7 +185,8 @@ export default function AnalyticsWeb() {
   
   const { width: screenWidth } = useWindowDimensions();
 
-  console.log('selected', filterType);
+  console.log("selected", filterType);
+
 
   return (
     <View
@@ -196,11 +197,9 @@ export default function AnalyticsWeb() {
         showsVerticalScrollIndicator={false}
         className="w-full h-auto max-h-screen px-4 pb-4 md:px-6 lg:px-8"
       >
-
         <View className="flex items-start justify-center w-full mt-4 lg:items-center">
           {/**Bar chart */}
           <View className="flex flex-col items-start justify-center w-auto max-w-full gap-6 mt-6">
-            
             <div className="flex flex-row justify-between w-full">
               <Text
                 className="mt-8 font-medium md:text-lg xl:text-2xl"
@@ -244,20 +243,25 @@ export default function AnalyticsWeb() {
                 </div>
                 {/**toggle */}
 
-                <Select value={filterType} onValueChange={(value: FilterType) => setFilterType(value)}>
-                  <SelectTrigger className="cursor-pointer min-w-[80px] max-w-[100px]" style={{ color: theme?.colors.text }}>
+                <Select
+                  value={filterType}
+                  onValueChange={(value: FilterType) => setFilterType(value)}
+                >
+                  <SelectTrigger
+                    className="cursor-pointer min-w-[80px] max-w-[100px]"
+                    style={{ color: theme?.colors.text }}
+                  >
                     <SelectValue placeholder="Week" defaultChecked />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
                       <SelectLabel>Filter</SelectLabel>
                       <SelectItem value="days">Days</SelectItem>
-                      <SelectItem value="weeks" >Weeks</SelectItem>
-                      <SelectItem value="months" >Months</SelectItem>
+                      <SelectItem value="weeks">Weeks</SelectItem>
+                      <SelectItem value="months">Months</SelectItem>
                     </SelectGroup>
                   </SelectContent>
                 </Select>
-
               </div>
             </div>
 
@@ -395,7 +399,7 @@ export default function AnalyticsWeb() {
                 className="text-[16px] text-center"
                 style={{ color: theme?.colors.gray }}
               >
-                 You saved Carbon footprint (CO₂e) of
+                You saved Carbon footprint (CO₂e) of
               </Text>
               <Text className="font-bold text-center text-[64px] text-[#DDA01C]">
                 {/** Formula: used oil litres × 1.8 = kg CO₂e saved */}

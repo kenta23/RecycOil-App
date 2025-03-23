@@ -1,4 +1,5 @@
-import { View, Text, Image, Pressable, Modal, TouchableOpacity, StyleSheet, FlatList, Platform, TouchableWithoutFeedback, Alert } from 'react-native'
+import { View, Text, Pressable, Modal, TouchableOpacity, StyleSheet, FlatList, Platform, TouchableWithoutFeedback, Alert } from 'react-native'
+import { Image } from 'expo-image';
 import React, { useState } from 'react'
 import { Redirect, Tabs, useRouter,  } from 'expo-router'
 import { AntDesign, Feather, FontAwesome, Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'
@@ -134,8 +135,8 @@ function TabBarBackground (props: BottomTabBarProps) {
           style={{
             width: 150,
             height: 50,
-            resizeMode: "center",
           }}
+          contentFit='contain'
         />
 
         <View className="mt-40">
@@ -205,10 +206,9 @@ function TabBarBackground (props: BottomTabBarProps) {
         >
           <Image
             source={require("../../assets/images/menu.png")}
-            width={65}
-            height={65}
+            style={{ width: 65, height: 65, shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3.84 }}
             aria-label="Menu button image"
-            resizeMode="cover"
+            contentFit="contain"
             alt="Menu button icon"
             className="drop-shadow-lg"
           />

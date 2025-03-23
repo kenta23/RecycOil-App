@@ -95,8 +95,8 @@ export default function Datalogs() {
                         style={{
                           width: 50,
                           height: 50,
-                          resizeMode: "contain",
                         }}
+                        contentFit='contain'
                         alt="oil circle icon"
                       />
 
