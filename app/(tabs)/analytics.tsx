@@ -207,7 +207,7 @@ export default function Analytics() {
     
     console.log('max time', maxProdTime);
   
-    const cardContainerStyle = `${isWeb ? "w-[12.5rem]  h-[239px]" : "w-[70%] h-[190px]"} md:w-[14rem] lg:w-[18rem] rounded-lg items-center justify-center px-4 py-2 border-[1px] border-[#E5E5EF] shadow-gray-300 shadow-sm`;
+    const cardContainerStyle = `${isWeb ? "w-[16rem] h-[13rem]" : "w-[65%] h-[13rem]"}  rounded-lg items-center justify-center px-4 py-2 border-[1px] border-[#E5E5EF] shadow-gray-300 shadow-sm`;
     
     const { width: screenWidth } = useWindowDimensions();
   
@@ -226,6 +226,7 @@ export default function Analytics() {
         contentContainerStyle={{ paddingBottom: 30 }}
         className="w-full h-auto max-h-screen-safe-offset-2"
       >
+       <View className="flex flex-col items-center justify-center w-full gap-5">
         {Platform.OS !== "web" ? (
           <View className="px-4 mt-4">
             {/**Bar chart */}
@@ -247,6 +248,7 @@ export default function Analytics() {
                   setOpen={setOpen}
                   setValue={setValue}
                   setItems={setItems}
+                  placeholder="Days"
                   style={{
                     height: 40,
                     width: 120,
@@ -273,7 +275,7 @@ export default function Analytics() {
                 />
               </View>
 
-              <View className="flex flex-col items-end justify-end w-full px-2 gap-7">
+              <View className="flex flex-col items-end justify-end w-full gap-3 px-2">
                 <BarChart
                   height={250}
                   yAxisColor={theme?.colors.text}
@@ -331,7 +333,7 @@ export default function Analytics() {
             </View>
           </View>
         ) : (
-          <View className="flex items-start justify-center w-full mt-4 lg:items-center">
+          <View className="flex items-start justify-center w-full max-w-5xl mt-4 lg:items-center">
             {/**Bar chart */}
             <View className="flex flex-col items-start justify-center w-auto max-w-full gap-6 mt-6">
               <div className="flex flex-row justify-between w-full">
@@ -411,9 +413,7 @@ export default function Analytics() {
                 xAxisThickness={1}
                 xAxisColor={theme?.colors.text}
                 yAxisThickness={0.5}
-                width={
-                  screenWidth < 900 ? screenWidth - 400 : screenWidth - 500
-                }
+                width={900}
                 noOfSections={4}
                 maxValue={500}
                 stackData={stackData}
@@ -426,7 +426,7 @@ export default function Analytics() {
           </View>
         )}
 
-        <View className={"flex-col items-center justify-center w-full gap-6 mt-10 md:flex-row"}>
+        <View className={"flex flex-col md:flex-row items-center justify-center gap-8 mt-10"}>
           {/** Min Production Time */}
           <View
             style={{ backgroundColor: theme?.colors.background }}
@@ -454,8 +454,8 @@ export default function Analytics() {
                   <Image
                     source={require("../../assets/images/line-graph.png")}
                     style={{
-                      width: isWeb ? 120 : 150,
-                      height: isWeb ? 100 : 115,
+                      width: 120,
+                      height: 100,
                     }}
                     contentFit="contain"
                   />
@@ -491,8 +491,8 @@ export default function Analytics() {
                   <Image
                     source={require("../../assets/images/line-graph-red.png")}
                     style={{
-                      width: isWeb ? 120 : 150,
-                      height: isWeb ? 100 : 115,
+                      width: 120,
+                      height: 100,
                     }}
                     contentFit="contain"
                   />
@@ -526,10 +526,10 @@ export default function Analytics() {
                     {totalUsedOil} liters
                   </Text>
                   <Image
-                    source={require("../../assets/images/oil.png")}
+                    source={require("../../assets/images/oil_container.png")}
                     style={{
-                      width: isWeb ? 100 : 150,
-                      height: isWeb ? 85 : 85,
+                      width: 90,
+                      height: 90,
                     }}
                     contentFit="contain"
                   />
@@ -537,24 +537,66 @@ export default function Analytics() {
               </View>
             </View>
           </View>
+
+          {/**Energy Consumption */}
+          <View
+            style={{ backgroundColor: theme?.colors.background }}
+            className={cardContainerStyle}
+          >
+            <View className="items-center w-full">
+              <View className="flex-col gap-2">
+                <Text
+                  className="text-sm font-normal"
+                  style={{ color: theme?.colors.gray }}
+                >
+                  Energy Consumption
+                </Text>
+                <Text
+                  className="text-base font-bold"
+                  style={{ color: theme?.colors.text }}
+                >
+                  Total kWh consumed
+                </Text>
+
+                <View className="flex-row items-center justify-between w-full">
+                  <Text className="font-bold text-2xl text-[#EBEB2A]">
+                    {totalUsedOil} kWh
+                  </Text>
+                  <Image
+                    source={require("../../assets/images/mdi_thunder.png")}
+                    style={{
+                      width: 90,
+                      height: 90,
+                    }}
+                    contentFit="contain"
+                  />
+                </View>
+              </View>
+            </View>
+          </View>
+         </View>
         </View>
+
+        
         
           {/** Carbon Footprint Saved */}
-          <View className={`${isWeb ? "size-[350px]" : "size-[300px]"} justify-self-center mx-auto shadow-green-300 shadow-lg items-center justify-center rounded-full border-[1px] mt-12 border-[#65DE9D]`}>
+          <View className={`${isWeb ? "size-[17rem]" : "size-[15rem]"} px-2 justify-self-center mx-auto shadow-green-300 shadow-lg items-center justify-center rounded-full border-[1px] mt-12 border-[#65DE9D]`}>
             
                    <View className="items-center justify-center w-full">
                      <Text
-                       className="text-[16px] text-center"
+                       className="text-[0.8rem] text-center"
                        style={{ color: theme?.colors.gray }}
                      >
                        You saved Carbon footprint (CO₂e) of
                      </Text>
-                     <Text className="font-bold text-center text-[64px] text-[#DDA01C]">
+                     <Text className="font-bold text-center text-[3rem] text-[#DDA01C]">
                        {/** Formula: used oil litres × 1.8 = kg CO₂e saved */}
-                       {totalSavedCo2} kg
+                       {totalSavedCo2} liters
                      </Text>
                    </View>
-                 </View>
+            </View>
+            
+
       </ScrollView>
     </SafeAreaView>
   );

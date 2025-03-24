@@ -58,23 +58,9 @@ export default function DashboardNative({
   // const [loading, setLoading] = useState<boolean>(false);
   const {buttonStart, setButtonStart } = useButtonStart();
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const { session } = useAuth();
   const [receivedData, setReceivedData] = useState<string | null>(null);
   const { setBTconnected } = useBTconnection();
  
-
-  // useEffect(() => {
-  //   if (buttonStart) {
-  //     setLoading(true);
-
-  //     const timer = setTimeout(() => {
-  //       setLoading(false); // Show content after delay
-  //     }, 1500); // Delay for 3 seconds
-
-  //     return () => clearTimeout(timer);
-  //   }
-  // }, [buttonStart]);
-
 
   const MAX_LITERS = 6; // Maximum capacity of the pie chart
 
