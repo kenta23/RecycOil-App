@@ -13,7 +13,7 @@ import { supabase } from '@/lib/supabase';
 import { Database } from '@/database.types';
 import { formatTimeStr, timeProgressFormat } from '@/lib/utils';
 import * as Crypto from 'expo-crypto';
-
+import { Image } from 'expo-image';
 
 export default function DatalogsID () {
     const { itemId } = useLocalSearchParams();
@@ -56,8 +56,9 @@ export default function DatalogsID () {
   return (
     <SafeAreaProvider>
       <SafeAreaView
+        edges={['bottom']}
         style={{ backgroundColor: theme?.colors.background }}
-        className="items-center justify-center w-full h-full min-h-screen"
+        className="items-center justify-center w-full h-full"
       >
         <Stack.Screen
           name="datalog/[itemId]"
@@ -118,7 +119,7 @@ export default function DatalogsID () {
           </View>
         </Modal>
 
-        <ScrollView className="w-full h-screen min-h-screen">
+        <ScrollView className="w-full h-full">
           <View className="flex-row items-center justify-between w-full px-4 mt-10">
             {/** Name and date  */}
             <View className="flex flex-col gap-1">
@@ -198,20 +199,19 @@ export default function DatalogsID () {
                   Max. temp
                 </Text>
               </View>
-
-              {/**chunks filtered / glycerin */}
-              {/* 
-            <View className="flex flex-col items-center">
-              <Text
-                id="chunks"
-                className="font-bold text-[25px] text-[#376EC2] "
-              >
-                75%
-              </Text>
-              <Text className="text-[#376EC2] " nativeID="chunks">
-                Chunks filtered
-              </Text>
-            </View> */}
+              
+              {/** oil volume */}
+              <View className="flex flex-col items-center">
+                <Text
+                  id="temp"
+                  className="font-bold text-[25px] text-[#376EC2] "
+                >
+                  {data[0]?.oil_volume}
+                </Text>
+                <Text className="text-[#376EC2]">
+                  Oil volume
+                </Text>
+              </View>
             </View>
 
             <View className="flex flex-col items-center mt-8">
@@ -240,7 +240,42 @@ export default function DatalogsID () {
               >
                 {formatTimeStr(Number(data[0]?.production_time)) || "0 min"}
               </Text>
-            </View> 
+            </View>
+
+            <View className="items-center gap-2 mt-8">
+              <Text
+                className="text-lg font-normal"
+                style={{ color: theme?.colors.text }}
+              >
+                Carbon Saved
+              </Text>
+
+              <View className='flex-row items-center gap-2 '>
+                <Image
+                  source={require("../../assets/images/mdi_leaf.svg")}
+                  style={{ width: 25, height: 25 }}
+                />
+                <Text className='text-[#15D037] font-medium text-2xl'>{data[0]?.carbon_footprint} kg of CO2 saved</Text>
+              </View>
+            </View>
+
+            
+            <View className="items-center gap-2 mt-8">
+              <Text
+                className="text-lg font-normal"
+                style={{ color: theme?.colors.text }}
+              >
+                Energy Consumption
+              </Text>
+
+              <View className='flex-row items-center gap-2 '>
+                <Image
+                  source={require("../../assets/images/mdi_thunder.svg")}
+                  style={{ width: 25, height: 25 }}
+                />
+                <Text className='text-[#DEC536] font-medium text-2xl'>{data[0]?.energy_consumption || 0} kWh</Text>
+              </View>
+            </View>
           </View>
         </ScrollView>
       </SafeAreaView>

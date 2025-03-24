@@ -83,9 +83,6 @@ export default function Viewdashboard() {
   console.log("buttonStart", buttonStart);
 
 
-  console.log(location);
-
-
   useEffect(() => {
     let timeout: string | number | NodeJS.Timeout | undefined; // Declare timeout variable for cleanup
   
@@ -181,7 +178,27 @@ export default function Viewdashboard() {
             ...prevTopics,
             [key]: data,
           }));
+
+          if (topic === 'recycoil/biodiesel' && message.toString() !== '0.0') {
+               setFinished(true);
+           }
         });
+        
+        //save data to database with status of Running 
+        let { data, error } = await supabase.from("datalogs").insert({ status: 'RUNNING', user_id: session?.user.id, });
+        console.log("data", data);
+
+        if (data) { 
+          Platform.OS === "web"
+          ? toast.success("The machine starts running")
+          : Alert.alert("Successful", "The machine starts running", [{ text: "Ok" }]);
+        }
+
+        if (error) { 
+          Platform.OS === "web"
+          ? toast.success("Failed to run machine")
+          : Alert.alert("Error", "Failed to run machine", [{ text: "Ok" }]);
+        }
       }
 
       if (!buttonStart && isResponseReceived) {
@@ -228,10 +245,11 @@ export default function Viewdashboard() {
   }, [loading, isResponseReceived, buttonStart]);
   
 
-  //save the data from the supabase database
+  //save the data from the supabase database if the status is successful or failed
   useEffect(() => {
     if (topics.status === "SUCCESSFUL") {
       async function uploadData() {
+
         const formatTime = (seconds: number) => {
           if (!seconds || isNaN(seconds)) return "00:00:00"; // Default value if null/undefined
           const hrs = Math.floor(seconds / 3600).toString().padStart(2, "0");
@@ -240,25 +258,21 @@ export default function Viewdashboard() {
           return `${hrs}:${mins}:${secs}`;
         };
 
-        let { data: datalogs, error, status: uploadStatus } = await supabase.from("datalogs").insert([
-          {
-            flow_rate: topics.flowRate,
-            production_time: formatTime(topics.producingTime),  // Convert producingTime to string
-            temperature: topics.temperature,
-            user_id: session?.user.id,
-            oil_volume: topics.oilVolume || 0,
-            biodiesel: topics.biodiesel || 0,
-            carbon_footprint: topics.carbonFootprint || 0,
-            energy_consumption: topics.energyConsumption || 0,
-            status: topics.status,
-          },
-        ]);
+        //update the last data with status of running 
+        let { data: datalogs, error, status: uploadStatus} = await supabase.from('datalogs').update({ 
+          status: topics.status,
+          flow_rate: topics.flowRate,
+          production_time: formatTime(topics.producingTime),  // Convert producingTime to string
+          temperature: topics.temperature,
+          oil_volume: topics.oilVolume || 0,
+          biodiesel: topics.biodiesel || 0,
+          carbon_footprint: topics.carbonFootprint || 0,
+          energy_consumption: topics.energyConsumption || 0
+        }).eq("user_id", session?.user.id as string).eq("status", "RUNNING").select();
 
-  
         if (error) {
           alert(error.message);
           setButtonStart(false);
-          setFinished(true);
 
           if (client.connected) {
             client.end(() => {

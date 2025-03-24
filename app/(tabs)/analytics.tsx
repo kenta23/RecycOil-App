@@ -48,7 +48,6 @@ const legend: LegendItem[] = [
   { label: "Running", frontColor: "#E5CA7D" },
 ];
 
-
 export default function Analytics() {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState('');
@@ -207,14 +206,10 @@ export default function Analytics() {
     
     console.log('max time', maxProdTime);
   
-    const cardContainerStyle = `${isWeb ? "w-[16rem] h-[13rem]" : "w-[65%] h-[13rem]"}  rounded-lg items-center justify-center px-4 py-2 border-[1px] border-[#E5E5EF] shadow-gray-300 shadow-sm`;
+    const cardContainerStyle = `${isWeb ? "w-[16rem]" : "w-[65%]"}  rounded-lg items-center justify-center px-4 py-3 border-[1px] border-[#E5E5EF] h-[10rem] shadow-gray-300 shadow-sm`;
     
     const { width: screenWidth } = useWindowDimensions();
   
-
-  // const cardContainerStyle = "w-[80%] items-center justify-center px-4 py-2 border-[1px] border-[#E5E5EF] shadow-gray-300 shadow-sm h-[200px]";
-
-
   return (
     <SafeAreaView
       edges={["bottom"]}
@@ -226,10 +221,11 @@ export default function Analytics() {
         contentContainerStyle={{ paddingBottom: 30 }}
         className="w-full h-auto max-h-screen-safe-offset-2"
       >
-       <View className="flex flex-col items-center justify-center w-full gap-5">
-        {Platform.OS !== "web" ? (
+  <View className={`flex ${isWeb ? 'items-start flex-col-reverse px-6  w-[85%]' : 'flex-col w-full items-center px-3'} justify-center gap-2`}>       
+     <View className="flex flex-row items-center justify-around w-full gap-3">
+        {!isWeb ? (
           <View className="px-4 mt-4">
-            {/**Bar chart */}
+            {/**Bar chart */} 
             <View className="gap-6 mt-4">
               <Text
                 className="text-[22px]"
@@ -275,7 +271,7 @@ export default function Analytics() {
                 />
               </View>
 
-              <View className="flex flex-col items-end justify-end w-full gap-3 px-2">
+              <View className="flex flex-col items-end justify-end w-full gap-2 px-2">
                 <BarChart
                   height={250}
                   yAxisColor={theme?.colors.text}
@@ -333,7 +329,7 @@ export default function Analytics() {
             </View>
           </View>
         ) : (
-          <View className="flex items-start justify-center w-full max-w-5xl mt-4 lg:items-center">
+          <View className="flex items-start justify-center w-full max-w-4xl mt-4">
             {/**Bar chart */}
             <View className="flex flex-col items-start justify-center w-auto max-w-full gap-6 mt-6">
               <div className="flex flex-row justify-between w-full">
@@ -413,7 +409,7 @@ export default function Analytics() {
                 xAxisThickness={1}
                 xAxisColor={theme?.colors.text}
                 yAxisThickness={0.5}
-                width={900}
+                width={700}
                 noOfSections={4}
                 maxValue={500}
                 stackData={stackData}
@@ -425,6 +421,24 @@ export default function Analytics() {
             </View>
           </View>
         )}
+
+        
+         {/** Carbon Footprint Saved */}
+       { isWeb && <View className={`size-[17rem] px-2 justify-self-center mx-auto shadow-green-300 shadow-lg items-center justify-center rounded-full border-[1px] mt-12 border-[#65DE9D]`}>    
+            <View className="items-center justify-center w-full">
+              <Text
+                className="text-[0.8rem] text-center"
+                style={{ color: theme?.colors.gray }}
+              >
+                You saved Carbon footprint (CO₂e) of
+              </Text>
+              <Text className="font-bold text-center text-[3rem] text-[#DDA01C]">
+                {/** Formula: used oil litres × 1.8 = kg CO₂e saved */}
+                {totalSavedCo2} liters
+              </Text>
+              </View>
+           </View>}
+        </View>
 
         <View className={"flex flex-col md:flex-row items-center justify-center gap-8 mt-10"}>
           {/** Min Production Time */}
@@ -448,14 +462,14 @@ export default function Analytics() {
                 </Text>
 
                 <View className="flex-row items-center justify-between w-full">
-                  <Text className="font-bold text-2xl text-[#70761D]">
+                  <Text className="font-bold text-xl text-[#70761D]">
                     {minProdTime}
                   </Text>
                   <Image
                     source={require("../../assets/images/line-graph.png")}
                     style={{
-                      width: 120,
-                      height: 100,
+                      width: 90,
+                      height: 70,
                     }}
                     contentFit="contain"
                   />
@@ -485,14 +499,14 @@ export default function Analytics() {
                 </Text>
 
                 <View className="flex-row items-center justify-between w-full">
-                  <Text className="font-bold text-2xl text-[#D62F19]">
+                  <Text className="font-bold text-xl text-[#D62F19]">
                     {maxProdTime}
                   </Text>
                   <Image
                     source={require("../../assets/images/line-graph-red.png")}
                     style={{
-                      width: 120,
-                      height: 100,
+                      width: 90,
+                      height: 70,
                     }}
                     contentFit="contain"
                   />
@@ -522,14 +536,14 @@ export default function Analytics() {
                 </Text>
 
                 <View className="flex-row items-center justify-between w-full">
-                  <Text className="font-bold text-2xl text-[#22546F]">
+                  <Text className="font-bold text-xl text-[#22546F]">
                     {totalUsedOil} liters
                   </Text>
                   <Image
                     source={require("../../assets/images/oil_container.png")}
                     style={{
                       width: 90,
-                      height: 90,
+                      height: 70,
                     }}
                     contentFit="contain"
                   />
@@ -559,14 +573,14 @@ export default function Analytics() {
                 </Text>
 
                 <View className="flex-row items-center justify-between w-full">
-                  <Text className="font-bold text-2xl text-[#EBEB2A]">
+                  <Text className="font-bold text-xl text-[#EBEB2A]">
                     {totalUsedOil} kWh
                   </Text>
                   <Image
                     source={require("../../assets/images/mdi_thunder.png")}
                     style={{
                       width: 90,
-                      height: 90,
+                      height: 70,
                     }}
                     contentFit="contain"
                   />
@@ -575,29 +589,26 @@ export default function Analytics() {
             </View>
           </View>
          </View>
-        </View>
 
-        
-        
-          {/** Carbon Footprint Saved */}
-          <View className={`${isWeb ? "size-[17rem]" : "size-[15rem]"} px-2 justify-self-center mx-auto shadow-green-300 shadow-lg items-center justify-center rounded-full border-[1px] mt-12 border-[#65DE9D]`}>
-            
-                   <View className="items-center justify-center w-full">
-                     <Text
-                       className="text-[0.8rem] text-center"
-                       style={{ color: theme?.colors.gray }}
-                     >
-                       You saved Carbon footprint (CO₂e) of
-                     </Text>
-                     <Text className="font-bold text-center text-[3rem] text-[#DDA01C]">
-                       {/** Formula: used oil litres × 1.8 = kg CO₂e saved */}
-                       {totalSavedCo2} liters
-                     </Text>
-                   </View>
-            </View>
-            
+           {/** Carbon Footprint Saved */}
+          {!isWeb && <View className={`size-[15rem] px-2 justify-self-center mx-auto shadow-green-300 shadow-lg items-center justify-center rounded-full border-[1px] mt-12 border-[#65DE9D]`}> 
+            <View className="items-center justify-center w-full">
+              <Text
+                className="text-[0.8rem] text-center"
+                style={{ color: theme?.colors.gray }}
+              >
+                You saved Carbon footprint (CO₂e) of
+              </Text>
+              <Text className="font-bold text-center text-[3rem] text-[#DDA01C]">
+                {/** Formula: used oil litres × 1.8 = kg CO₂e saved */}
+                {totalSavedCo2} liters
+              </Text>
+             </View>
+            </View>}
+         </View>
 
-      </ScrollView>
+         
+       </ScrollView>
     </SafeAreaView>
   );
 }

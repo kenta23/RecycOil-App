@@ -159,10 +159,10 @@ export default function DashboardNative({
 
     const scanAndConnect = async () => {
       const permissionGranted = await requestBluetoothPermission();
-      if (Platform.OS === 'web') {
-        setLoading(true);
+      if (Platform.OS === 'web' || Platform.OS === 'ios') {
+           setLoading(true);
       }
-      
+
       if (!permissionGranted) {
         console.error("Bluetooth permissions not granted!");
         Alert.alert("Bluetooth permissions not granted!");
