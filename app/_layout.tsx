@@ -71,12 +71,15 @@ export default function RootLayout() {
       <Themeprovider value={colorScheme === "dark" ? darkMode : lightMode}>
         <Stack
           screenOptions={{
-            headerShown: false,
-           
+            headerShown: false,   
           }}
+          initialRouteName='index'
         >
-          <Stack.Screen name="(auth)" />
-          <Stack.Screen name="(tabs)" />
+          <Stack.Screen name='index' options={{ 
+              title: 'Home',
+           }}/>
+           <Stack.Screen name="(auth)" />
+           <Stack.Screen name="(tabs)" />
         </Stack>
         <SystemBars hidden={false} style={colorScheme === "dark" ? 'dark' : 'light'}/>
         

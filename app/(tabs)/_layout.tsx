@@ -6,19 +6,9 @@ import { AntDesign, Feather, FontAwesome, Ionicons, MaterialCommunityIcons, Mate
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs'
 import { useAuth } from '@/providers/authprovider'
 import { supabase } from '@/lib/supabase'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
 import BackButton from '@/components/backbutton'
 import { useTheme } from '@/providers/themeprovider'
+import { Menu } from 'lucide-react';
 
 const linkStyles = 'flex flex-row group hover:bg-primaryColor hover:text-white transition-all ease-out duration-200 items-center gap-2 py-3 px-4';
 
@@ -34,7 +24,7 @@ const links = [
         size={26}
       />
     ),
-    navigationName: "index",
+    navigationName: "dashboard",
     name: "Dashboard",
   },
   {
@@ -128,77 +118,6 @@ function TabBarBackground (props: BottomTabBarProps) {
 
     return (
       <>
-    {Platform.OS === "web" ? (
-      <View className="relative py-2 h-full w-[220px] min-h-svh bg-dark">
-        <Image
-          source={require("../../assets/images/logo-white.png")}
-          style={{
-            width: 150,
-            height: 50,
-          }}
-          contentFit='contain'
-        />
-
-        <View className="mt-40">
-          <FlatList
-            data={links}
-            accessibilityLabel="Links"
-            horizontal={false}
-            contentContainerStyle={{ gap: 20 }}
-            renderItem={({ item }) => {
-              const isActivelink =
-                item.navigationName ===
-                props.state.routeNames[props.state.index];
-                
-              return (
-                <AlertDialog open={showWebAlert}>
-                  <AlertDialogTrigger asChild>
-                    <TouchableOpacity
-                      className={linkStyles}
-                      style={
-                        isActivelink
-                          ? {
-                              backgroundColor: "#A7B891",
-                              borderRadius: 17,
-                            }
-                          : {}
-                      }
-                      onPress={() => handleTabClicked(item)}
-                    >
-                      {item.icon({
-                        style: isActivelink ? { color: "#fff" } : {},
-                      })}
-                      <Text
-                        className="text-primaryColor group-hover:text-white text-[18px]"
-                        style={isActivelink ? { color: "#fff" } : {}}
-                      >
-                        {item.name}
-                      </Text>
-                    </TouchableOpacity>
-                  </AlertDialogTrigger>
-
-                  <AlertDialogContent style={{ backgroundColor: theme?.colors.background, color: theme?.colors.text,  }}>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>
-                        Sign out
-                      </AlertDialogTitle>
-                      <AlertDialogDescription style={{ color: theme?.colors.gray }}>
-                         Are you sure you want to sign out?
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel style={{ color: theme?.colors.text, backgroundColor: theme?.dark ? '#3e3e3e' : '#f4f3f4' }} onClick={() => setShowWebAlert(false)}>Cancel</AlertDialogCancel>
-                      <AlertDialogAction onClick={() => supabase.auth.signOut()} className='bg-red-500 hover:bg-red-200'>Yes</AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              );
-            }}
-            keyExtractor={(item) => item.id.toString()}
-          />
-        </View>
-      </View>
-    ) : (
       <View className="absolute bottom-5 left-3">
         <Pressable
           className={`${drawerVisible ? "hidden" : "block"}`}
@@ -206,11 +125,11 @@ function TabBarBackground (props: BottomTabBarProps) {
         >
           <Image
             source={require("../../assets/images/menu.png")}
-            style={{ width: 65, height: 65, shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3.84 }}
+            style={{ width: 65, height: 65 }}
             aria-label="Menu button image"
             contentFit="contain"
             alt="Menu button icon"
-            className="drop-shadow-lg"
+            shouldRasterizeIOS
           />
         </Pressable>
 
@@ -260,7 +179,6 @@ function TabBarBackground (props: BottomTabBarProps) {
           </TouchableWithoutFeedback>
         </Modal>
       </View>
-    )}
       </>
   ); 
  }
@@ -285,10 +203,11 @@ export default function Tablayout() {
         headerBackButtonDisplayMode: "minimal",
         tabBarPosition: 'left',
       }}
+      initialRouteName='dashboard'
       tabBar={(props) => <TabBarBackground {...props} />}
     >
       <Tabs.Screen
-        name="index"
+        name="dashboard"
         options={{
           title: "Dashboard",
           headerTitleAlign: "center",

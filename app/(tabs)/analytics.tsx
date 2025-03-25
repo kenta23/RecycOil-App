@@ -221,8 +221,8 @@ export default function Analytics() {
         contentContainerStyle={{ paddingBottom: 30 }}
         className="w-full h-auto max-h-screen-safe-offset-2"
       >
-  <View className={`flex ${isWeb ? 'items-start flex-col-reverse px-6  w-[85%]' : 'flex-col w-full items-center px-3'} justify-center gap-2`}>       
-     <View className="flex flex-row items-center justify-around w-full gap-3">
+  <View className={`flex ${isWeb ? 'items-start flex-col-reverse px-6 w-[85%]' : 'flex-col w-full items-center px-3'} justify-center gap-2`}>       
+     <View className="flex flex-col items-center w-full gap-3 justify-evenly md:flex-row">
         {!isWeb ? (
           <View className="px-4 mt-4">
             {/**Bar chart */} 
@@ -331,7 +331,7 @@ export default function Analytics() {
         ) : (
           <View className="flex items-start justify-center w-full max-w-4xl mt-4">
             {/**Bar chart */}
-            <View className="flex flex-col items-start justify-center w-auto max-w-full gap-6 mt-6">
+            <View className="flex flex-col items-start justify-center w-auto max-w-4xl gap-6 mt-6">
               <div className="flex flex-row justify-between w-full">
                 <Text
                   className="mt-8 font-medium md:text-lg xl:text-2xl"
@@ -409,7 +409,7 @@ export default function Analytics() {
                 xAxisThickness={1}
                 xAxisColor={theme?.colors.text}
                 yAxisThickness={0.5}
-                width={700}
+                width={screenWidth < 900 ? 400 : 700}
                 noOfSections={4}
                 maxValue={500}
                 stackData={stackData}
@@ -424,7 +424,7 @@ export default function Analytics() {
 
         
          {/** Carbon Footprint Saved */}
-       { isWeb && <View className={`size-[17rem] px-2 justify-self-center mx-auto shadow-green-300 shadow-lg items-center justify-center rounded-full border-[1px] mt-12 border-[#65DE9D]`}>    
+       { isWeb && <View className={`size-[17rem] px-2 justify-self-center  shadow-green-300 shadow-lg items-center justify-center rounded-full border-[1px] border-[#65DE9D]`}>    
             <View className="items-center justify-center w-full">
               <Text
                 className="text-[0.8rem] text-center"
@@ -440,7 +440,7 @@ export default function Analytics() {
            </View>}
         </View>
 
-        <View className={"flex flex-col md:flex-row items-center justify-center gap-8 mt-10"}>
+        <View className={"flex flex-col sm:grid sm:grid-cols-2 lg:flex lg:flex-row items-center justify-center gap-8 mt-10"}>
           {/** Min Production Time */}
           <View
             style={{ backgroundColor: theme?.colors.background }}

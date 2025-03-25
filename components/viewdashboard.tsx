@@ -67,6 +67,7 @@ export default function Viewdashboard() {
   const [isResponseReceived, setIsResponseReceived] = useState(false);
   const [finished, setFinished] = useState<boolean>(false);
 
+
   const [topics, setTopics] = useState<topicsDT>({
     temperature: 0.0,
     flowRate: 0.0,
@@ -112,7 +113,7 @@ export default function Viewdashboard() {
         });
       }
   
-      if (loading && (isMobile ? BTconnected !== null : location?.latitude)) {
+      if (loading && (isMobile ? BTconnected : location?.latitude)) {
         if (!client.connected) {
           try {
             console.log("Connecting to MQTT...");

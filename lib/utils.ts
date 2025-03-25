@@ -39,6 +39,10 @@ export function formatTimeStr (milliseconds: number) {
   return `${hours} hours, ${minutes} minutes, and ${seconds} seconds`;
  }
 
+export  function timeToMilliseconds(timeStr: string | null) {
+  let [hours, minutes, seconds] = timeStr?.split(":").map(Number) || [0, 0, 0];
+  return (hours * 3600 + minutes * 60 + seconds) * 1000;
+}
 
 export function timeProgressFormat (milliseconds: number): ProgressChartData {
     const { hours, minutes, seconds } = formatMsToHMS(milliseconds);

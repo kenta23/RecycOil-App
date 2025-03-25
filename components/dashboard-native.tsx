@@ -22,10 +22,6 @@ import {
 
 
 //for web 
-import { WithSkiaWeb } from '@shopify/react-native-skia/lib/module/web';
-import RenderTankOnWeb from './renderTankOnWeb';
-import { ProgressChartData } from 'react-native-chart-kit/dist/ProgressChart';
-import { useAuth } from '@/providers/authprovider';
 import { formatTimeStr, timeProgressFormat } from '@/lib/utils';
 import { BleManager, Device } from "react-native-ble-plx";
 
@@ -60,47 +56,10 @@ export default function DashboardNative({
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [receivedData, setReceivedData] = useState<string | null>(null);
   const { setBTconnected } = useBTconnection();
- 
-
-  const MAX_LITERS = 6; // Maximum capacity of the pie chart
-
-  const [piechartData, setPiechartData] = useState([
-    {
-      value: (flowRate / MAX_LITERS) * 100, // Convert flowRate into a percentage
-      color: "#DB2777",
-    },
-    {
-      value: 100 - (flowRate / MAX_LITERS) * 100, // Remaining part of the pie chart
-      color: "lightgray",
-    },
-  ]);
-
-
-  useEffect(() => {
-    setPiechartData([
-      {
-        value: (flowRate / MAX_LITERS) * 100, // Convert flowRate into a percentage
-        color: "#DB2777",
-      },
-      {
-        value: 100 - (flowRate / MAX_LITERS) * 100, // Remaining part
-        color: "lightgray",
-      },
-    ]);
-  }, [flowRate]);
 
 
   console.log('button start', buttonStart);
   console.log('show dialog', showDialog);
-
-  const handleMachineStop = () => { 
-    if (Platform.OS === 'web') { 
-      setShowDialog(true);
-    } 
-    else { 
-       Alert.alert('Are you sure you want to stop the machine?');
-    }
-  }
 
   const showAlert = () => {
     Alert.alert("Warning", "Are you sure you want to stop?", [
@@ -109,108 +68,119 @@ export default function DashboardNative({
     ]);
   };
 
-
   
-    const requestBluetoothPermission = async () => {
-      if (Platform.OS === 'ios') {
-        console.log("iOS detected, no additional permissions required.");
-        return true;
+  const requestAndroid31Permissions = async () => {
+    const bluetoothScanPermission = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
+      {
+        title: "Location Permission",
+        message: "Bluetooth Low Energy requires Location",
+        buttonPositive: "OK",
       }
-    
-      if (Platform.OS === 'android' && PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION) {
-        const apiLevel = parseInt(Platform.Version.toString(), 10);
-    
-        if (apiLevel < 31) {
-          const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
-          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-            console.log("Location permission granted.");
-            return true;
-          } else {
-            console.log("Location permission denied.");
-            return false;
-          }
-        }
-    
-        if (PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN && PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT) {
-          const result = await PermissionsAndroid.requestMultiple([
-            PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
-            PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
-            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
-          ]);
-    
-          if (
-            result['android.permission.BLUETOOTH_CONNECT'] === PermissionsAndroid.RESULTS.GRANTED &&
-            result['android.permission.BLUETOOTH_SCAN'] === PermissionsAndroid.RESULTS.GRANTED &&
-            result['android.permission.ACCESS_FINE_LOCATION'] === PermissionsAndroid.RESULTS.GRANTED
-          ) {
-            console.log("All Bluetooth and location permissions granted.");
-            return true;
-          } else {
-            console.log("One or more Bluetooth permissions denied.");
-            return false;
-          }
-        }
+    );
+    const bluetoothConnectPermission = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
+      {
+        title: "Location Permission",
+        message: "Bluetooth Low Energy requires Location",
+        buttonPositive: "OK",
       }
-    
-      console.log('Permissions have not been granted.');
-      return false;
-    };
+    );
+    const fineLocationPermission = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      {
+        title: "Location Permission",
+        message: "Bluetooth Low Energy requires Location",
+        buttonPositive: "OK",
+      }
+    );
+
+    return (
+      bluetoothScanPermission === "granted" &&
+      bluetoothConnectPermission === "granted" &&
+      fineLocationPermission === "granted"
+    );
+  };
+
+  const requestPermissions = async () => {
+    if (Platform.OS === "android") {
+      if (Platform.Version < 31) {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+          {
+            title: "Location Permission",
+            message: "Bluetooth Low Energy requires Location",
+            buttonPositive: "OK",
+          }
+        );
+        return granted === PermissionsAndroid.RESULTS.GRANTED;
+      } else {
+        const isAndroid31PermissionsGranted =
+          await requestAndroid31Permissions();
+
+        return isAndroid31PermissionsGranted;
+      }
+    } else {
+      return true;
+    }
+  };
   
 
     const scanAndConnect = async () => {
-      const permissionGranted = await requestBluetoothPermission();
-      if (Platform.OS === 'web' || Platform.OS === 'ios') {
-           setLoading(true);
+      if (Platform.OS === 'web') {
+        setLoading(true);
       }
 
-      if (!permissionGranted) {
-        console.error("Bluetooth permissions not granted!");
-        Alert.alert("Bluetooth permissions not granted!");
-        return;
-      }
-    
-      const bleManager = new BleManager();
-    
-      bleManager.startDeviceScan(null, null, (error, device) => {
-        
-        if(!device?.isConnected) { 
-          Alert.alert("No ESP32 device found.");
-       }
-       
-        if (error) {
-          console.error("Bluetooth scan error:", error);
+       else { 
+        const permissionGranted = await requestPermissions();   
+        if (!permissionGranted) {
+          console.error("Bluetooth permissions not granted!");
+          Alert.alert("Bluetooth permissions not granted!");
           return;
         }
-
-        console.log('Devices', device);
-    
-        if (device?.name === "ESP32") {  // Match ESP32 name
-          console.log("Found ESP32:", device.id);
-          bleManager.stopDeviceScan();
-    
-          device
-            .connect()
-            .then((device) => device.discoverAllServicesAndCharacteristics())
-            .then((device) => {
-              setBTconnected(device);
-              console.log("Connected to ESP32");
-    
-               //turn on the button
-              setLoading(true);
+      
+        const bleManager = new BleManager();
+        
+        bleManager.startDeviceScan(null, null, (error, device) => {
+          
+          if(!device?.isConnected) { 
+            Alert.alert("No ESP32 device found.");
+         }
+         
+          if (error) {
+            console.error("Bluetooth scan error:", error);
+            return;
+          }
   
-              return device.readCharacteristicForService(
-                "4fafc201-1fb5-459e-8fcc-c5c9c331914b", // SERVICE_UUID (must match ESP32)
-                "beb5483e-36e1-4688-b7f5-ea07361b26a8"  // CHARACTERISTIC_UUID (must match ESP32)
-              );
-            })
-            .then((characteristic) => {
-              setReceivedData(characteristic.value);
-              console.log("Received Data:", characteristic.value);
-            })
-            .catch((error) => console.error("Connection error:", error));
-        }
-
-      });
+          console.log('Devices', device);
+      
+          if (device?.name === "ESP32") {  // Match ESP32 name
+            console.log("Found ESP32:", device.id);
+            bleManager.stopDeviceScan();
+      
+            device
+              .connect()
+              .then((device) => device.discoverAllServicesAndCharacteristics())
+              .then((device) => {
+                setBTconnected(device);
+                console.log("Connected to ESP32");
+                 //turn on the button
+                setLoading(true);
+    
+                return device.readCharacteristicForService(
+                  "4fafc201-1fb5-459e-8fcc-c5c9c331914b", // SERVICE_UUID (must match ESP32)
+                  "beb5483e-36e1-4688-b7f5-ea07361b26a8"  // CHARACTERISTIC_UUID (must match ESP32)
+                );
+              })
+              .then((characteristic) => {
+                setReceivedData(characteristic.value);
+                console.log("Received Data:", characteristic.value);
+              })
+              .catch((error) => console.error("Connection error:", error));
+          }
+  
+        });
+       }
     };
 
 
