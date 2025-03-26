@@ -24,7 +24,7 @@ const links = [
         size={26}
       />
     ),
-    navigationName: "dashboard",
+    navigationName: "index",
     name: "Dashboard",
   },
   {
@@ -203,11 +203,10 @@ export default function Tablayout() {
         headerBackButtonDisplayMode: "minimal",
         tabBarPosition: 'left',
       }}
-      initialRouteName='dashboard'
       tabBar={(props) => <TabBarBackground {...props} />}
     >
       <Tabs.Screen
-        name="dashboard"
+        name="index"
         options={{
           title: "Dashboard",
           headerTitleAlign: "center",

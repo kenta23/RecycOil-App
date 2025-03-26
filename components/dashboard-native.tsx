@@ -177,12 +177,13 @@ export default function DashboardNative({
                 setBTconnected(device);
                 console.log("Connected to ESP32");
                
+               
                 device.writeCharacteristicWithResponseForService(
                   "4fafc201-1fb5-459e-8fcc-c5c9c331914b", // SERVICE_UUID (must match ESP32)
                   "beb5483e-36e1-4688-b7f5-ea07361b26a8", // CHARACTERISTIC_UUID (must match ESP32)
-                  encodeURI("START")
-                ).then(() =>   
-                setLoading(true)).catch((err) => console.warn(err)); //turn on the button
+                  encodeURI("START"));
+                  
+                setLoading(true);
     
                 return device.readCharacteristicForService(
                   "4fafc201-1fb5-459e-8fcc-c5c9c331914b", // SERVICE_UUID (must match ESP32)

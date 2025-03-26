@@ -18,9 +18,11 @@ import { formatMsToHMS, formatTimeStr } from '@/lib/utils';
 //if this website is in production 
 const checkSecure = process.env.NODE_ENV === "production";
 
-const MQTT_BROKER = checkSecure
-  ? "wss://broker.emqx.io:8084/mqtt"  // Use WSS in production (HTTPS)
-  : "ws://broker.emqx.io:8083/mqtt";  // Use WS in development (HTTP)
+// const MQTT_BROKER = checkSecure
+//   ? "wss://broker.emqx.io:8084/mqtt"  // Use WSS in production (HTTPS)
+//   : "ws://broker.emqx.io:8083/mqtt";  // Use WS in development (HTTP)
+
+const MQTT_BROKER = "wss://broker.emqx.io:8084/mqtt";
 
 const MQTT_TOPICS = [
      "recycoil/temperature",
@@ -163,7 +165,7 @@ export default function Viewdashboard() {
       }
   
       // ✅ If machine is started, subscribe and continue reading data
-      if (buttonStart && isResponseReceived && !loading) {
+     if (buttonStart && isResponseReceived && !loading) {
         console.log("✅ Machine is running. Subscribing to topics...");
         client.subscribe(MQTT_TOPICS, (err) => {
           if (err) console.error("Subscription Error:", err);
@@ -185,21 +187,6 @@ export default function Viewdashboard() {
            }
         });
         
-        //save data to database with status of Running 
-        let { data, error } = await supabase.from("datalogs").insert({ status: 'RUNNING', user_id: session?.user.id, });
-        console.log("data", data);
-
-        if (data) { 
-          Platform.OS === "web"
-          ? toast.success("The machine starts running")
-          : Alert.alert("Successful", "The machine starts running", [{ text: "Ok" }]);
-        }
-
-        if (error) { 
-          Platform.OS === "web"
-          ? toast.success("Failed to run machine")
-          : Alert.alert("Error", "Failed to run machine", [{ text: "Ok" }]);
-        }
       }
 
       if (!buttonStart && isResponseReceived) {
@@ -260,7 +247,7 @@ export default function Viewdashboard() {
         };
 
         //update the last data with status of running 
-        let { data: datalogs, error, status: uploadStatus} = await supabase.from('datalogs').update({ 
+       let { data: datalogs, error, status: uploadStatus} = await supabase.from('datalogs').insert({
           status: topics.status,
           flow_rate: topics.flowRate,
           production_time: formatTime(topics.producingTime),  // Convert producingTime to string
@@ -268,8 +255,9 @@ export default function Viewdashboard() {
           oil_volume: topics.oilVolume || 0,
           biodiesel: topics.biodiesel || 0,
           carbon_footprint: topics.carbonFootprint || 0,
-          energy_consumption: topics.energyConsumption || 0
-        }).eq("user_id", session?.user.id as string).eq("status", "RUNNING").select();
+          energy_consumption: topics.energyConsumption || 0,
+          user_id: session?.user.id
+        })
 
         if (error) {
           alert(error.message);
