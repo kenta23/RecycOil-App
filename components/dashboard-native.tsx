@@ -25,11 +25,11 @@ import {
 import { formatTimeStr, timeProgressFormat } from '@/lib/utils';
 import { BleManager, Device } from "react-native-ble-plx";
 
-
-
 export default function DashboardNative({
   loading,
   setLoading,
+  finished,
+  setFinished,
   pieData,
   status,
   producingTime,
@@ -48,14 +48,16 @@ export default function DashboardNative({
   carbonFootprint: number;
   status: string | null;
   producingTime: number;
-  energyConsumption: number 
+  energyConsumption: number;
+  finished: boolean;
+  setFinished: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const theme = useTheme();
   // const [loading, setLoading] = useState<boolean>(false);
   const {buttonStart, setButtonStart } = useButtonStart();
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [receivedData, setReceivedData] = useState<string | null>(null);
-  const { setBTconnected } = useBTconnection();
+  const { setBTconnected, BTconnected } = useBTconnection();
 
 
   console.log('button start', buttonStart);
@@ -64,7 +66,17 @@ export default function DashboardNative({
   const showAlert = () => {
     Alert.alert("Warning", "Are you sure you want to stop?", [
       { text: "Cancel", style: "cancel" },
-      { text: "OK", onPress: () => setButtonStart(false) },
+      { text: "OK", onPress: () => {
+         setButtonStart(false);
+         const bleManager = new BleManager();
+        
+         if (BTconnected) { 
+           bleManager.cancelDeviceConnection(BTconnected.id).then(() => { 
+             console.log("Device Disconnected");
+             setBTconnected(null);
+           }).catch((err) => console.error("Device Disconnection Error:", err));
+         }
+      }},
     ]);
   };
 
@@ -164,8 +176,13 @@ export default function DashboardNative({
               .then((device) => {
                 setBTconnected(device);
                 console.log("Connected to ESP32");
-                 //turn on the button
-                setLoading(true);
+               
+                device.writeCharacteristicWithResponseForService(
+                  "4fafc201-1fb5-459e-8fcc-c5c9c331914b", // SERVICE_UUID (must match ESP32)
+                  "beb5483e-36e1-4688-b7f5-ea07361b26a8", // CHARACTERISTIC_UUID (must match ESP32)
+                  encodeURI("START")
+                ).then(() =>   
+                setLoading(true)).catch((err) => console.warn(err)); //turn on the button
     
                 return device.readCharacteristicForService(
                   "4fafc201-1fb5-459e-8fcc-c5c9c331914b", // SERVICE_UUID (must match ESP32)
@@ -462,7 +479,7 @@ export default function DashboardNative({
           <View
             className={`${
               Platform.OS === "web" ? "flex-row flex" : "flex-col"
-            } items-center justify-center gap-6 mt-5`}
+            } ${!finished ? "opacity-70" : "opacity-100" } items-center justify-center gap-6 mt-5`}
           >
             {/**Carbon footprint */}
             <View

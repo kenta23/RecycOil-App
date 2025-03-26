@@ -8,7 +8,7 @@ type ButtonStartStore = {
 
 type BTconnectedStore = { 
    BTconnected: Device | null;
-   setBTconnected: (connected: Device) => void;
+   setBTconnected: (connected: Device | null) => void;
 }
 
 export const useButtonStart = create<ButtonStartStore>((set) => ({

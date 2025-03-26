@@ -329,6 +329,8 @@ export default function Viewdashboard() {
   return (
     <DashboardNative
       loading={loading}
+      setFinished={setFinished}
+      finished={finished}
       setLoading={setLoading}
       flowRate={topics.flowRate}
       temperature={topics.temperature}
