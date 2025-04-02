@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Image } from 'expo-image';
 import OTPInput from 'react-native-otp-textinput';
 import { supabase } from '@/lib/supabase';
-import { useRouter, useNavigation,  } from 'expo-router';
+import { useRouter } from 'expo-router';
 import parsePhoneNumberFromString, { PhoneNumber } from 'libphonenumber-js';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -15,7 +15,7 @@ export default function OTPVerification() {
     const [code, setCode] = useState('');
     const router = useRouter();
     const otpInputRef = useRef<OTPInput>(null);
-    const navigation = useNavigation();
+
 
     async function getPhoneNumber(): Promise<void> { 
        try {

@@ -1,46 +1,45 @@
 import { View, Text, Pressable, TextInput, Modal, TouchableWithoutFeedback, Alert, Platform } from 'react-native'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
-import Paho, { Message } from 'paho-mqtt';
+import React, { useRef, useState } from 'react'
 import { supabase } from '@/lib/supabase';
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import { useAuth } from '@/providers/authprovider';
 import { useRouter } from 'expo-router';
 import PhoneInput, { ICountry } from 'react-native-international-phone-number';
-import { AntDesign, Entypo } from '@expo/vector-icons';
+import { Entypo } from '@expo/vector-icons';
 import { useTheme } from '@/providers/themeprovider';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import OTPInput from 'react-native-otp-textinput';
+import { toast } from 'sonner';
+
+
 
 export default function Account() {
-  const [text, setText] = useState("");
   const { session } = useAuth();
   const [phoneChangeModal, setPhoneChangeModal] = useState<boolean>(false); // State to control the modal visibility [setPhoneChangeModal]
   const router = useRouter();
 
   const theme = useTheme();
   const [newPhoneNumber, setNewPhoneNumber] = useState<string>('');
-  const [selectedCountry, setSelectedCountry] =
-    useState<null | ICountry>(null);
+  const [selectedCountry, setSelectedCountry] = useState<null | ICountry>(null);
   const [verifyOtpModal, setVerifyOtpModal] = useState<boolean>(false);
   const [verifyOtp, setVerifyOtp] = useState<string>('');
   const [phoneNumberObj, setPhoneNumberObj] = useState<null | any>(null);
   const otpInputRef = useRef<OTPInput>(null);
 
+
     const handleChangePhoneNumber = async () => { 
       try {
-        //create asyncStorage to store phone number
-        // eslint-disable-next-line no-unused-expressions
-        setPhoneNumberObj(parsePhoneNumberFromString(newPhoneNumber, 'PH'));
-        
+        setPhoneNumberObj(parsePhoneNumberFromString(newPhoneNumber, 'PH')); //new phone number
+
          if (!phoneNumberObj || !phoneNumberObj.isValid()) {
-          Alert.alert('Invalid phone number', 'Please enter a valid phone number.');
-          return;
+           Alert.alert('Invalid phone number', 'Please enter a valid phone number.');
+           return;
          }
-          const { data, error } = await supabase.auth.updateUser({
+
+          await supabase.auth.updateUser({
             phone: phoneNumberObj.format("E.164"),
           });
-     
-             //
+    
              setPhoneChangeModal(false);
              setVerifyOtpModal(true);
          
@@ -50,9 +49,8 @@ export default function Account() {
         }
     }
 
-
     async function verifyOtpHandler () {
-          const { data, error } = await supabase.auth.verifyOtp({ phone: phoneNumberObj.format('E.164'), token: verifyOtp, type: 'phone_change'});
+          const { data, error } = await supabase.auth.verifyOtp({ phone: phoneNumberObj.format('E.164'), token:verifyOtp, type: 'phone_change'});
           console.log(data);
           
           if (error) {
@@ -73,13 +71,42 @@ export default function Account() {
           }
     }
 
+    const handleResetData = async () => { 
+      const resetdata = async () => {
+        const { error } = await supabase
+          .from("datalogs")
+          .delete()
+          .eq("user_id", session?.user?.id as string);
+
+          error && toast.error(error?.message);
+          toast.success("Data deleted successfully.");
+          await supabase.auth.signOut();
+          router.replace("/(auth)");
+      
+      }
+
+       if (Platform.OS === 'web') { 
+          if (confirm('Are you sure you want to delete your data?')) {
+            resetdata();
+          }
+      }
+       else {
+        Alert.alert("Delete Data", "Are you sure you want to delete your data?", [
+          {
+            text: "Yes",
+            onPress: resetdata
+          },
+          {
+            text: "No",
+          }
+        ]);
+       }
+
+  }
+
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ backgroundColor: theme?.colors.background }} className="items-center justify-center w-full h-full min-h-screen">
-        {/**Inputs */}
-      {/* <Pressable onPress={signoutHandler}>
-        <Text>Sign out</Text>
-      </Pressable> */}
         <Modal
           animationType="fade"
           visible={phoneChangeModal}
@@ -88,7 +115,7 @@ export default function Account() {
         >
           <TouchableWithoutFeedback onPress={() => setPhoneChangeModal(false)}>
             <View  className="items-center justify-center flex-1 bg-black/80">
-              <View className="bg-white rounded-lg shadow-md w-[80%] px-4 py-6 h-auto">
+              <View style={{ backgroundColor: theme?.colors.background }} className="rounded-lg shadow-md w-[80%] px-4 py-6 h-auto">
                 <View className="flex-col items-start gap-2">
                   <View className="flex-row items-center gap-2">
                     <Text style={[{ color: theme?.colors.text }]} className="text-lg" nativeID="changePhone">
@@ -99,7 +126,6 @@ export default function Account() {
                   <PhoneInput
                     defaultCountry="PH"
                     theme={theme?.dark ? "dark" : "light"}
-                    phoneInputStyles={{}}
                     style={{
                       width: "100%",
                       outline: "none",
@@ -134,6 +160,7 @@ export default function Account() {
           </TouchableWithoutFeedback>
         </Modal>
 
+  {/**after phone number change */}
         <Modal
           animationType="fade"
           visible={verifyOtpModal}
@@ -142,7 +169,7 @@ export default function Account() {
         >
           <TouchableWithoutFeedback onPress={() => setVerifyOtpModal(false)}>
             <View className="items-center justify-center flex-1 bg-black/80">
-              <View className="bg-white rounded-lg shadow-md w-[80%] px-4 py-6 h-auto">
+              <View className="bg-white rounded-lg shadow-md w-[90%] lg:max-w-[80%] px-4 py-6 h-auto">
                 <View className="flex-col items-start gap-2">
                   <View className="flex-row items-center gap-2">
                     <Text className="text-lg" nativeID="changePhone">
@@ -197,6 +224,7 @@ export default function Account() {
               className="border-gray-400 border-[1px] outline-none active:outline-none rounded-lg px-2 py-2 w-full"
               aria-labelledby="phoneNumber"
               aria-label="phone number input"
+              style={{ color: theme?.colors.gray }}
             />
           </View>
 
@@ -207,6 +235,7 @@ export default function Account() {
             <TextInput
               readOnly
               defaultValue={session?.user.email && session.user.email}
+              style={{ color: theme?.colors.gray }}
               className="border-gray-400 border-[1px] outline-none active:outline-none rounded-lg text-gray-400 px-2 py-2 w-full"
               aria-labelledby="email"
               aria-label="email input"
@@ -216,18 +245,13 @@ export default function Account() {
 
         {/**CTA's */}
         <View className="flex-col max-w-[550px] w-[270px] gap-4 mt-8">
-          <Pressable className="px-3 w-full py-3 rounded-lg border-[#D29967] border-[1px]">
+          <Pressable onPress={handleResetData} className="px-3 w-full py-3 rounded-lg border-[#D29967] border-[1px]">
             <Text className="text-[#D29967] text-lg text-center">
-              Reset Data
-            </Text>
-          </Pressable>
-
-          <Pressable className="px-3 w-full py-3 rounded-lg bg-[#D83E3E]">
-            <Text className="text-lg text-center text-white">
-              Delete Account
+              Delete Data
             </Text>
           </Pressable>
         </View>
+
       </SafeAreaView>
     </SafeAreaProvider>
   );

@@ -10,8 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.recycoil.inv",
-      "buildNumber": "1"
+      "bundleIdentifier": "com.recycoil.inv"
     },
     "android": {
       "package": "com.recycoil.inv",

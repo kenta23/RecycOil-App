@@ -6,7 +6,7 @@ import { useTheme } from '@/providers/themeprovider';
 import { Image } from 'expo-image';
 import { ProgressChart } from 'react-native-chart-kit';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useBTconnection, useButtonStart } from '@/lib/store';
+import { useButtonStart } from '@/lib/store';
 
 import {
   AlertDialog,
@@ -23,7 +23,7 @@ import {
 
 //for web 
 import { formatTimeStr, timeProgressFormat } from '@/lib/utils';
-import { BleManager } from "react-native-ble-plx";
+
 
 export default function Dashboard({
   loading,
@@ -55,28 +55,9 @@ export default function Dashboard({
   const theme = useTheme();
   // const [loading, setLoading] = useState<boolean>(false);
   const {buttonStart, setButtonStart } = useButtonStart();
-  const [showDialog, setShowDialog] = useState<boolean>(false);
-  const { setBTconnected, BTconnected } = useBTconnection();
-
-
-  console.log('button start', buttonStart);
-  console.log('show dialog', showDialog);
 
   const showAlert = () => {
-    Alert.alert("Warning", "Are you sure you want to stop?", [
-      { text: "Cancel", style: "cancel" },
-      { text: "OK", onPress: () => {
-         setButtonStart(false);
-         const bleManager = new BleManager();
-        
-         if (BTconnected) { 
-           bleManager.cancelDeviceConnection(BTconnected.id).then(() => { 
-             console.log("Device Disconnected");
-             setBTconnected(null);
-           }).catch((err) => console.error("Device Disconnection Error:", err));
-         }
-      }},
-    ]);
+    setButtonStart(false);
   };
 
   const scanAndConnect = async () => {

@@ -17,7 +17,7 @@ import { Entypo } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { toast } from 'sonner';
-import { useFonts } from 'expo-font';
+
 
 
 export default function Auth() {
@@ -39,7 +39,6 @@ function handleInputValue(phoneNumber: string) {
 function handleSelectedCountry(country: ICountry) {
   setSelectedCountry(country);
 }
-  console.log(theme);
   WebBrowser.maybeCompleteAuthSession(); // required for web only
   const redirectTo = makeRedirectUri();
 
@@ -86,9 +85,6 @@ const performOAuth = async (provider: Provider) => {
 
   async function handleSignInWithOTP () {
    try {
-   //create asyncStorage to store phone number
-   // eslint-disable-next-line no-unused-expressions
-
    const phoneNumberObj = parsePhoneNumberFromString(phoneNumber, 'PH');
 
    if (!phoneNumberObj || !phoneNumberObj.isValid()) {
