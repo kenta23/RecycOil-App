@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Recycoil",
-    "slug": "recycoil-backup",
+    "slug": "Recycoil",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/logo-no-background.png",
@@ -91,15 +91,15 @@
         "origin": false
       },
       "eas": {
-        "projectId": "31bde593-9539-4605-8635-598d3a2cf573"
+         "projectId": "9b5eb034-33c9-4fa8-a9f8-233352f997b1"
       }
     },
-    "owner": "dreyyyy",
+    "owner": "drey_rm23",
     "runtimeVersion": {
       "policy": "appVersion"
     },
     "updates": { 
-      "url": "https://u.expo.dev/31bde593-9539-4605-8635-598d3a2cf573"
+      "url": "https://u.expo.dev/9b5eb034-33c9-4fa8-a9f8-233352f997b1"
     }
   }
 }

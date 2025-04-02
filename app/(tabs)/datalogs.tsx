@@ -14,7 +14,7 @@ export default function Datalogs() {
   const theme = useTheme();
   const { session } = useAuth();
   const [data, setData] = useState<Database['public']['Tables']['datalogs']['Row'][]>([]);
-  const [refresh, setRefresh] = useState(false);
+
   
      useEffect(() => {
         async function getData() {
@@ -32,7 +32,7 @@ export default function Datalogs() {
           }
         }
         getData();
-       }, [session?.user.id,  refresh]);
+       }, [session?.user.id]);
 
        console.log(data);
 
@@ -70,6 +70,7 @@ export default function Datalogs() {
                 <Octicons name="download" size={18} color={"#6b7280"} />
               </Pressable>
 
+  
               <Pressable>
                 <Octicons name="filter" size={18} color={theme?.colors.text} />
               </Pressable>

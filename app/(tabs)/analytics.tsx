@@ -52,16 +52,17 @@ export default function Analytics() {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState('');
   const isWeb = Platform.OS === "web";
-   const theme = useTheme();
-    const [filterType, setFilterType] = useState<FilterType>("days");
-    const [items, setItems] = useState<{ label: string; value: string }[]>([
+  const theme = useTheme();
+  const [filterType, setFilterType] = useState<FilterType>("days");
+  const [items, setItems] = useState<{ label: string; value: string }[]>([
       { label: 'Days', value: 'days' },
       { label: 'Weeks', value: 'weeks' },
       { label: 'Months', value: 'months' },
-    ]);
+  ]);
     const [loading, setLoading] = useState<boolean>(false);
     const [maxProdTime, setMaxProdTime] = useState<string>("");
     const [minProdTime, setMinProdTime] = useState<string>("");
+
     const { session } = useAuth();
     const [stackData, setStackData] = useState<StackDataItem[]>([]);
     const [totalUsedOil, setTotalUsedOil] = useState<number>(0);
@@ -69,10 +70,14 @@ export default function Analytics() {
     
     const getMaxTime = (timeArray: string[]): string => timeArray.reduce((max, current) => (current > max ? current : max), "00:00:00");
     const getMinTime = (timeArray: string[]): string => timeArray.reduce((min, current) => (current < min ? current : min), "00:00:00");
-    
+
+    //synchronous and asynchronous
+
   
     const fetchMaxProductionTime = async (): Promise<{ maxTime: string; minTime: string }> => {
-      const { data, error } = await supabase
+      
+      try {
+        const { data, error } = await supabase
         .from("datalogs")
         .select("production_time");
     
@@ -87,7 +92,12 @@ export default function Analytics() {
       const minTime = getMinTime(timeArray);
     
       return { maxTime, minTime };
-    };
+
+       } catch (error) {
+        console.warn(error);
+        return { maxTime: "00:00:00", minTime: "00:00:00" };
+      }
+   };
     
     
     useEffect(() => {
@@ -127,6 +137,7 @@ export default function Analytics() {
       fetchData();
     }, [session?.user.id, filterType]);
     
+
     useEffect(() => { 
        switch(value) {
            case 'days': 
@@ -142,8 +153,8 @@ export default function Analytics() {
     }, [value]);
     
     const processChartData = (data: DataLog[]) => {
-      let groupedData: Record<string, GroupedData> = {};
-    
+      let groupedData: Record<string, GroupedData> = { "": { successful: 0, failed: 0, running: 0 },};
+
       data.forEach((log) => {
         const date = new Date(log.created_at);
         let label: string = "";
@@ -192,9 +203,7 @@ export default function Analytics() {
       setStackData(newStackData);
     };
 
-    console.log('value', value);
-    console.log('filter type', filterType);
-    
+
     
     // Helper Function to Get Week Number
     const getWeekNumber = (date: Date): number => {
@@ -203,8 +212,7 @@ export default function Analytics() {
       return Math.ceil((days + firstJan.getDay() + 1) / 7);
     };
   
-    
-    console.log('max time', maxProdTime);
+  
   
     const cardContainerStyle = `${isWeb ? "w-[16rem]" : "w-[65%]"}  rounded-lg items-center justify-center px-4 py-3 border-[1px] border-[#E5E5EF] h-[10rem] shadow-gray-300 shadow-sm`;
     
@@ -606,8 +614,6 @@ export default function Analytics() {
              </View>
             </View>}
          </View>
-
-         
        </ScrollView>
     </SafeAreaView>
   );

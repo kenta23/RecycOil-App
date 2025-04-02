@@ -1,26 +1,11 @@
-import { Platform, Alert, PermissionsAndroid } from 'react-native'
+import { Platform, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import DashboardNative from './dashboard-native';
 import { useAuth } from '@/providers/authprovider';
 import { supabase } from '@/lib/supabase';
 import { toast } from "sonner"
 import { useBTconnection, useButtonStart } from '@/lib/store';
 import mqtt from 'mqtt';
-import RNBluetoothClassic, { BluetoothDevice } from 'react-native-bluetooth-classic';
-import { getMacAddress, getDeviceId } from 'react-native-device-info';
-import * as Location from 'expo-location';
-import { BleManager, Device } from "react-native-ble-plx";
-import { formatMsToHMS, formatTimeStr } from '@/lib/utils';
-
-
-
-   // Initialize the MQTT client
-//if this website is in production 
-const checkSecure = process.env.NODE_ENV === "production";
-
-// const MQTT_BROKER = checkSecure
-//   ? "wss://broker.emqx.io:8084/mqtt"  // Use WSS in production (HTTPS)
-//   : "ws://broker.emqx.io:8083/mqtt";  // Use WS in development (HTTP)
+import Dashboard from './dashboard';
 
 const MQTT_BROKER = "wss://broker.emqx.io:8084/mqtt";
 
@@ -115,13 +100,14 @@ export default function Viewdashboard() {
         });
       }
   
-      if (loading && (isMobile ? BTconnected : location?.latitude)) {
+      if (loading) {
+
         if (!client.connected) {
           try {
             console.log("Connecting to MQTT...");
   
             client.on("connect", async () => {
-              console.log("Connected to MQTT!");
+              console.log("Connected to MQTT!"); 
   
               client.publish(`recycoil/${device}/buttonStart`, "true");
               client.publish("recycoil/buttonStart", "true");
@@ -314,8 +300,9 @@ export default function Viewdashboard() {
     { value: remainingVolume, color: "lightgray" },
   ];
 
+
   return (
-    <DashboardNative
+    <Dashboard
       loading={loading}
       setFinished={setFinished}
       finished={finished}
@@ -324,7 +311,7 @@ export default function Viewdashboard() {
       temperature={topics.temperature}
       status={topics.status}
       carbonFootprint={topics.carbonFootprint}
-      biodiesel={topics.biodiesel}
+      biodiesel={topics.biodiesel} 
       producingTime={topics.producingTime}
       energyConsumption={topics.energyConsumption}
       pieData={pieData}

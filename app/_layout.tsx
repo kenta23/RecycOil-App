@@ -1,5 +1,5 @@
 import { Inter_400Regular, Inter_300Light, Inter_500Medium, Inter_600SemiBold, Inter_700Bold, useFonts } from '@expo-google-fonts/inter';
-import {  Redirect, Stack } from 'expo-router';
+import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import '../globals.css';
@@ -44,7 +44,6 @@ SplashScreen.preventAutoHideAsync();
 setTimeout(SplashScreen.hideAsync, 5000);
 
 export default function RootLayout() {
-  const { session } = useAuth();
   
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
@@ -74,14 +73,11 @@ export default function RootLayout() {
             headerShown: false,   
           }}
         >
-          <Stack.Screen name='home' options={{ 
-              title: 'Home',
-           }}/>
            <Stack.Screen name="(auth)" />
            <Stack.Screen name="(tabs)" />
         </Stack>
+
         <SystemBars hidden={false} style={colorScheme === "dark" ? 'dark' : 'light'}/>
-        
         {Platform.OS === 'web' && <Toaster />}
     </Themeprovider>
     </AuthProvider>

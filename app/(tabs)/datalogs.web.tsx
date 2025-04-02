@@ -1,8 +1,6 @@
-import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native'
 import React, { useEffect, useMemo, useState } from 'react'
-import { Image } from 'expo-image';
 import { useTheme } from '@/providers/themeprovider';
-import { AntDesign, Feather, Ionicons, Octicons } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
 import {
   useReactTable,
   ColumnDef,
@@ -12,15 +10,14 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  Row,
 } from "@tanstack/react-table";
-import { DataInfo, Status } from '@/lib/data';
+import { Status } from '@/lib/data';
 import { StatusComponent } from '@/components/web/StatusComponent';
 import { ActionsButton } from '@/components/web/ActionsButton';
 import { useAuth } from '@/providers/authprovider';
 import { supabase } from '@/lib/supabase';
 import { Database } from '@/database.types';
-import { formatDate, formatTimeStr } from '@/lib/utils';
+import { formatDate } from '@/lib/utils';
 
 
 
@@ -121,9 +118,6 @@ export default function DatalogsWeb() {
       pagination,
     },
   })
-
-
-  console.log(data);
 
   
  return (
@@ -232,22 +226,4 @@ export default function DatalogsWeb() {
    </div>
  );
 }
-
-const styles = StyleSheet.create({
-  success: {
-    color: "#1F9254",
-  },
-  failed: {
-    color: "#A30D11",
-  },
-  running: {
-    color: "#DDAA1D",
-  },
-  headertitle: {
-    color: "#ffff",
-    textAlign: "center",
-    fontWeight: "500",
-    fontSize: 16,
-  },
-});
 

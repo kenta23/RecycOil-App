@@ -17,59 +17,6 @@ export default function Account() {
   const [phoneChangeModal, setPhoneChangeModal] = useState<boolean>(false); // State to control the modal visibility [setPhoneChangeModal]
   const router = useRouter();
 
-
-  // Initialize the MQTT client
-  const client = useMemo(() => new Paho.Client("ws://test.mosquitto.org:8081/mqtt", ""), []); //websocket protocol
-
-  // useEffect(() => {
-  //   // Set up the client and connect
-  //   client.onConnectionLost = (responseObject) => {
-  //     if (responseObject.errorCode !== 0) {
-  //       console.log("Connection lost:", responseObject.errorMessage);
-  //     }
-  //   };
-
-  //   client.onMessageArrived = (message) => {
-  //     console.log("Message arrived:", message.payloadString);
-  //     setText(message.payloadString);
-  //   };
-
-  //   client.connect({
-  //     onSuccess: () => {
-  //       console.log("Connected to MQTT broker");
-  //       client.subscribe("mytopic/test");
-  //       console.log("Subscribed to topic: mytopic/test");
-  //     },
-  //     onFailure: (err) => console.log("Connection failed", err.errorMessage),
-  //     useSSL: true,
-  //   });
-
-  //   return () => {
-  //     if (client.isConnected()) {
-  //       client.disconnect();
-  //     }
-  //   };
-
-  // }, [client]);
-
-
-  const signoutHandler = async () => {
-    try {
-      if(!session?.access_token) { 
-         router.replace('/(auth)')
-      }
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        console.error('Sign-out failed:', error.message);
-      } else {
-        console.log('Signed out successfully');
-      }
-    } catch (err) {
-      console.error('Unexpected error:', err);
-    }
-  }
-
-  console.log(session?.user);
   const theme = useTheme();
   const [newPhoneNumber, setNewPhoneNumber] = useState<string>('');
   const [selectedCountry, setSelectedCountry] =
@@ -93,7 +40,6 @@ export default function Account() {
             phone: phoneNumberObj.format("E.164"),
           });
      
-         
              //
              setPhoneChangeModal(false);
              setVerifyOtpModal(true);
@@ -266,22 +212,9 @@ export default function Account() {
               aria-label="email input"
             />
           </View>
-
-          {/* <View className="flex-col items-start gap-2">
-            <Text style={[{ color: theme?.colors.text }]} className="text-lg" nativeID="nickname">
-              Nickname
-            </Text>
-            <TextInput
-              defaultValue={"@"}
-              className="border-gray-400 border-[1px] outline-none active:outline-none rounded-lg text-gray-400 px-2 py-2 w-full"
-              aria-labelledby="nickname"
-              aria-label="nickname input"
-            />
-          </View> */}
         </View>
 
         {/**CTA's */}
-
         <View className="flex-col max-w-[550px] w-[270px] gap-4 mt-8">
           <Pressable className="px-3 w-full py-3 rounded-lg border-[#D29967] border-[1px]">
             <Text className="text-[#D29967] text-lg text-center">

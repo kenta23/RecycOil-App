@@ -8,9 +8,10 @@ import { useAuth } from '@/providers/authprovider'
 import { supabase } from '@/lib/supabase'
 import BackButton from '@/components/backbutton'
 import { useTheme } from '@/providers/themeprovider'
-import { Menu } from 'lucide-react';
 
-const linkStyles = 'flex flex-row group hover:bg-primaryColor hover:text-white transition-all ease-out duration-200 items-center gap-2 py-3 px-4';
+
+const linkStyles =
+  "flex flex-row group hover:bg-primaryColor hover:text-white transition-all ease-out duration-200 items-center gap-2 py-3 px-4";
 
 const links = [
   {
@@ -87,6 +88,7 @@ function TabBarBackground (props: BottomTabBarProps) {
     const closeDrawer = () => setDrawerVisible(false);
     const [showWebAlert, setShowWebAlert] = useState<boolean>(false);
     const theme = useTheme();
+    const closeWebModal = () => setShowWebAlert(false);
     
 
 
@@ -118,73 +120,98 @@ function TabBarBackground (props: BottomTabBarProps) {
 
     return (
       <>
-      <View className="absolute bottom-5 left-3">
-        <Pressable
-          className={`${drawerVisible ? "hidden" : "block"}`}
-          onPress={openDrawer}
-        >
-          <Image
-            source={require("../../assets/images/menu.png")}
-            style={{ width: 65, height: 65 }}
-            aria-label="Menu button image"
-            contentFit="contain"
-            alt="Menu button icon"
-            shouldRasterizeIOS
-          />
-        </Pressable>
-
-        {/* Drawer Modal */}
         <Modal
-          animationType="fade"
+          animationType="none"
           transparent={true}
-          visible={drawerVisible}
-          onRequestClose={closeDrawer}
+          visible={showWebAlert}
+          onRequestClose={closeWebModal}
         >
-          <TouchableWithoutFeedback onPress={closeDrawer}>
-            <View style={styles.drawerContainer}>
-              <TouchableWithoutFeedback>
-                <View style={styles.drawerContent}>
-                  {/* Add your links here */}
-                  <FlatList
-                    data={links}
-                    accessibilityLabel="Links"
-                    horizontal={false}
-                    style={{ height: 100 }}
-                    contentContainerStyle={{ gap: 20 }}
-                    renderItem={({ item }) => (
-                      <TouchableOpacity
-                        className={linkStyles}
-                        hitSlop={8}
-                        onPress={() => handleTabClicked(item)}
-                      >
-                        {item.icon({ style: {} })}
-                        <Text
-                          className={`text-primaryColor`}
-                          style={{ fontSize: 22 }}
-                        >
-                          {item.name}
-                        </Text>
-                      </TouchableOpacity>
-                    )}
-                    keyExtractor={(item) => item.id.toString()}
-                  />
+          <View style={styles.modalOverlay}>
+            <View className="" style={{ backgroundColor: theme?.colors.background, padding: 20, borderRadius: 10, width: 300, outline: '1px', outlineColor: theme?.colors.gray }}>
+              <Text style={[ styles.modalTitle, { color: theme?.colors.text }]}>Sign out</Text>
+              <Text style={[ styles.modalMessage, { color: theme?.colors.gray }]}>
+                Are you sure you want to sign out?
+              </Text>
+              <View style={styles.buttonContainer}>
+                <Pressable className='font-bold text-white py-[10px] rounded-lg w-24 px-5 mx-[10px] bg-green-500' onPress={() => { setShowWebAlert(false); supabase.auth.signOut() }}>
+                  <Text style={[styles.buttonText, { textAlign: 'center' }]}>Yes</Text>
+                </Pressable>
 
-                  {/* Close Button */}
-                  <TouchableOpacity onPress={closeDrawer}>
-                    <Feather name="x" size={55} color="white" />
-                  </TouchableOpacity>
-                </View>
-              </TouchableWithoutFeedback>
+                <Pressable className='font-bold text-white py-[10px] rounded-lg w-24 px-5 mx-[10px] bg-red-500' onPress={() => setShowWebAlert(false)}>
+                  <Text style={[styles.buttonText, { textAlign: 'center'}]}>No</Text>
+                </Pressable>
+              </View>
             </View>
-          </TouchableWithoutFeedback>
+          </View>
         </Modal>
-      </View>
+
+
+        <View className="absolute bottom-5 left-3">
+          <Pressable
+            className={`${drawerVisible ? "hidden" : "block"}`}
+            onPress={openDrawer}
+          >
+            <Image
+              source={require("../../assets/images/menu.png")}
+              style={{ width: 65, height: 65 }}
+              aria-label="Menu button image"
+              contentFit="contain"
+              alt="Menu button icon"
+              shouldRasterizeIOS
+            />
+          </Pressable>
+
+          {/* Drawer Modal */}
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={drawerVisible}
+            onRequestClose={closeDrawer}
+          >
+            <TouchableWithoutFeedback onPress={closeDrawer}>
+              <View style={styles.drawerContainer}>
+                <TouchableWithoutFeedback>
+                  <View style={styles.drawerContent}>
+                    {/* Add your links here */}
+                    <FlatList
+                      data={links}
+                      accessibilityLabel="Links"
+                      horizontal={false}
+                      style={{ height: 100 }}
+                      contentContainerStyle={{ gap: 20 }}
+                      renderItem={({ item }) => (
+                        <TouchableOpacity
+                          className={linkStyles}
+                          hitSlop={8}
+                          onPress={() => handleTabClicked(item)}
+                        >
+                          {item.icon({ style: {} })}
+                          <Text
+                            className={`text-primaryColor`}
+                            style={{ fontSize: 22 }}
+                          >
+                            {item.name}
+                          </Text>
+                        </TouchableOpacity>
+                      )}
+                      keyExtractor={(item) => item.id.toString()}
+                    />
+
+                    {/* Close Button */}
+                    <TouchableOpacity onPress={closeDrawer}>
+                      <Feather name="x" size={55} color="white" />
+                    </TouchableOpacity>
+                  </View>
+                </TouchableWithoutFeedback>
+              </View>
+            </TouchableWithoutFeedback>
+          </Modal>
+        </View>
       </>
-  ); 
+    ); 
  }
 
 export default function Tablayout() {
-  const router = useRouter();
   const { session } = useAuth();
   
    if (!session?.user) { 
@@ -255,6 +282,44 @@ export default function Tablayout() {
 
 
 const styles = StyleSheet.create({
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContainer: {
+    width: 300,
+    padding: 20,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  modalMessage: {
+    fontSize: 16,
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  button: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: '#BFEC87',
+    borderRadius: 5,
+    marginHorizontal: 10,
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
     drawerContainer: {
       flex: 1,
       backgroundColor: 'rgba(0, 0, 0, 0.7)', // Semi-transparent background
