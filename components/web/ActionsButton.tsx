@@ -133,35 +133,15 @@ export function ActionsButton ({ row, setRefresh }: { row: Row<Database['public'
                    <div className="flex flex-col gap-2">
                      <div className="flex flex-row items-center gap-1">
                        {/**title */}
-                       {editing ? (
-                         <input
-                           className="rounded-lg"
-                           type="text"
-                           defaultValue={formatDate(row.original.created_at)}
-                         />
-                       ) : (
                          <h1
                            style={{ color: theme?.colors.text }}
                            className="text-lg font-semibold"
                          >
                            {formatDate(row.original.created_at)}
                          </h1>
-                       )}
-                       <MaterialCommunityIcons
-                         name="pencil"
-                         size={20}
-                         color={theme?.colors.gray}
-                         onPress={() => setEditing((prev) => !prev)}
-                       />
                      </div>
 
-                     {/** format the date to mm/dd/yyyy */}
-                     <h2
-                       style={{ color: theme?.colors.gray }}
-                       className="font-light"
-                     >
-                       {formatDate(row.original.created_at)}
-                     </h2>
+                   
                    </div>
 
                    {/** STATUS */}

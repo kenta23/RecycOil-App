@@ -77,6 +77,7 @@ export default function Viewdashboard() {
     if (!isResponseReceived) {
       timeout = setTimeout(() => {
         console.log("⏳ No response received from recycoil/machineStatus! Closing connection.");
+        Platform.OS === "web" ? toast.error("No machine is connected. Closing connection.") : Alert.alert("No machine is connected", "Closing connection.", [{ text: "OK" }]); 
         client.publish("recycoil/buttonStart", "false", { qos: 2 });
         setLoading(false);
         setButtonStart(false);

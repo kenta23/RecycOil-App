@@ -11,7 +11,7 @@ import SkiaComponent from '@/skia components/tank-container';
 import { useAuth } from '@/providers/authprovider';
 import { supabase } from '@/lib/supabase';
 import { Database } from '@/database.types';
-import { formatTimeStr, timeProgressFormat } from '@/lib/utils';
+import { formatDate, formatTimeStr, timeProgressFormat } from '@/lib/utils';
 import * as Crypto from 'expo-crypto';
 import { Image } from 'expo-image';
 
@@ -119,6 +119,7 @@ export default function DatalogsID () {
           </View>
         </Modal>
 
+
         <ScrollView className="w-full h-full">
           <View className="flex-row items-center justify-between w-full px-4 mt-10">
             {/** Name and date  */}
@@ -127,26 +128,26 @@ export default function DatalogsID () {
                 {/**title */}
                 <Text
                   style={{ color: theme?.colors.text }}
-                  className="text-lg font-semibold"
+                  className="text-sm font-semibold"
                 >
-                  {itemId}
+                  {formatDate(data[0].created_at)}
                 </Text>
-
+{/* 
                 <MaterialCommunityIcons
                   name="pencil"
                   size={20}
                   color={theme?.colors.gray}
                   onPress={() => setEditing(true)}
-                />
+                /> */}
               </View>
 
-              {/** format the date to mm/dd/yyyy */}
+              {/* * format the date to mm/dd/yyyy
               <Text
                 style={{ color: theme?.colors.gray }}
                 className="font-light"
               >
-                fdf fsf
-              </Text>
+                {formatDate(data[0]?.created_at)}
+              </Text> */}
             </View>
 
             {/** STATUS */}
